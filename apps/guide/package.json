@@ -1,0 +1,16 @@
+{
+  "name": "@preqstation/guide",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/starlight": "^0.32.5",
+    "astro": "^5.17.1",
+    "sharp": "^0.33.5"
+  }
+}
