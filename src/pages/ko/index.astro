@@ -1,0 +1,11 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PageContent from '../../components/PageContent';
+import { getTranslations } from '../../i18n';
+
+const t = getTranslations('ko');
+---
+
+<Layout title={t.meta.title} description={t.meta.description} lang="ko" locale="ko">
+  <PageContent client:load translations={t} locale="ko" />
+</Layout>

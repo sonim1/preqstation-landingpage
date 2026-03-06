@@ -1,0 +1,18 @@
+---
+import Layout from '../layouts/Layout.astro';
+import LegalPage from '../components/LegalPage';
+import { getTranslations } from '../i18n';
+
+const t = getTranslations('en');
+---
+
+<Layout title={`${t.legal.privacy.title} — Preq Station`} description="Preq Station Privacy Policy" lang="en" locale="en">
+  <LegalPage
+    client:load
+    title={t.legal.privacy.title}
+    lastUpdated={t.legal.privacy.lastUpdated}
+    sections={t.legal.privacy.sections}
+    backLabel={t.legal.backToHome}
+    backHref="/"
+  />
+</Layout>

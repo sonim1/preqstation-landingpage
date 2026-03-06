@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+@theme {
+  /* Kitchen Color Palette */
+  --color-charcoal: #2D3436;
+  --color-mint: #00B894;
+  --color-warm-yellow: #FDCB6E;
+  --color-coral: #E17055;
+  --color-kitchen-white: #F8F9FA;
+  --color-steel: #DFE6E9;
+  --color-review-blue: #74B9FF;
+
+  /* Typography */
+  --font-display: "Space Grotesk", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", monospace;
+
+  /* Easing */
+  --ease-kitchen: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+}

@@ -1,0 +1,11 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageContent from '../components/PageContent';
+import { getTranslations } from '../i18n';
+
+const t = getTranslations('en');
+---
+
+<Layout title={t.meta.title} description={t.meta.description} lang="en" locale="en">
+  <PageContent client:load translations={t} locale="en" />
+</Layout>

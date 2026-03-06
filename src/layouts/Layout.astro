@@ -1,0 +1,68 @@
+---
+import '../styles/global.css'
+
+interface Props {
+  title?: string;
+  description?: string;
+  lang?: string;
+  locale?: string;
+}
+
+const {
+  title = "Preq Station — AI Agent Execution Platform",
+  description = "Submit a task. AI preps it. An open-source AI agent execution platform that solves the Last Mile of vibe coding.",
+  lang = "en",
+  locale = "en",
+} = Astro.props;
+
+const schemaDescription = locale === "ko"
+  ? "AI 에이전트 실행 플랫폼 - Task를 올리면 AI가 코드를 작성하고, 테스트하고, PR을 올립니다."
+  : "AI Agent Execution Platform - Submit a task and AI writes code, runs tests, and creates PRs.";
+
+const schemaFeatures = locale === "ko"
+  ? ["AI Task 자동화", "멀티 AI 에이전트 (Claude, Codex, Gemini)", "Telegram 원격 트리거", "Self-hosted 오픈소스"]
+  : ["AI Task Automation", "Multi AI Agent (Claude, Codex, Gemini)", "Telegram Remote Trigger", "Self-hosted Open Source"];
+---
+
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content={locale === "ko" ? "ko_KR" : "en_US"} />
+
+    <!-- Alternate languages -->
+    <link rel="alternate" hreflang="en" href="/" />
+    <link rel="alternate" hreflang="ko" href="/ko/" />
+    <link rel="alternate" hreflang="x-default" href="/" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+    <title>{title}</title>
+
+    <!-- JSON-LD Schema -->
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Preq Station",
+      "applicationCategory": "DeveloperApplication",
+      "description": schemaDescription,
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "operatingSystem": "Cross-platform",
+      "featureList": schemaFeatures,
+    })} />
+  </head>
+  <body class="bg-kitchen-white text-charcoal font-body antialiased overflow-x-hidden">
+    <slot />
+  </body>
+</html>
