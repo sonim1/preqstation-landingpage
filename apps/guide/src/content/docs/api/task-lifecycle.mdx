@@ -1,6 +1,141 @@
 ---
 title: Task Lifecycle
-description: Understanding the PREQSTATION task lifecycle.
+description: Task status workflow and state transitions.
 ---
 
-Tasks in PREQSTATION move through a defined lifecycle: created, planned, started, blocked, completed, or failed. Learn about each state, valid transitions, and how to handle edge cases.
+import { Aside } from '@astrojs/starlight/components';
+
+Tasks in PREQSTATION flow through six states. Understanding the lifecycle is key to using agents effectively.
+
+## Status Workflow
+
+```
+inbox  →  todo  →  in_progress  →  review  →  done
+                       │                        ▲
+                       └──── blocked ────────────┘
+                              (retry)
+```
+
+## Status Descriptions
+
+| Status | Meaning | Who Can Move | Action |
+|---|---|---|---|
+| **Inbox** | New task, awaiting planning | Agent | Agent runs `preq_plan_task` to move to Todo |
+| **Todo** | Planned and ready | Agent | Agent runs `preq_start_task` to begin |
+| **In Progress** | Agent actively working | Agent | Agent runs `preq_complete_task` when done |
+| **Review** | Results submitted for inspection | You/Agent | Run tests, verify, then `preq_review_task` |
+| **Done** | Complete and deployed | Archive | Task is finished |
+| **Blocked** | Cannot proceed | Agent/You | Fix blocker, move back to Todo |
+
+## Agent Execution Flow
+
+When an agent receives a task, it checks the current status and proceeds:
+
+### From Inbox
+
+```
+Agent fetches task (status: inbox)
+  → Reads requirements and acceptance criteria
+  → Generates a plan and test strategy
+  → Calls preq_plan_task(planMarkdown)
+  → Task moves to: todo
+  → Agent STOPS (waits for approval)
+```
+
+### From Todo
+
+```
+Agent fetches task (status: todo)
+  → Calls preq_start_task()
+  → Task moves to: in_progress
+  → Agent implements:
+      - Writes code
+      - Runs tests
+      - Commits and pushes (per deploy strategy)
+  → Calls preq_complete_task(summary, tests, prUrl)
+  → Task moves to: review
+```
+
+### From In Progress
+
+```
+Agent continues work (status: in_progress)
+  → Runs tests, verifies deployment
+  → Calls preq_complete_task(summary, tests, prUrl)
+  → Task moves to: review
+```
+
+### From Review
+
+```
+You run verification:
+  - Review the PR/code changes
+  - Run tests locally
+  - Check acceptance criteria
+
+If passing:
+  → Call preq_review_task()
+  → Task moves to: done
+
+If blocked:
+  → Call preq_block_task(reason)
+  → Task moves to: blocked
+```
+
+### From Blocked
+
+```
+You identify and fix the issue:
+  - Add context to task description
+  - Provide missing information
+  - Resolve the blocker
+
+Then either:
+  → Move back to: todo (agent retries)
+  → Move back to: in_progress (agent continues)
+```
+
+## Valid Transitions
+
+| From | To | Triggered By | Command |
+|---|---|---|---|
+| `inbox` | `todo` | Agent | `preq_plan_task(plan)` |
+| `todo` | `in_progress` | Agent | `preq_start_task()` |
+| `in_progress` | `review` | Agent | `preq_complete_task(result)` |
+| `in_progress` | `blocked` | Agent | `preq_block_task(reason)` |
+| `review` | `done` | You | `preq_review_task()` |
+| `review` | `blocked` | You | `preq_block_task(reason)` |
+| `blocked` | `todo` | You | Move via Kanban (status: todo) |
+| `blocked` | `in_progress` | You | Move via Kanban (status: in_progress) |
+| `done` | `todo` | You | Reopen via Kanban (for retry) |
+
+## Task Result
+
+When an agent submits `preq_complete_task()`, it includes a result object:
+
+```json
+{
+  "summary": "Implemented JWT authentication. All tests passing.",
+  "tests": "✓ User signup\n✓ User login\n✓ Protected routes",
+  "prUrl": "https://github.com/project/pull/456",
+  "notes": "Stored JWT in httpOnly cookie as per security best practices."
+}
+```
+
+This becomes a **Work Log** entry attached to the task for audit and review.
+
+## Deployment Strategy
+
+Task execution respects the project's deployment strategy:
+
+| Strategy | Behavior |
+|---|---|
+| `none` | No git operations. Code changes only. |
+| `direct_commit` | Commit and push to default branch. Optional squash merge. |
+| `feature_branch` | Commit to task branch. Optional auto-PR creation. |
+
+Agents fetch the strategy via `preq_get_project_settings()` before executing.
+
+<Aside>
+Tasks can be reopened at any time by moving them back to `todo` or `in_progress` on the Kanban board. This is useful for retrying failed tasks or making additional changes.
+</Aside>

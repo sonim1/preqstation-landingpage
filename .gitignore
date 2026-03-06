@@ -24,4 +24,4 @@ pnpm-debug.log*
 .idea/
 .omc/
 .turbo/
-docs/
+/docs/

@@ -1,6 +1,432 @@
 ---
 title: Troubleshooting
-description: Common issues and solutions for PREQSTATION.
+description: Common issues and solutions for PREQSTATION task execution
 ---
 
-Encountering issues with PREQSTATION? This page covers common problems, error messages, and step-by-step solutions to get you back on track.
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+This guide covers common problems and their solutions. Check your issue below.
+
+## MCP Connection Issues
+
+### MCP server fails to start
+
+**Symptom:** `Error: Cannot find module` or MCP tools unavailable in Claude Code
+
+**Solutions:**
+
+1. Verify Node.js is installed:
+```bash
+node --version  # Should be 16+
+```
+
+2. Check the script path is absolute (not relative):
+```bash
+# ❌ Bad: "args": ["./preqstation-mcp-server.mjs"]
+# ✅ Good: "args": ["/Users/kendrick/projects/preqstation-skill/scripts/preqstation-mcp-server.mjs"]
+```
+
+3. Verify the script file exists:
+```bash
+ls -la /path/to/preqstation-skill/scripts/preqstation-mcp-server.mjs
+```
+
+4. Check environment variables are set:
+```bash
+echo $PREQSTATION_API_URL
+echo $PREQSTATION_TOKEN
+```
+
+5. Restart Claude Code or re-add the MCP server:
+```bash
+claude mcp remove preqstation
+claude mcp add -s user \
+  --env='PREQSTATION_API_URL=https://...' \
+  --env='PREQSTATION_TOKEN=preq_...' \
+  preqstation -- node /path/to/preqstation-mcp-server.mjs
+```
+
+### Tools appear in MCP but return errors
+
+**Symptom:** `preq_list_tasks` or other tools fail with `401 Unauthorized`
+
+1. Verify token format (should start with `preq_`):
+```bash
+echo $PREQSTATION_TOKEN  # Should output: preq_xxxxxxxxx
+```
+
+2. Verify token is not expired:
+- Go to project-manager UI → Settings → API Keys
+- Check token creation date and expiration
+- Generate a new token if needed
+
+3. Test connectivity directly:
+```bash
+curl -H "Authorization: Bearer $PREQSTATION_TOKEN" \
+  "$PREQSTATION_API_URL/api/health"
+# Should return: {"status":"ok"}
+```
+
+4. Verify API URL is correct (must include protocol):
+```bash
+# ❌ Bad: "preqstation-lp.vercel.app"
+# ✅ Good: "https://preqstation-lp.vercel.app"
+```
+
+## Token & Authentication Issues
+
+### "Invalid token" error on every MCP call
+
+**Symptom:** Token auth fails even with correct-looking token
+
+<Tabs>
+<TabItem label="Cause: Expired Token">
+**Check:** In project-manager UI, go to Settings → API Keys and check expiration date.
+
+**Fix:** Generate a new token:
+1. Click "New Token"
+2. Copy the new token value
+3. Update `PREQSTATION_TOKEN` environment variable
+4. Re-register MCP server with new token
+</TabItem>
+<TabItem label="Cause: Token Revoked">
+**Check:** List tokens in Settings → API Keys to see if token is still there.
+
+**Fix:** Generate a fresh token (old one may have been revoked).
+</TabItem>
+<TabItem label="Cause: Wrong Bearer Format">
+**Check:** Environment variable and MCP config have exact token value.
+
+**Problem:** Token was pasted with extra spaces or quotes.
+
+**Fix:**
+```bash
+# ❌ Bad:
+export PREQSTATION_TOKEN=" preq_xxxxx " # spaces!
+
+# ✅ Good:
+export PREQSTATION_TOKEN="preq_xxxxx"   # no extra spaces
+```
+</TabItem>
+</Tabs>
+
+### "Bearer token required" for API health check
+
+**Symptom:**
+```bash
+curl "$PREQSTATION_API_URL/api/health"
+# Returns: {"error":"Bearer token required"}
+```
+
+**Cause:** Using unprotected `/api/health` endpoint without token.
+
+**Fix:** `/api/health` is public; token errors on other endpoints:
+```bash
+# Health check (no token needed):
+curl "$PREQSTATION_API_URL/api/health"
+
+# Task operations (token required):
+curl -H "Authorization: Bearer $PREQSTATION_TOKEN" \
+  "$PREQSTATION_API_URL/api/tasks"
+```
+
+## Worktree & Git Issues
+
+### Worktree conflicts or cleanup failures
+
+**Symptom:** `fatal: invalid reference: <branch>` or stale worktree directory
+
+**Solutions:**
+
+1. List existing worktrees:
+```bash
+git -C <project_cwd> worktree list
+```
+
+2. Remove stale worktrees:
+```bash
+git -C <project_cwd> worktree remove <path> --force
+git -C <project_cwd> worktree prune
+```
+
+3. If worktree is locked:
+```bash
+git -C <project_cwd> worktree unlock <path>
+git -C <project_cwd> worktree remove <path> --force
+```
+
+4. Check for corrupted `.git/worktrees/` directory:
+```bash
+ls -la <project_cwd>/.git/worktrees/
+# If corrupted, delete the lock file:
+rm <project_cwd>/.git/worktrees/<worktree_name>/locked
+```
+
+### Remote push verification fails
+
+**Symptom:** `failed: ... - Remote push verification failed`
+
+<Tabs>
+<TabItem label="Issue: Branch not pushed">
+**Cause:** `deploy_commit_on_review=true` requires successful push before completing task.
+
+**Check:**
+```bash
+git -C <project_cwd> branch -r | grep <branch_name>
+# Or:
+git ls-remote --heads origin <branch_name>
+```
+
+**Fix:**
+1. Manually push the branch:
+```bash
+git -C <project_cwd> push origin <branch_name>
+```
+
+2. Then call `preq_complete_task` again
+</TabItem>
+<TabItem label="Issue: Wrong branch name">
+**Cause:** Branch created locally but with different name.
+
+**Check:** Compare local vs. resolved branch name:
+```bash
+git -C <project_cwd> branch
+# Expected: preqstation/PROJ/feature-name
+```
+
+**Fix:** Push with correct name or use `preq_complete_task` with `branchName` parameter.
+</TabItem>
+</Tabs>
+
+## Build & Compilation Errors
+
+### "npm install" fails in worktree
+
+**Symptom:** `npm ERR! 404 Not Found` or dependency resolution errors
+
+<Tabs>
+<TabItem label="Cause: Stale lock file">
+**Check:**
+```bash
+ls <cwd>/package-lock.json
+```
+
+**Fix:**
+```bash
+rm <cwd>/package-lock.json
+npm -C <cwd> install
+```
+</TabItem>
+<TabItem label="Cause: Node version mismatch">
+**Check:**
+```bash
+node --version
+cat <cwd>/.nvmrc  # If using nvm
+```
+
+**Fix:** Use correct Node version:
+```bash
+nvm use  # If .nvmrc exists
+node --version  # Should match project requirements
+```
+</TabItem>
+<TabItem label="Cause: Private dependencies">
+**Check:** `.npmrc` credentials or `package.json` scoped packages.
+
+**Fix:**
+```bash
+# Ensure .npmrc has auth token for private registry:
+echo "@scope:registry=https://npm.example.com" >> ~/.npmrc
+echo "//npm.example.com/:_authToken=YOUR_TOKEN" >> ~/.npmrc
+```
+</TabItem>
+</Tabs>
+
+### TypeScript compilation fails
+
+**Symptom:** `error TS1005: ';' expected` or type errors in build
+
+**Solutions:**
+
+1. Check TypeScript version:
+```bash
+npm -C <cwd> list typescript
+```
+
+2. Verify `tsconfig.json` is valid:
+```bash
+cat <cwd>/tsconfig.json | jq .
+```
+
+3. Clear build cache:
+```bash
+rm -rf <cwd>/dist <cwd>/build <cwd>/.next <cwd>/.turbo
+npm -C <cwd> run build
+```
+
+4. Check for Node version incompatibility:
+```bash
+# Node 20+ may have stricter TS checks
+node --version
+```
+
+## MEMORY.md Path Issues
+
+### "Project not found in MEMORY.md"
+
+**Symptom:** OpenClaw asks for project path even though it's in MEMORY.md
+
+**Solutions:**
+
+1. Verify MEMORY.md exists in workspace root:
+```bash
+ls -la /workspace/MEMORY.md
+cat /workspace/MEMORY.md
+```
+
+2. Check table format is correct:
+```markdown
+| key | cwd | note |
+|-----|-----|------|
+| proj | /absolute/path | Description |
+```
+
+3. Verify project key matches:
+```bash
+# If task is PRJ-284, key should be: prj (lowercase)
+grep "| prj |" MEMORY.md
+```
+
+4. Ensure paths are absolute (not relative):
+```bash
+# ❌ Bad: ./projects/example
+# ✅ Good: /Users/kendrick/projects/example
+```
+
+## OpenClaw Execution Issues
+
+### Session never completes or seems stuck
+
+**Symptom:** Process shows no output for hours, or stuck at same log line
+
+**Solutions:**
+
+1. Check session status:
+```bash
+process action:poll sessionId:<id>
+```
+
+2. Read last 100 lines of output:
+```bash
+process action:log sessionId:<id> | tail -100
+```
+
+3. If truly stuck, kill the session:
+```bash
+process action:kill sessionId:<id>
+```
+
+4. Check for infinite loops or blocking I/O:
+```bash
+# Common causes:
+# - npm install hung on network
+# - Interactive prompts waiting for input
+# - Subprocess blocking on child process
+```
+
+### "Permission denied" when accessing project files
+
+**Symptom:** `Error: EACCES: permission denied` in worktree
+
+**Solutions:**
+
+1. Verify directory permissions:
+```bash
+ls -ld <project_cwd>
+# Should be readable/writable by current user
+```
+
+2. Check worktree permissions:
+```bash
+ls -ld <cwd>
+chmod -R u+rw <cwd>  # If needed
+```
+
+3. Ensure Git can write to worktree:
+```bash
+touch <cwd>/.test-write
+rm <cwd>/.test-write
+```
+
+## Common Mistakes
+
+### ❌ Forgetting to update MEMORY.md
+
+**Issue:** OpenClaw can't resolve project path, requires manual input each time.
+
+**Fix:** Update MEMORY.md whenever you clone a new project or change paths:
+```markdown
+| key | cwd | note |
+|-----|-----|------|
+| newproj | /absolute/path | Added 2026-03-06 |
+```
+
+### ❌ Using relative paths in MEMORY.md
+
+**Issue:** Worktree creation fails because path doesn't expand.
+
+**Fix:** Always use absolute paths:
+```bash
+# Get absolute path:
+pwd  # from within the project
+```
+
+### ❌ Not cleaning up old worktrees
+
+**Issue:** Disk fills up, performance degrades.
+
+**Fix:** Periodic cleanup:
+```bash
+git -C <project_cwd> worktree list
+git -C <project_cwd> worktree remove <old_path> --force
+git -C <project_cwd> worktree prune
+```
+
+### ❌ Expecting sync without MCP
+
+**Issue:** `project-sync` fails because MCP server isn't running.
+
+**Fix:** Ensure PREQSTATION MCP server is registered:
+```bash
+claude mcp list | grep preqstation
+```
+
+## Getting Help
+
+If you've checked all above:
+
+1. **Gather diagnostics:**
+   ```bash
+   echo "API URL: $PREQSTATION_API_URL"
+   echo "Token format: ${PREQSTATION_TOKEN:0:4}... (masked)"
+   node --version
+   git --version
+   npm --version
+   ```
+
+2. **Test basic connectivity:**
+   ```bash
+   curl -H "Authorization: Bearer $PREQSTATION_TOKEN" \
+     "$PREQSTATION_API_URL/api/health" | jq .
+   ```
+
+3. **Check logs:**
+   - Claude Code: Settings → Logs
+   - OpenClaw: Session output via `process action:log`
+   - project-manager: Vercel dashboard logs
+
+4. **File an issue** with:
+   - System info (OS, Node version)
+   - Error message (full stack trace)
+   - Steps to reproduce
+   - Diagnostics output (without exposing tokens)

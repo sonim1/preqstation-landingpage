@@ -1,14 +1,27 @@
 ---
-title: Welcome to PREQSTATION
-description: The complete guide for PREQSTATION - your AI-powered task management platform.
+title: PREQSTATION Guide
+description: AI-powered task management for developers. Configure agents to manage your workflow.
 template: splash
 hero:
-  title: Welcome to PREQSTATION
-  tagline: AI-powered task management for engineering teams using Claude Code.
+  title: PREQSTATION Guide
+  tagline: "Task를 올리세요. AI가 prep합니다."
   actions:
     - text: Get Started
       link: /guide/getting-started/overview
       icon: right-arrow
+      variant: primary
+    - text: API Reference
+      link: /guide/api/rest-api
+      icon: open-book
+      variant: secondary
 ---
 
-Welcome to the PREQSTATION documentation. Here you'll find everything you need to set up and use PREQSTATION effectively.
+PREQSTATION is a task management platform designed for developers who want AI agents to work on their behalf.
+
+It consists of three interconnected systems:
+
+- **project-manager** — Central web service with Kanban board, REST API, and Telegram notifications
+- **preqstation-skill** — MCP server that coding agents use to read and update tasks
+- **preqstation-openclaw** — Trigger layer that launches agents from Telegram messages
+
+Create tasks. AI prepares them. You review the results.

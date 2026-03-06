@@ -1,12 +1,132 @@
+/* PREQSTATION Guide — Custom Theme */
+
+/* ─── Google Fonts ─────────────────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* ─── Typography ───────────────────────────────────────────────────────────── */
+:root {
+  --sl-font: 'Inter', system-ui, sans-serif;
+  --sl-font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+/* ─── Accent colors (shared base) ─────────────────────────────────────────── */
 :root {
   --sl-color-accent-low: #1a6b52;
   --sl-color-accent: #00B894;
   --sl-color-accent-high: #b3efe0;
   --sl-color-text-accent: #00B894;
 }
+
+/* ─── Dark theme (default) ─────────────────────────────────────────────────── */
+:root[data-theme='dark'] {
+  /* Accent */
+  --sl-color-accent-low: #1a6b52;
+  --sl-color-accent: #00B894;
+  --sl-color-accent-high: #b3efe0;
+  --sl-color-text-accent: #00B894;
+
+  /* Backgrounds — charcoal kitchen steel */
+  --sl-color-bg: #2D3436;
+  --sl-color-bg-nav: #252d2f;
+  --sl-color-bg-sidebar: #353b48;
+  --sl-color-bg-inline-code: #3d4450;
+  --sl-color-hairline-light: #3d4450;
+  --sl-color-hairline: #4a5060;
+
+  /* Text */
+  --sl-color-text: #DFE6E9;
+  --sl-color-text-invert: #2D3436;
+  --sl-color-white: #ECEFF1;
+
+  /* Gray scale */
+  --sl-color-gray-1: #ECEFF1;
+  --sl-color-gray-2: #DFE6E9;
+  --sl-color-gray-3: #B2BEC3;
+  --sl-color-gray-4: #636e72;
+  --sl-color-gray-5: #4a5060;
+  --sl-color-gray-6: #3d4450;
+  --sl-color-gray-7: #2D3436;
+}
+
+/* ─── Light theme ──────────────────────────────────────────────────────────── */
 :root[data-theme='light'] {
+  /* Accent — darker mint for contrast on light bg */
   --sl-color-accent-low: #b3efe0;
   --sl-color-accent: #00956f;
   --sl-color-accent-high: #1a6b52;
   --sl-color-text-accent: #00956f;
+
+  /* Backgrounds */
+  --sl-color-bg: #F8F9FA;
+  --sl-color-bg-nav: #ffffff;
+  --sl-color-bg-sidebar: #DFE6E9;
+  --sl-color-bg-inline-code: #edf0f2;
+  --sl-color-hairline-light: #DFE6E9;
+  --sl-color-hairline: #B2BEC3;
+
+  /* Text */
+  --sl-color-text: #2D3436;
+  --sl-color-text-invert: #F8F9FA;
+  --sl-color-white: #ffffff;
+
+  /* Gray scale */
+  --sl-color-gray-1: #2D3436;
+  --sl-color-gray-2: #636e72;
+  --sl-color-gray-3: #B2BEC3;
+  --sl-color-gray-4: #DFE6E9;
+  --sl-color-gray-5: #edf0f2;
+  --sl-color-gray-6: #F8F9FA;
+  --sl-color-gray-7: #ffffff;
+}
+
+/* ─── PREQSTATION Status Colors ────────────────────────────────────────────── */
+:root {
+  --preq-todo: #DFE6E9;
+  --preq-in-progress: #FDCB6E;
+  --preq-review: #74B9FF;
+  --preq-done: #00B894;
+  --preq-blocked: #E17055;
+}
+
+/* ─── Status badge utilities ───────────────────────────────────────────────── */
+.preq-badge {
+  display: inline-block;
+  padding: 0.15em 0.55em;
+  border-radius: 3px;
+  font-family: var(--sl-font-mono);
+  font-size: 0.78em;
+  font-weight: 500;
+  line-height: 1.6;
+}
+.preq-badge-todo       { background: var(--preq-todo);        color: #2D3436; }
+.preq-badge-progress   { background: var(--preq-in-progress); color: #2D3436; }
+.preq-badge-review     { background: var(--preq-review);      color: #2D3436; }
+.preq-badge-done       { background: var(--preq-done);        color: #ffffff; }
+.preq-badge-blocked    { background: var(--preq-blocked);     color: #ffffff; }
+
+/* ─── Site title: monospace accent ─────────────────────────────────────────── */
+.site-title {
+  font-family: var(--sl-font-mono) !important;
+  letter-spacing: -0.02em;
+  font-weight: 500;
+}
+
+/* ─── Code blocks: JetBrains Mono ──────────────────────────────────────────── */
+code, pre, kbd, samp {
+  font-family: var(--sl-font-mono) !important;
+}
+
+/* ─── Hero section polish ──────────────────────────────────────────────────── */
+.hero > .sl-flex {
+  gap: 1rem;
+}
+
+.hero h1 {
+  font-family: var(--sl-font-mono);
+  letter-spacing: -0.03em;
+}
+
+.hero .tagline {
+  font-size: 1.15rem;
+  opacity: 0.85;
 }

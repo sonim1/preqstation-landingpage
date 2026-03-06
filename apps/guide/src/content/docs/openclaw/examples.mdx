@@ -1,6 +1,218 @@
 ---
 title: Examples
-description: Example OpenClaw configurations and use cases.
+description: Natural language examples for OpenClaw task execution
 ---
 
-Explore real-world examples of OpenClaw in action, including code review automation, test generation, documentation workflows, and more.
+import { Aside } from '@astrojs/starlight/components';
+
+OpenClaw accepts natural language commands to run PREQSTATION tasks. Below are all supported patterns with optional structured fields.
+
+## Basic Task Execution
+
+### Example 1: Start task with explicit engine
+
+```
+Start PRJ-284 in the example project using Claude.
+```
+
+**Parsed:**
+- Task: `PRJ-284`
+- Project: `example`
+- Engine: `claude`
+- Objective: "Start task"
+
+### Example 2: Fix code in specific project
+
+```
+Use Codex to fix README command examples in the example project.
+```
+
+**Parsed:**
+- Engine: `codex`
+- Project: `example`
+- Objective: "Fix README command examples"
+
+### Example 3: Draft notes for documentation task
+
+```
+Use Gemini to draft notes for DOC-12 in the example project.
+```
+
+**Parsed:**
+- Engine: `gemini`
+- Task: `DOC-12`
+- Project: `example`
+- Objective: "Draft notes"
+
+## Project Path Resolution
+
+### Example 4: Update project path
+
+```
+Update the example project path to /absolute/path/to/projects/example-project.
+```
+
+**Action:** Updates `MEMORY.md` with new path for `example` project key.
+
+**Parsed:**
+- Project: `example`
+- Path: `/absolute/path/to/projects/example-project`
+
+### Example 5: Implement feature with all parameters
+
+```
+Implement API pagination and add tests in the example project.
+```
+
+**Parsed:**
+- Project: `example`
+- Objective: "Implement API pagination and add tests"
+- Engine: `claude` (default)
+
+## Session Management
+
+### Example 6: Check running sessions
+
+```
+What is currently running in OpenClaw sessions?
+```
+
+**Action:** List all active background sessions with status.
+
+### Example 7: Monitor specific session
+
+```
+Show progress for session openclaw-claude-20260221-131240.
+```
+
+**Parsed:**
+- Session ID: `openclaw-claude-20260221-131240`
+- Action: Show progress
+
+## Project Sync
+
+### Example 8: Sync all projects
+
+```
+/skills preqstation sync
+```
+
+**Action:** Sync all mapped projects from `MEMORY.md`.
+
+### Example 9: Sync single project
+
+```
+project-sync all
+```
+
+**Action:** Sync all projects (alias for `/skills preqstation sync`).
+
+### Example 10: Sync specific project
+
+```
+project-sync proj
+```
+
+**Parsed:**
+- Project key: `proj`
+- Action: Sync only the `proj` project
+
+## Optional Structured Fields
+
+You can include structured fields in the same message for clarity:
+
+### Branch Name Field
+
+```
+Implement PROJ-284 in the example project
+branch_name="feature/rate-limiting"
+```
+
+**Parsed:**
+- Task: `PROJ-284`
+- Project: `example`
+- Branch: `feature/rate-limiting` → normalized to `preqstation/PROJ/feature-rate-limiting`
+
+### Explicit Engine Field
+
+```
+Start PROJ-284
+engine=codex
+```
+
+**Parsed:**
+- Task: `PROJ-284`
+- Engine: `codex` (override auto-detection)
+
+## Engine Selection Rules
+
+OpenClaw engine resolution:
+
+1. **Explicit engine in message** — Use it (`claude`, `codex`, `gemini`)
+2. **Omitted** — Default to `claude`
+
+**Example: Explicit selection**
+```
+"Use Codex to..." → codex
+"Use Gemini to..." → gemini
+"Implement PROJ-284" → claude (default)
+```
+
+## Message Structure
+
+Natural language is flexible. These all work:
+
+```
+❌ "/skill preqstation implement PROJ-284 in example" (too rigid)
+✅ "Start PROJ-284 in the example project"
+✅ "Implement PROJ-284 using Claude"
+✅ "PROJ-284: Implement rate limiting in example"
+✅ "Fix tests for PROJ-284"
+```
+
+<Aside>
+OpenClaw prioritizes natural language intent over fixed syntax. Focus on clarity (task ID, project, engine) and the system will parse it correctly.
+</Aside>
+
+## Intent Patterns
+
+| Intent | Example |
+|--------|---------|
+| Run task | "Start PROJ-284", "Implement PROJ-284" |
+| Specific engine | "Use Codex to...", "Run with Gemini..." |
+| Specific project | "in the example project", "in example" |
+| Code review | "Review PROJ-284", "Check code for PROJ-284" |
+| Documentation | "Draft notes for DOC-12", "Write docs for PROJ-284" |
+| Testing | "Add tests for PROJ-284", "Fix failing tests" |
+| Sync projects | "project-sync all", "sync the example project" |
+| Monitor session | "Show progress for session `<id>`" |
+
+## Response Types
+
+### Success
+
+```
+completed: PROJ-284 via claude at /tmp/openclaw-worktrees/proj/preqstation-proj-feature-rate-limit
+```
+
+### Failure
+
+```
+failed: PROJ-284 via claude at /tmp/openclaw-worktrees/proj/preqstation-proj-feature-rate-limit - Tests failed: 3 failures in auth.test.js
+```
+
+### Awaiting Input
+
+```
+[Waiting for input] Clarify project path:
+- Did you mean 'example' from MEMORY.md at /path/to/example?
+- Or provide absolute path: /path/to/different/project
+```
+
+## Tips for Best Results
+
+1. **Be specific about the project** — Use project key or mention it explicitly
+2. **Include task ID when possible** — Helps with traceability and PREQSTATION updates
+3. **Mention engine only if specific** — Default to claude if you don't care
+4. **Natural language is fine** — Don't worry about syntax, focus on intent
+5. **Branch names optional** — System generates them if not specified

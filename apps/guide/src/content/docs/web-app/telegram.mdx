@@ -1,6 +1,75 @@
 ---
-title: Telegram
-description: Connecting PREQSTATION to Telegram for notifications.
+title: Telegram Integration
+description: Connect Telegram for task notifications and agent triggering.
 ---
 
-PREQSTATION supports Telegram notifications for real-time task updates. Learn how to connect your Telegram account and configure notification preferences.
+import { Aside } from '@astrojs/starlight/components';
+
+PREQSTATION integrates with Telegram to send notifications and trigger agent execution via OpenClaw.
+
+## Setup
+
+### 1. Create a Telegram Bot
+
+1. Message [@BotFather](https://t.me/BotFather) on Telegram
+2. Send `/newbot`
+3. Follow the prompts to create a bot
+4. Copy the **API token** (looks like: `123456789:ABCdefGHijklMNOpqrsTUVwxyzABCdeFg`)
+
+### 2. Configure in PREQSTATION
+
+1. Navigate to **Settings > Telegram**
+2. Paste your bot token
+3. Click **Test Connection**
+4. You'll receive a test message from your bot
+
+### 3. Receive Your Chat ID
+
+After testing, note your **Chat ID** from the test message. This is private and identifies your Telegram account.
+
+## Token Security
+
+Your bot token is encrypted at rest using **AES-GCM** with a key derived from `AUTH_SECRET`:
+
+```
+Encryption: AES-GCM (Web Crypto API)
+Key derivation: HKDF (HMAC-based Key Derivation Function)
+Stored format: v1.{base64urlIV}.{base64urlCiphertext}
+```
+
+Your plaintext token is never stored in the database.
+
+## Notifications
+
+PREQSTATION sends Telegram notifications for:
+
+- **Task created** — New task in queue
+- **Task status changed** — Moved to in_progress, review, done, or blocked
+- **Agent triggered** — Agent started work on a task
+- **Task completed** — Agent submitted results for review
+
+### Disabling Notifications
+
+1. Go to **Settings > Telegram**
+2. Toggle **Enable notifications** to off
+3. Bot commands still work; only broadcast notifications are disabled
+
+## Triggering Agents via Telegram
+
+Send a message to your bot to trigger agent execution:
+
+```
+@YourBotName CLAUDE PROJ-123
+```
+
+This format triggers the specified engine for a task:
+
+- `CLAUDE PROJ-123` — Assign to Claude agent
+- `CODEX PROJ-456` — Assign to Codex agent
+- `GEMINI PROJ-789` — Assign to Gemini agent
+
+OpenClaw receives the message and launches the agent in an isolated worktree.
+
+<Aside>
+Your bot token should never be shared. If compromised, revoke it at [@BotFather](https://t.me/BotFather) and issue a new one.
+</Aside>

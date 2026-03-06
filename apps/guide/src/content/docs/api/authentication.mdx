@@ -1,6 +1,173 @@
 ---
 title: Authentication
-description: Authenticating with the PREQSTATION API.
+description: Bearer tokens and session authentication.
 ---
 
-PREQSTATION uses token-based authentication for all API requests. Learn how to obtain tokens, pass them in requests, and handle token expiration and rotation.
+import { Aside } from '@astrojs/starlight/components';
+
+PREQSTATION uses two authentication methods depending on the client type.
+
+## Bearer Token Authentication
+
+**For agents and external integrations.**
+
+### Token Format
+
+```
+Authorization: Bearer preq_a7f3c9e2b1d4f6a8c0e2b4d6f8a0c2e4
+```
+
+- **Prefix**: `preq_`
+- **Length**: 32 random characters
+- **Storage**: SHA-256 hashed in database
+- **Type**: Stateless (no session required)
+
+### Obtaining a Token
+
+1. Log in to PREQSTATION web UI
+2. Navigate to **Settings > API Keys**
+3. Click **+ New Token**
+4. Name it (e.g., `local-dev`, `claude-prod`)
+5. Set optional expiration date
+6. Click **Create**
+7. **Copy immediately** (shown only once)
+
+### Using a Token
+
+Pass the token in the `Authorization` header:
+
+```bash
+curl -H "Authorization: Bearer preq_xxxxx" \
+  https://your-domain.com/api/tasks
+```
+
+### Token Expiration
+
+Tokens can have optional expiration dates:
+
+- **No expiration** — Token valid indefinitely (rotate manually)
+- **With expiration** — Token invalid after specified date
+- **Expired** — Returns `401 Unauthorized`
+
+Check token expiration in **Settings > API Keys**.
+
+## Session Cookie Authentication
+
+**For web UI (automatic).**
+
+### Session Cookies
+
+Created when you log in via the web UI:
+
+```
+Set-Cookie: session=...HMAC-signed...;
+  HttpOnly;
+  SameSite=Strict;
+  Secure;
+  Path=/;
+  Max-Age=86400
+```
+
+### Cookie Flags
+
+- **HttpOnly** — Cannot be accessed by JavaScript (XSS protection)
+- **SameSite=Strict** — No cross-site requests (CSRF protection)
+- **Secure** — HTTPS only (man-in-the-middle protection)
+- **Max-Age** — Configurable session timeout (default: 24 hours)
+
+### Automatic Renewal
+
+Sessions are automatically renewed on each request (up to Max-Age).
+
+## Token vs. Session
+
+| Aspect | Bearer Token | Session Cookie |
+|---|---|---|
+| **Client Type** | Agents, external integrations | Web UI |
+| **Format** | `Authorization: Bearer ...` | HTTP cookie |
+| **Storage** | Application code | Browser storage |
+| **Expiration** | Optional per-token | Session timeout |
+| **Revocation** | Immediate (via UI) | On logout |
+| **Scope** | Full API access | Authenticated user |
+
+## Error Responses
+
+### 401 Unauthorized
+
+Token is missing, invalid, or expired:
+
+```json
+{
+  "error": {
+    "code": "UNAUTHORIZED",
+    "message": "Missing or invalid authorization header"
+  }
+}
+```
+
+### 403 Forbidden
+
+Token is valid but scoped to different owner (single-owner system):
+
+```json
+{
+  "error": {
+    "code": "FORBIDDEN",
+    "message": "Insufficient permissions"
+  }
+}
+```
+
+## Best Practices
+
+<Aside type="tip">
+Follow these security practices when working with tokens:
+</Aside>
+
+### 1. **Never Hardcode Tokens**
+
+❌ Bad:
+```javascript
+const token = "preq_xxxxx"; // Hardcoded!
+```
+
+✅ Good:
+```javascript
+const token = process.env.PREQSTATION_TOKEN;
+```
+
+### 2. **Use Environment Variables**
+
+```bash
+export PREQSTATION_API_URL=https://your-domain.com
+export PREQSTATION_TOKEN=preq_xxxxx
+```
+
+### 3. **Rotate Tokens Regularly**
+
+- Issue a new token
+- Update agent configuration
+- Revoke the old token
+- Frequency: every 90 days minimum
+
+### 4. **Separate Tokens by Environment**
+
+- `local-dev` for development
+- `ci-test` for CI/testing
+- `prod` for production
+
+### 5. **Monitor Token Usage**
+
+Check **Settings > Audit Logs** for unexpected API calls.
+
+### 6. **Revoke Immediately if Exposed**
+
+If a token is compromised:
+1. Go to **Settings > API Keys**
+2. Delete the exposed token
+3. Issue a new one
+4. Update your agents
+
+<Aside>
+Token revocation is immediate. Any agent using a revoked token will receive `401 Unauthorized` on the next API call.
+</Aside>

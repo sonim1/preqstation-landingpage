@@ -1,6 +1,126 @@
 ---
-title: Overview
-description: An overview of PREQSTATION and what it offers.
+title: System Overview
+description: Architecture, components, and data flow of PREQSTATION.
 ---
 
-PREQSTATION is an AI-powered task management platform designed for engineering teams working with Claude Code and MCP-enabled agents. This page provides a high-level overview of the platform's capabilities and architecture.
+import { Aside, Card, CardGrid } from '@astrojs/starlight/components';
+
+PREQSTATION is a task management platform designed for AI-agent-driven development workflows. It bridges developers and AI agents through a central task queue and REST API.
+
+## Three-System Architecture
+
+PREQSTATION consists of three interconnected services:
+
+<CardGrid>
+	<Card title="project-manager" icon="setting">
+		Central web service. Manages tasks, renders the Kanban UI, exposes the REST API, sends Telegram notifications.
+	</Card>
+	<Card title="preqstation-openclaw" icon="rocket">
+		Trigger layer. Receives Telegram messages and launches coding agents in isolated git worktrees.
+	</Card>
+	<Card title="preqstation-skill" icon="approve">
+		Agent client. MCP server and shell helpers for agents to call project-manager APIs during execution.
+	</Card>
+</CardGrid>
+
+## System Diagram
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│                   project-manager (Web Service)              │
+│                                                              │
+│  Next.js 16 · React 19 · Mantine 8 · Prisma 6 · Neon PG    │
+│                                                              │
+│  ┌────────────┐  ┌──────────────┐  ┌───────────────────┐    │
+│  │ Kanban UI  │  │  REST API    │  │  Telegram Client  │    │
+│  │ Dashboard  │  │  /api/tasks  │  │  /api/telegram    │    │
+│  │ Settings   │  │  /api/keys   │  │                   │    │
+│  └────────────┘  └──────┬───────┘  └────────┬──────────┘    │
+│                         │                    │               │
+└─────────────────────────┼────────────────────┼───────────────┘
+                          │                    │
+                  API calls (Bearer token)     │ Sends notifications
+                          │                    │
+                          │                    ▼
+                          │           ┌─────────────────┐
+                          │           │    Telegram     │
+                          │           └────────┬────────┘
+                          │                    │
+                          │                    │ User forwards / bot relays
+                          │                    ▼
+                          │           ┌─────────────────────────────────┐
+                          │           │      OpenClaw (Runtime)         │
+                          │           │                                 │
+                          │           │  Receives message, triggers     │
+                          │           │  preqstation-openclaw skill     │
+                          │           └────────────────┬────────────────┘
+                          │                            │
+                          │                   Parses intent, creates
+                          │                   git worktree, launches
+                          │                   coding agent (PTY+bg)
+                          │                            │
+                          │                            ▼
+                          │           ┌─────────────────────────────────┐
+                          │           │     Coding Agent                │
+                          │           │     (Claude / Codex / Gemini)   │
+                          │           │                                 │
+                          │           │  Runs in isolated worktree      │
+                          │           │  Implements code changes        │
+                          ◄───────────│  Uses preqstation-skill MCP     │
+                                      │  to report status & results     │
+                                      └─────────────────────────────────┘
+```
+
+## Data Flow
+
+### Task Creation and Notification
+
+```
+User creates task in Kanban UI
+  → project-manager stores in PostgreSQL
+  → (optional) sends Telegram notification
+```
+
+### Agent Trigger via Telegram + OpenClaw
+
+```
+Developer sends task request via Telegram
+  → OpenClaw receives message
+    → preqstation-openclaw skill triggers
+      → Parses: engine, task ID, project key
+      → Resolves project path from MEMORY.md
+      → Creates isolated git worktree
+      → Launches coding agent (claude/codex/gemini CLI)
+```
+
+### Agent Execution and Status Reporting
+
+```
+Coding agent fetches task via preq_get_task, then:
+
+  inbox       → preq_plan_task (write plan, → todo)
+  todo        → preq_start_task (→ in_progress)
+              → Implement + test + deploy per strategy
+              → preq_complete_task (→ review)
+  in_progress → Continue implement + test
+              → preq_complete_task (→ review)
+  review      → Run verification (tests, build, lint)
+              → preq_review_task (→ done)
+
+  On any failure → preq_block_task (→ blocked)
+```
+
+## Tech Stack
+
+| Layer      | Technology                                  |
+| ---------- | ------------------------------------------- |
+| Framework  | Next.js 16 (App Router)                     |
+| UI         | React 19, Mantine 8, Tabler Icons, Recharts |
+| ORM        | Prisma 6                                    |
+| Database   | Neon PostgreSQL (Row Level Security)        |
+| Validation | Zod                                         |
+| Auth       | Session cookies (HMAC-signed), bcryptjs     |
+
+<Aside>
+All data is owner-scoped via Neon PostgreSQL Row Level Security. PREQSTATION is designed for single-developer use.
+</Aside>

@@ -1,6 +1,87 @@
 ---
 title: API Keys
-description: Managing API keys for PREQSTATION integrations.
+description: Issue and manage Bearer tokens for agent authentication.
 ---
 
-API keys allow your agents and external tools to authenticate with PREQSTATION. Learn how to create, rotate, and revoke API keys from the web app.
+API tokens allow coding agents to authenticate to the PREQSTATION REST API and perform task operations.
+
+## Token Format
+
+- **Prefix**: `preq_`
+- **Storage**: SHA-256 hashed in database (never stored in plaintext)
+- **Length**: 32 random characters
+- **Example**: `preq_a7f3c9e2b1d4f6a8c0e2b4d6f8a0c2e4`
+
+## Issuing a Token
+
+1. Navigate to **Settings > API Keys**
+2. Click **+ New Token**
+3. Enter a descriptive name (e.g., `local-dev`, `claude-prod`, `codex-testing`)
+4. (Optional) Set an expiration date
+5. Click **Create**
+6. Copy the token immediately (shown only once)
+
+## Using a Token
+
+Configure your agent's environment:
+
+```bash
+export PREQSTATION_API_URL=https://your-domain.com
+export PREQSTATION_TOKEN=preq_xxxxxxxxxxxxx
+```
+
+Or in your MCP configuration:
+
+```json
+{
+  "tools": {
+    "preqstation": {
+      "command": "node",
+      "args": ["./preqstation-mcp-server.mjs"],
+      "env": {
+        "PREQSTATION_API_URL": "https://your-domain.com",
+        "PREQSTATION_TOKEN": "preq_xxxxxxxxxxxxx"
+      }
+    }
+  }
+}
+```
+
+## Revoking a Token
+
+1. Navigate to **Settings > API Keys**
+2. Find the token you want to revoke
+3. Click the **Delete** icon
+4. Confirm
+
+Revoked tokens are immediately invalid. Any agent using a revoked token will receive `401 Unauthorized`.
+
+## Token Rotation
+
+Best practice: rotate tokens periodically.
+
+1. Issue a new token with the new name
+2. Update your agent configuration with the new token
+3. Revoke the old token
+
+## Scoping
+
+All tokens are scoped to your owner account. Tokens can:
+
+- Read and create tasks
+- Update task status and results
+- List projects and project settings
+- Create work logs
+
+Tokens cannot:
+
+- Access other user accounts (single-owner system)
+- Modify user settings or issue new tokens
+- Access audit logs or security events
+
+## Security Notes
+
+- **Never commit tokens to version control** — use environment variables or secrets management
+- **Rotate tokens before sharing credentials** — if a token is exposed, revoke and issue a new one
+- **Token prefix** (`preq_`) helps identify tokens in logs and error messages
+- **Expiration** (optional) enforces automatic token invalidation after a set time

@@ -1,6 +1,138 @@
 ---
 title: Installation
-description: Installing the PREQSTATION skill for Claude Code.
+description: Set up PREQSTATION MCP server for Claude Code, Codex, and Gemini CLI
 ---
 
-The PREQSTATION skill integrates directly into Claude Code via oh-my-claudecode. Learn how to install and configure the skill to connect your AI agents to PREQSTATION.
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+The PREQSTATION MCP server enables coding agents to interact with the task management API. Install for your platform below.
+
+## Prerequisites
+
+- Node.js 16+ installed
+- PREQSTATION API URL and bearer token (from `/api-keys` page in project-manager)
+
+## Environment Variables
+
+Set these before registering the MCP server:
+
+```bash
+export PREQSTATION_API_URL="https://your-preqstation-domain.vercel.app"
+export PREQSTATION_TOKEN="preq_xxxxxxxxxxxxxxxxx"
+```
+
+Optional fallback engine (only needed if client auto-detection is unavailable):
+
+```bash
+export PREQSTATION_ENGINE="claude"  # or codex, gemini
+```
+
+## Claude Code
+
+Register the PREQSTATION MCP server with environment variables:
+
+<Tabs>
+<TabItem label="Install">
+```bash
+claude mcp add -s user \
+  --env='PREQSTATION_API_URL=https://<your-domain>' \
+  --env='PREQSTATION_TOKEN=preq_xxxxx' \
+  preqstation -- \
+  node /Users/kendrick/projects/preqstation-skill/scripts/preqstation-mcp-server.mjs
+```
+</TabItem>
+<TabItem label="Update">
+If already registered, remove and re-add:
+
+```bash
+claude mcp remove -s user preqstation
+```
+
+Then run the install command above.
+</TabItem>
+<TabItem label="Verify">
+```bash
+claude mcp list
+claude mcp get preqstation
+```
+</TabItem>
+</Tabs>
+
+## Codex CLI
+
+Register the PREQSTATION MCP server:
+
+<Tabs>
+<TabItem label="Install">
+```bash
+codex mcp add preqstation \
+  --env='PREQSTATION_API_URL=https://<your-domain>' \
+  --env='PREQSTATION_TOKEN=preq_xxxxx' \
+  -- node /Users/kendrick/projects/preqstation-skill/scripts/preqstation-mcp-server.mjs
+```
+</TabItem>
+<TabItem label="Update">
+If already registered, remove and re-add:
+
+```bash
+codex mcp remove preqstation
+```
+
+Then run the install command above.
+</TabItem>
+<TabItem label="Verify">
+```bash
+codex mcp list
+codex mcp get preqstation
+```
+</TabItem>
+</Tabs>
+
+## Gemini CLI
+
+Gemini uses environment variables directly. Set them in your shell:
+
+```bash
+export PREQSTATION_API_URL="https://your-preqstation-domain.vercel.app"
+export PREQSTATION_TOKEN="preq_xxxxxxxxxxxxxxxxx"
+```
+
+Then invoke Gemini with access to these variables. MCP server setup not required for Gemini CLI.
+
+## JSON Configuration Example
+
+If you need to manually configure the MCP server in settings:
+
+```json
+{
+  "mcpServers": {
+    "preqstation": {
+      "command": "node",
+      "args": ["/ABSOLUTE/PATH/TO/preqstation-skill/scripts/preqstation-mcp-server.mjs"],
+      "env": {
+        "PREQSTATION_API_URL": "https://your-preqstation-domain.vercel.app",
+        "PREQSTATION_TOKEN": "preq_xxxxxxxxxxxxxxxxx"
+      }
+    }
+  }
+}
+```
+
+<Aside>
+Replace `/ABSOLUTE/PATH/TO/preqstation-skill` with the actual installation path. Relative paths will not work.
+</Aside>
+
+## Troubleshooting
+
+**MCP server fails to start:**
+- Verify Node.js is installed: `node --version`
+- Check the script path is absolute
+- Confirm PREQSTATION_API_URL is valid (should start with https://)
+
+**Connection errors:**
+- Verify token format (should start with `preq_`)
+- Test connectivity: `curl -H "Authorization: Bearer $PREQSTATION_TOKEN" "$PREQSTATION_API_URL/api/health"`
+
+**Token rejected:**
+- Generate a new token from project-manager `/api-keys` page
+- Ensure token has not expired

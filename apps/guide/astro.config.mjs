@@ -8,6 +8,12 @@ export default defineConfig({
     starlight({
       title: 'PREQSTATION Guide',
       customCss: ['./src/styles/custom.css'],
+      head: [
+        {
+          tag: 'script',
+          content: `(function(){if(!localStorage.getItem('starlight-theme')){localStorage.setItem('starlight-theme','dark');document.documentElement.setAttribute('data-theme','dark');}})();`,
+        },
+      ],
       social: {
         github: 'https://github.com/preq',
       },

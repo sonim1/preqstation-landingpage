@@ -1,6 +1,184 @@
 ---
 title: Environment Variables
-description: Environment variables used by PREQSTATION and OpenClaw.
+description: Complete reference of all environment variables for PREQSTATION systems
 ---
 
-A complete reference of all environment variables used by PREQSTATION, the MCP skill, and OpenClaw. Includes required variables, optional settings, and example values.
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+This reference documents all environment variables used by project-manager, preqstation-skill, and preqstation-openclaw.
+
+## project-manager
+
+Server-side variables for the main PREQSTATION web service.
+
+| Variable | Required | Default | Purpose |
+|----------|----------|---------|---------|
+| `AUTH_SECRET` | Yes | — | HMAC session secret (minimum 16 characters) |
+| `OWNER_EMAIL` | Yes | — | Single account email address |
+| `OWNER_PASSWORD` | Yes | — | Owner password (minimum 8 characters) |
+| `DATABASE_URL` | Yes | — | Neon PostgreSQL connection string |
+| `ALLOWED_ORIGINS` | No | — | CORS verification (comma-separated URLs) |
+| `CRON_SECRET` | No | — | Vercel cron job authentication secret |
+
+### Setup Example
+
+```bash
+# .env.local
+AUTH_SECRET="your-secret-min-16-chars"
+OWNER_EMAIL="you@example.com"
+OWNER_PASSWORD="securepassword123"
+DATABASE_URL="postgresql://user:pass@host/dbname"
+ALLOWED_ORIGINS="https://yourdomain.com,https://www.yourdomain.com"
+CRON_SECRET="cron-secret-for-vercel"
+```
+
+### Database Setup
+
+Get your Neon PostgreSQL connection string:
+
+1. Create project on [Neon Console](https://console.neon.tech)
+2. Copy connection string: `postgresql://[user]:[password]@[host]/[dbname]`
+3. Set as `DATABASE_URL`
+
+## preqstation-skill
+
+Agent-side variables for MCP server and shell helpers.
+
+| Variable | Required | Default | Purpose |
+|----------|----------|---------|---------|
+| `PREQSTATION_API_URL` | Yes | — | project-manager API base URL (e.g., `https://mypreqstation.vercel.app`) |
+| `PREQSTATION_TOKEN` | Yes | — | Bearer token (format: `preq_` prefix, from `/api-keys` page) |
+| `PREQSTATION_ENGINE` | No | `codex` | Fallback engine when client auto-detection unavailable |
+
+### Setup Example
+
+```bash
+# ~/.zshrc or ~/.bashrc
+export PREQSTATION_API_URL="https://your-preqstation-domain.vercel.app"
+export PREQSTATION_TOKEN="preq_xxxxxxxxxxxxxxxxx"
+export PREQSTATION_ENGINE="claude"  # optional
+```
+
+### Getting a Token
+
+1. Deploy project-manager
+2. Log into web UI
+3. Go to Settings → API Keys
+4. Click "New Token"
+5. Copy the generated token (starts with `preq_`)
+
+### Engine Values
+
+| Value | Meaning |
+|-------|---------|
+| `claude` | Claude (Anthropic) |
+| `codex` | Codex (OpenAI) |
+| `gemini` | Gemini (Google) |
+
+## preqstation-openclaw
+
+Execution layer variables for OpenClaw skill and worktree management.
+
+| Variable | Required | Default | Purpose |
+|----------|----------|---------|---------|
+| `OPENCLAW_WORKTREE_ROOT` | No | `/tmp/openclaw-worktrees` | Root directory for isolated task worktrees |
+
+### Setup Example
+
+```bash
+# ~/.zshrc or ~/.bashrc
+export OPENCLAW_WORKTREE_ROOT="/home/user/openclaw-worktrees"
+```
+
+### Worktree Root Considerations
+
+**Default:** `/tmp/openclaw-worktrees`
+- Temporary directory, cleaned on system reboot
+- Fine for transient task execution
+- Works with most CI/CD systems
+
+**Custom:** `/home/user/openclaw-worktrees`
+- Persistent across reboots
+- Useful for debugging and inspection
+- Requires manual cleanup of old worktrees
+
+**In CI/CD:**
+```bash
+export OPENCLAW_WORKTREE_ROOT="/workspace/openclaw-worktrees"
+```
+
+## Complete Setup Checklist
+
+<Tabs>
+<TabItem label="Local Development">
+```bash
+# 1. Install project-manager (optional for local testing)
+# Skip if using hosted instance
+
+# 2. Set preqstation-skill variables
+export PREQSTATION_API_URL="https://your-hosted-domain.vercel.app"
+export PREQSTATION_TOKEN="preq_xxxxx"  # from /api-keys page
+export PREQSTATION_ENGINE="claude"
+
+# 3. Set preqstation-openclaw variables (optional)
+export OPENCLAW_WORKTREE_ROOT="$HOME/openclaw-worktrees"
+
+# 4. Verify connectivity
+curl -H "Authorization: Bearer $PREQSTATION_TOKEN" \
+  "$PREQSTATION_API_URL/api/health"
+# Should return: {"status":"ok"}
+```
+</TabItem>
+<TabItem label="CI/CD Pipeline">
+```bash
+# GitHub Actions example
+env:
+  PREQSTATION_API_URL: https://your-preqstation-domain.vercel.app
+  PREQSTATION_TOKEN: ${{ secrets.PREQSTATION_TOKEN }}
+  PREQSTATION_ENGINE: claude
+  OPENCLAW_WORKTREE_ROOT: /workspace/openclaw-worktrees
+
+steps:
+  - name: Install preqstation-skill
+    run: npm install -g sonim1/preqstation-skill
+```
+</TabItem>
+<TabItem label="Docker">
+```dockerfile
+FROM node:16-alpine
+
+# project-manager
+ENV AUTH_SECRET=your-secret
+ENV OWNER_EMAIL=you@example.com
+ENV OWNER_PASSWORD=secure
+ENV DATABASE_URL=postgresql://...
+
+# preqstation-skill
+ENV PREQSTATION_API_URL=https://your-domain.vercel.app
+ENV PREQSTATION_TOKEN=preq_xxxxx
+ENV PREQSTATION_ENGINE=claude
+
+# preqstation-openclaw
+ENV OPENCLAW_WORKTREE_ROOT=/app/worktrees
+
+WORKDIR /app
+RUN npm install -g sonim1/preqstation-skill
+```
+</TabItem>
+</Tabs>
+
+## Environment Variable Scope
+
+| Layer | Variables | Scope |
+|-------|-----------|-------|
+| **Web Service** | `AUTH_SECRET`, `OWNER_EMAIL`, `OWNER_PASSWORD`, `DATABASE_URL`, `ALLOWED_ORIGINS`, `CRON_SECRET` | Server-side only, set during deployment |
+| **MCP Server** | `PREQSTATION_API_URL`, `PREQSTATION_TOKEN`, `PREQSTATION_ENGINE` | Available to all MCP tools and shell helpers |
+| **Execution** | `OPENCLAW_WORKTREE_ROOT` | Affects where worktrees are created during task execution |
+
+## Secrets Best Practices
+
+1. **Never commit secrets** — Use `.env.local` (git-ignored)
+2. **Use secret managers** — GitHub Secrets, Vercel Env, HashiCorp Vault
+3. **Rotate tokens regularly** — Revoke old tokens from `/api-keys` page
+4. **Scope tokens narrowly** — Use separate tokens per environment
+5. **Monitor token usage** — Check audit logs for suspicious activity

@@ -1,6 +1,102 @@
 ---
-title: Concepts
-description: Core concepts and terminology used throughout PREQSTATION.
+title: Kitchen Metaphor
+description: Understanding PREQSTATION through the kitchen prep station.
 ---
 
-Learn the core concepts behind PREQSTATION: tasks, agents, engines, MCP tools, and how they work together to power your engineering workflows.
+import { Aside } from '@astrojs/starlight/components';
+
+PREQSTATION is named after a kitchen prep station — a place where a chef directs work and line cooks prepare ingredients. This metaphor guides how the system works.
+
+## The Kitchen Metaphor
+
+| Kitchen Concept | PREQSTATION Equivalent | Meaning |
+|---|---|---|
+| **Chef** | Developer (you) | Directs tasks, makes final decisions |
+| **Line Cook** | AI Agent | Executes tasks (Claude Code, Codex, Gemini) |
+| **Ticket** | Task | A unit of work with acceptance criteria |
+| **Queue** | Task Queue | Waiting tasks in status order |
+| **Station** | Agent Instance | An AI working on a specific task |
+| **Prep List** | Acceptance Criteria | Instructions for completing the task |
+| **Mise en Place** | Setup | Configuring API tokens and environment |
+| **Fire** | Execute | Launch a task for an agent to work on |
+| **Pass** | Review | Final inspection before deployment |
+| **Order Up** | Complete | Task finished, results ready |
+| **86'd** | Blocked | Task cannot proceed (missing context, error) |
+
+## The Story
+
+In a kitchen, the head chef doesn't cut onions or cook steaks. Instead, the chef:
+
+1. **Receives orders** — understands what the customer wants
+2. **Writes tickets** — creates clear instructions with acceptance criteria
+3. **Directs line cooks** — tells them which station to work on
+4. **Inspects results** — checks quality before service
+5. **Serves the customer** — ensures satisfaction
+
+PREQSTATION works the same way:
+
+1. **You write tasks** — describe what you want the AI to implement
+2. **Set acceptance criteria** — list what "done" means
+3. **AI agents execute** — they implement code, run tests, create PRs
+4. **You review** — check the code and accept or request changes
+5. **Deploy** — merge and ship
+
+<Aside>
+You are the chef. The AI agent is the line cook. Your job is to **direct and inspect**, not to do all the prep work yourself.
+</Aside>
+
+## Key Principles
+
+### 1. **Clear Tickets**
+
+A good task is like a good kitchen ticket:
+- Specific objective
+- Clear acceptance criteria (checklist)
+- Priority level
+- Any constraints or context
+
+### 2. **Isolated Worktrees**
+
+Just like each station in a kitchen is separate, each agent runs in an isolated git worktree. No interference, no pollution of your main branch.
+
+### 3. **Status Visibility**
+
+The Kanban board shows all tasks in their current state:
+- **Inbox** — New tasks waiting for planning
+- **Todo** — Planned and ready for agents
+- **In Progress** — Agent is working
+- **Review** — Results ready for inspection
+- **Done** — Task complete and deployed
+- **Blocked** — Cannot proceed; needs input
+
+### 4. **Asynchronous Execution**
+
+Agents run independently. You don't watch them work. You check results periodically.
+
+## Terminology
+
+| Term | Meaning |
+|---|---|
+| **Task** | A unit of work with acceptance criteria and status |
+| **Engine** | Which AI agent will execute: `claude`, `codex`, or `gemini` |
+| **Status** | Current state: `inbox`, `todo`, `in_progress`, `review`, `done`, `blocked` |
+| **Acceptance Criteria** | Checklist of what must be true for task completion |
+| **Work Log** | Result of agent execution: summary, tests, PR URL, timestamp |
+| **API Token** | Bearer token for agents to authenticate to REST API (prefix: `preq_`) |
+
+## When to Use PREQSTATION
+
+**Good use cases:**
+- Refactoring existing code
+- Adding features with clear specs
+- Writing tests for untested code
+- Implementing API endpoints
+- Fixing bugs with reproduction steps
+- Deploying to production
+- Updating dependencies
+
+**Not ideal:**
+- Exploratory work (needs human judgment)
+- Architectural decisions (needs discussion first)
+- Creative writing or design
+- Work requiring deep context about your business logic

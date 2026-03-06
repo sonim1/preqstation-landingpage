@@ -1,6 +1,111 @@
 ---
 title: Progress Modes
-description: Progress reporting modes available in OpenClaw.
+description: Sparse vs. live progress reporting for long-running tasks
 ---
 
-OpenClaw supports multiple progress reporting modes to fit different workflows. Learn about streaming, polling, and webhook-based progress updates and when to use each.
+import { Aside } from '@astrojs/starlight/components';
+
+OpenClaw supports two progress reporting modes to balance visibility and token cost. Choose based on your monitoring needs.
+
+## Sparse Mode (Default)
+
+**Reports only on state changes:** start, milestone, error, completion.
+
+Use this for:
+- Cost optimization (reduced token usage)
+- Tasks that run reliably without intervention
+- Background task queues
+- Default behavior when no mode specified
+
+**Example output:**
+```
+[Start] PROJ-284: Implement rate limiting (via claude)
+[Milestone] Tests passed: 45/45
+[Complete] Rate limiting implemented - feature branch pushed
+```
+
+**Trigger:** No explicit request, or say:
+```
+"Start PROJ-284 in sparse mode"
+"Run with sparse updates"
+```
+
+## Live Mode
+
+**Reports state changes + periodic heartbeats** (every 1-2 minutes).
+
+Use this for:
+- Close monitoring of long-running tasks
+- Debugging stuck or slow execution
+- Interactive workflows requiring responsiveness
+- High-confidence deployments needing oversight
+
+**Example output:**
+```
+[Start] PROJ-284: Implement rate limiting (via claude)
+[Running] 2 min — compiling TypeScript...
+[Running] 4 min — running tests...
+[Milestone] Tests passed: 45/45
+[Running] 6 min — pushing to feature branch...
+[Complete] Rate limiting implemented — feature branch pushed
+```
+
+**Trigger:** Say one of:
+```
+"Start PROJ-284 with progress live"
+"Run with live updates"
+"Run with realtime progress"
+"Run with detailed updates"
+```
+
+## Context Compaction
+
+Long-running sessions can accumulate token overhead. To manage context:
+
+### For Sparse Mode
+- Prefer sparse unless close monitoring is required
+- Send short milestone checkpoints instead of repeated logs
+- One summary per significant state change is sufficient
+
+### For Live Mode
+- Monitor closely but avoid reading the full log repeatedly
+- Use `process action:log sessionId:<id>` for updates instead of re-reading entire output
+- If the thread gets too long, post one compaction summary and continue in the same session
+
+### Best Practices
+
+```
+❌ Bad:  Asking for updates every 30 seconds, causing token bloat
+✅ Good: Send a checkpoint once per 5-10 minute milestone
+
+❌ Bad:  Re-reading entire 50KB execution log on each update
+✅ Good: Ask for "last 100 lines of log" or new updates only
+
+❌ Bad:  Starting new sessions for every task
+✅ Good: Run multiple tasks in same session, monitor in parallel
+```
+
+## Recommendations
+
+| Scenario | Mode | Notes |
+|----------|------|-------|
+| Batch processing | Sparse | Fire and forget, check results later |
+| Interactive review | Live | Watch closely, respond to prompts |
+| Long infrastructure tasks | Sparse | Deploy and monitor separately |
+| Time-critical features | Live | Stay involved until complete |
+| Development workflow | Live | Iterate quickly with feedback |
+| CI/CD automation | Sparse | Log output sufficient |
+
+## Switching Modes
+
+You can specify progress mode in any message to OpenClaw:
+
+```
+"PROJ-284: Implement rate limiting" → sparse (default)
+"PROJ-284: Implement rate limiting (progress: live)" → live
+"Check progress for session <id> (live)" → switch to live monitoring
+```
+
+<Aside>
+Once a session starts in sparse mode, you can request "live progress" for that session to increase monitoring verbosity mid-run. The opposite (downgrading live to sparse) is not typically useful as live mode is already running.
+</Aside>

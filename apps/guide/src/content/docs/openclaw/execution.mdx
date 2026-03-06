@@ -1,6 +1,255 @@
 ---
 title: Execution
-description: How OpenClaw executes tasks using Claude Code agents.
+description: Worktree-first execution model for OpenClaw task runs
 ---
 
-Learn how OpenClaw picks up tasks from PREQSTATION, spins up Claude Code agents, and reports results back. Understand the execution lifecycle and how to monitor runs.
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+OpenClaw uses a worktree-first execution model to isolate task work from the primary checkout. This page documents the execution flow, prompt template, and engine commands.
+
+## Execution Flow
+
+When you submit a task to OpenClaw, the system follows these steps:
+
+```
+1. Parse message
+   → engine (claude/codex/gemini, default: claude)
+   → task ID (e.g., PROJ-284)
+   → project key
+   → branch name (optional)
+   → objective
+
+2. Resolve project path
+   → Lookup project key in MEMORY.md
+   → Confirm absolute path to primary checkout
+
+3. Create isolated worktree
+   → git -C <project_cwd> worktree add -b <branch> <cwd> HEAD
+   → Worktree path: <OPENCLAW_WORKTREE_ROOT>/<project_key>/<branch_slug>/
+
+4. Render prompt template
+   → Inject task ID, project key, branch, objective
+   → Include execution constraints and task workflow rules
+
+5. Launch coding agent (PTY + background)
+   → Claude:  claude --dangerously-skip-permissions '<prompt>'
+   → Codex:   codex exec --dangerously-bypass-approvals-and-sandbox '<prompt>'
+   → Gemini:  GEMINI_SANDBOX=false gemini -p '<prompt>'
+
+6. Monitor via process actions
+   → poll (check status)
+   → log (read output)
+   → write/submit (send input)
+
+7. Clean up worktree
+   → git -C <project_cwd> worktree remove <cwd> --force
+   → git -C <project_cwd> worktree prune
+```
+
+## Branch Naming
+
+Branch names must include the resolved project key for traceability.
+
+### Resolution Priority
+
+1. **Message `branch_name` field** — If you say `branch_name="feature/rate-limit"`
+2. **Fallback** — Use `preqstation/<project_key>` (e.g., `preqstation/PROJ`)
+
+### Normalization
+
+- If custom branch name doesn't include project key, prepend `preqstation/<project_key>/`
+- Lowercase all characters
+- Replace whitespace with hyphens
+- Directory slug: replace forward slashes with hyphens
+
+**Examples:**
+| Input | Result |
+|-------|--------|
+| `feature/my-feature` | `preqstation/proj/feature-my-feature` |
+| `My Feature` | `preqstation/proj/my-feature` |
+| `preqstation/proj/rate-limit` | `preqstation/proj/rate-limit` (no change) |
+
+## Prompt Template
+
+OpenClaw renders this template before launching the agent:
+
+```text
+Task ID: <task or N/A>
+Project Key: <project_key or N/A>
+Branch Name: <branch_name or N/A>
+Skill: preqstation (use preq_* MCP tools for task lifecycle)
+User Objective: <objective>
+
+Execution Requirements:
+1) Work only inside <cwd>.
+2) Use branch <branch_name> for commits/pushes when provided.
+3) Call preq_get_task("<task>") for task details and status.
+4) Call preq_get_project_settings("<project_key>") for deploy strategy.
+5) Follow task status workflow:
+   - inbox → preq_plan_task (plan only, do not implement)
+   - todo → preq_start_task → implement → deploy per strategy → preq_complete_task
+   - in_progress → continue → deploy per strategy → preq_complete_task
+   - review → verify (tests, build, lint) → preq_review_task
+   - failure → preq_block_task with reason
+6) Worktree cleanup after all work:
+   git -C <project_cwd> worktree remove <cwd> --force
+   git -C <project_cwd> worktree prune
+7) When finished: openclaw system event --text "Done: <brief summary>" --mode now
+```
+
+## Engine Commands
+
+OpenClaw launches agents using engine-specific CLI commands. All use `pty:true` and `background:true` for safe execution.
+
+### Claude Code
+
+```bash
+bash pty:true workdir:<cwd> background:true command:"claude --dangerously-skip-permissions '<rendered_prompt>'"
+```
+
+- Uses local Claude Code CLI
+- Renders prompt and passes via stdin
+- `--dangerously-skip-permissions` skips approval checks in isolated worktree context
+
+### Codex CLI
+
+```bash
+bash pty:true workdir:<cwd> background:true command:"codex exec --dangerously-bypass-approvals-and-sandbox '<rendered_prompt>'"
+```
+
+- Uses OpenAI Codex CLI
+- `--dangerously-bypass-approvals-and-sandbox` disables safety checks in task context
+- Requires `codex` command available in `$PATH`
+
+### Gemini CLI
+
+```bash
+bash pty:true workdir:<cwd> background:true command:"GEMINI_SANDBOX=false gemini -p '<rendered_prompt>'"
+```
+
+- Uses Google Gemini CLI
+- `GEMINI_SANDBOX=false` disables sandbox in isolated worktree
+- Requires `gemini` command available in `$PATH`
+
+## Background Execution
+
+OpenClaw launches agents with `background:true` by default (non-blocking). Monitor progress with process actions:
+
+```bash
+# List all running sessions
+process action:list
+
+# Poll status for a specific session
+process action:poll sessionId:<id>
+
+# Read output log
+process action:log sessionId:<id>
+
+# Send input (for interactive prompts)
+process action:write sessionId:<id> data:"..."
+process action:submit sessionId:<id> data:"..."
+
+# Kill session (only when necessary)
+process action:kill sessionId:<id>
+```
+
+<Aside>
+Sessions run in the background and do not block. You can submit multiple tasks to OpenClaw and monitor them in parallel.
+</Aside>
+
+## Foreground Execution
+
+To run synchronously (blocking), explicitly request it in your message:
+
+```
+"Implement PROJ-284 and wait for completion"
+"Run this blocking until done"
+```
+
+## Environment Constraints
+
+The executing agent:
+- **Works in:** Isolated worktree `<cwd>`
+- **Cannot write to:** Primary checkout, `~/clawd/`, `~/.openclaw/`
+- **Has access to:** Task ID, project key, deployment strategy
+- **Must use:** `preq_*` MCP tools for status tracking
+
+<Aside>
+The worktree-first design ensures tasks never modify the primary checkout directory directly. All work is isolated and scoped to the per-task worktree.
+</Aside>
+
+## Task Lifecycle in Execution
+
+The agent follows the PREQSTATION task lifecycle:
+
+### Inbox Tasks
+```
+1. preq_get_task(PROJ-284) → status=inbox
+2. Read requirements and acceptance criteria
+3. preq_plan_task(PROJ-284, plan_markdown)
+4. Stop (do not implement)
+```
+
+### Todo Tasks
+```
+1. preq_get_task(PROJ-284) → status=todo
+2. preq_start_task(PROJ-284) → status=in_progress
+3. Implement code changes
+4. Run tests and verify locally
+5. Deploy per strategy (resolve via preq_get_project_settings)
+6. preq_complete_task(PROJ-284, summary, branch, pr_url)
+```
+
+### In-Progress Tasks
+```
+1. preq_get_task(PROJ-284) → status=in_progress
+2. Continue implementation
+3. Deploy per strategy
+4. preq_complete_task(PROJ-284, summary, branch, pr_url)
+```
+
+### Review Tasks
+```
+1. preq_get_task(PROJ-284) → status=review
+2. Run verification (tests, build, lint)
+3. preq_review_task(PROJ-284) if all pass
+4. preq_block_task(PROJ-284, reason) if any fail
+```
+
+## Output Format
+
+### Success
+
+```
+completed: <task_id or N/A> via <engine> at <cwd>
+```
+
+Example:
+```
+completed: PROJ-284 via claude at /tmp/openclaw-worktrees/proj/preqstation-proj-rate-limit
+```
+
+### Failure
+
+```
+failed: <task_id or N/A> via <engine> at <cwd or N/A> - <short reason>
+```
+
+Example:
+```
+failed: PROJ-284 via claude at /tmp/openclaw-worktrees/proj/preqstation-proj-rate-limit - Tests failed: 3 failures in auth.test.js
+```
+
+## Worktree Cleanup
+
+The agent is responsible for cleanup at the end (success or failure):
+
+```bash
+git -C <project_cwd> worktree remove <cwd> --force
+git -C <project_cwd> worktree prune
+```
+
+This ensures:
+- No stale worktrees accumulate
+- Clean state for subsequent tasks
+- Safe isolation boundaries

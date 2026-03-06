@@ -1,6 +1,149 @@
 ---
 title: Setup
-description: Setting up OpenClaw with PREQSTATION.
+description: Install and configure OpenClaw for PREQSTATION task execution
 ---
 
-OpenClaw is PREQSTATION's execution runtime for running Claude Code agents autonomously. This page covers installation, configuration, and connecting OpenClaw to your workspace.
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+OpenClaw is the execution layer that bridges Telegram notifications to coding agent execution. It launches agents in isolated git worktrees when users submit task requests.
+
+## ClawHub Import
+
+To enable OpenClaw in your runtime, import the skill via ClawHub:
+
+**Repository URL:**
+```
+https://github.com/sonim1/preqstation-openclaw
+```
+
+<Tabs>
+<TabItem label="ClawHub Web UI">
+1. Go to ClawHub console
+2. Click "Import Skill"
+3. Paste the repository URL above
+4. ClawHub detects `SKILL.md` automatically
+5. Complete import
+</TabItem>
+<TabItem label="Manual Setup">
+If manual import is required:
+
+1. Clone the repository
+2. Ensure `SKILL.md` is in the repository root
+3. Point OpenClaw to the cloned path
+</TabItem>
+</Tabs>
+
+## MEMORY.md Configuration
+
+OpenClaw uses `MEMORY.md` to map project keys to local checkout paths. This file stores reusable project mappings.
+
+### Format
+
+Create or edit `MEMORY.md` in your workspace root:
+
+```markdown
+# MEMORY.md
+
+## Projects
+
+| key | cwd | note |
+|-----|-----|------|
+| example | /absolute/path/to/example-project | Example project repository |
+| dashboard | /absolute/path/to/dashboard | Main dashboard project |
+| api | /absolute/path/to/api-server | API backend |
+```
+
+### Requirements
+
+- **Keys**: Short, lowercase, kebab-case (e.g., `my-project`)
+- **Paths**: Absolute paths only (e.g., `/home/user/projects/my-project`)
+- **One entry per project**
+
+### Example
+
+```markdown
+| key | cwd | note |
+|-----|-----|------|
+| preq | /Users/kendrick/projects/preqstation-lp | Main PREQSTATION LP site |
+| skill | /Users/kendrick/projects/preqstation-skill | MCP server and helpers |
+| openclaw | /Users/kendrick/projects/preqstation-openclaw | Execution layer |
+```
+
+## Environment Variables
+
+### OPENCLAW_WORKTREE_ROOT
+
+Specifies where OpenClaw creates isolated git worktrees for each task.
+
+```bash
+export OPENCLAW_WORKTREE_ROOT="/tmp/openclaw-worktrees"
+```
+
+**Default:** `/tmp/openclaw-worktrees` (if not set)
+
+**Location:** Ensure the parent directory exists and has write permissions.
+
+## Path Resolution
+
+When you submit a task to OpenClaw, it resolves the project path in this order:
+
+1. **Absolute path in message** — If you mention `/home/user/projects/myapp`, use it directly
+2. **Project key from MEMORY.md** — If you say "in the example project", look up `example` in the table
+3. **Task prefix key match** — If task is `PROJ-284`, try to find `proj` in MEMORY.md
+4. **Prompt user** — If unresolved, ask for the absolute path or project key
+
+### Example Resolution
+
+Message: `"Start PROJ-284 in the example project"`
+- Task: `PROJ-284` (prefix: `proj`)
+- Project: `example` (explicit in message)
+- Path lookup: `MEMORY.md` → `/Users/kendrick/projects/example-project`
+
+## Worktree Configuration
+
+OpenClaw creates isolated worktrees automatically before launching agents.
+
+### Worktree Path Structure
+
+```
+<OPENCLAW_WORKTREE_ROOT>/<project_key>/<branch_slug>/
+```
+
+**Example:**
+```
+/tmp/openclaw-worktrees/proj/preqstation-PROJ-rate-limit/
+```
+
+### Branch Naming
+
+- **Default:** `preqstation/<project_key>` (e.g., `preqstation/PROJ`)
+- **Custom:** If you specify `branch_name="feature/my-feature"`, normalize to `preqstation/PROJ/feature-my-feature`
+- **Slug conversion:** Forward slashes replaced with hyphens for directory names
+
+## Engine Configuration
+
+OpenClaw supports three execution engines:
+
+| Engine | CLI Command | Setup |
+|--------|-------------|-------|
+| Claude | `claude` | Installed via Claude Code |
+| Codex | `codex` | Installed via OpenAI CLI |
+| Gemini | `gemini` | Installed via Google CLI |
+
+**Default engine:** `claude`
+
+To use a different engine, specify it in your message:
+- "Use Codex to implement PROJ-284"
+- "Run with Gemini in the example project"
+
+## Next Steps
+
+1. ✅ Import OpenClaw skill to ClawHub
+2. ✅ Create `MEMORY.md` with project mappings
+3. ✅ Set `OPENCLAW_WORKTREE_ROOT` if needed
+4. ✅ Verify engines are installed (`command -v claude`, `command -v codex`, `command -v gemini`)
+5. → Continue to [Execution](/docs/openclaw/execution) to understand how OpenClaw runs tasks
+
+<Aside>
+After setup, test by sending a simple message to OpenClaw: `"What projects are available?"` to verify MEMORY.md is loaded correctly.
+</Aside>

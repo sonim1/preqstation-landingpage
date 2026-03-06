@@ -1,6 +1,204 @@
 ---
 title: Deploy Strategy
-description: Recommended strategies for deploying agents with PREQSTATION.
+description: Deployment strategy contract for PREQSTATION task execution
 ---
 
-Learn recommended strategies for deploying your Claude Code agents alongside PREQSTATION, including CI/CD integration, environment configuration, and scaling considerations.
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+Before executing any git operations on a task, agents must resolve and follow the project's deployment strategy. This contract defines how code changes should be committed, pushed, and deployed.
+
+## Strategy Types
+
+Each project configures one of three strategies:
+
+| Strategy | Behavior | When to Use |
+|----------|----------|-------------|
+| `none` | No git operations; code changes + task update only | Development/testing workflows |
+| `direct_commit` | Merge worktree commits to default branch and push | Single-branch production deployments |
+| `feature_branch` | Push worktree branch; create PR if auto_pr=true | Multi-environment, review-based deployments |
+
+## Configuration
+
+### Resolving Strategy
+
+Before any git action, resolve the deployment strategy:
+
+1. Call `preq_get_task <task_id>`
+2. Check `task.deploy_strategy` in the response
+3. If missing, call `preq_get_project_settings <project_key>`
+4. Use settings: `deploy_strategy`, `deploy_default_branch`, `deploy_auto_pr`, `deploy_commit_on_review`, `deploy_squash_merge`
+
+### Default Values
+
+When strategy is missing or invalid:
+
+```json
+{
+  "strategy": "none",
+  "default_branch": "main",
+  "auto_pr": false,
+  "commit_on_review": true,
+  "squash_merge": true
+}
+```
+
+### Settings Table
+
+| Setting | Type | Purpose |
+|---------|------|---------|
+| `deploy_strategy` | string | `direct_commit`, `feature_branch`, or `none` |
+| `deploy_default_branch` | string | Target branch name (usually `main`) |
+| `deploy_auto_pr` | boolean | Auto-create PR (feature_branch only) |
+| `deploy_commit_on_review` | boolean | Require remote push before review transition |
+| `deploy_squash_merge` | boolean | Squash commits (direct_commit only) |
+
+## Strategy: none
+
+**No git operations.** Only code changes and task status updates.
+
+Use this for:
+- Local development workflows
+- Testing/sandbox environments
+- Tasks that don't modify code
+
+**Implementation:**
+```bash
+# Just update the task status without any git push
+preq_complete_task PROJ-284 "Implementation complete" claude
+```
+
+## Strategy: direct_commit
+
+**Commit and push to default branch.** No PR created.
+
+Use this for:
+- Single-branch deployments
+- CI/CD auto-deployment from main
+- Trust-based team workflows
+
+### Execution Steps
+
+1. Work in isolated worktree
+2. Make commits and run tests
+3. **Before `preq_complete_task`:**
+
+<Tabs>
+<TabItem label="Squash Merge (default)">
+```bash
+# In primary checkout: update and merge with squash
+git -C <project_cwd> checkout <default_branch>
+git -C <project_cwd> pull origin <default_branch>
+git -C <project_cwd> merge --squash <worktree_branch>
+git -C <project_cwd> commit -m "PROJ-284: Implement rate limiting"
+git -C <project_cwd> push origin <default_branch>
+
+# Verify push succeeded before completing
+git ls-remote --heads origin <default_branch> | grep -q . && \
+  preq_complete_task PROJ-284 "Implemented rate limiting" claude
+```
+</TabItem>
+<TabItem label="Regular Merge">
+When `deploy_squash_merge=false`:
+
+```bash
+git -C <project_cwd> checkout <default_branch>
+git -C <project_cwd> pull origin <default_branch>
+git -C <project_cwd> merge <worktree_branch>
+git -C <project_cwd> push origin <default_branch>
+```
+</TabItem>
+</Tabs>
+
+## Strategy: feature_branch
+
+**Push worktree branch; optionally create PR.** Multi-environment friendly.
+
+Use this for:
+- Pull-request-based workflows
+- Feature review and approval
+- Multi-environment deployments (dev → staging → prod)
+
+### Execution Steps
+
+1. Work in isolated worktree (branch: `preqstation/<project_key>/<feature>`)
+2. Make commits and run tests
+3. **Before `preq_complete_task`:**
+
+```bash
+# Push feature branch
+git -C <project_cwd> push origin <worktree_branch>
+
+# Verify push succeeded
+git ls-remote --heads origin <worktree_branch> | grep -q . || \
+  { preq_block_task PROJ-284 "Failed to push feature branch" claude; exit 1; }
+
+# If auto_pr=true, create PR (requires GitHub MCP or gh CLI)
+if [ "$deploy_auto_pr" = "true" ]; then
+  gh pr create --head <worktree_branch> --base <default_branch> \
+    --title "PROJ-284: Implement rate limiting" \
+    --body "Task: PROJ-284"
+fi
+
+# Complete task with branch and PR URL
+preq_complete_task PROJ-284 \
+  "Implemented rate limiting" \
+  claude \
+  "https://github.com/org/repo/pull/123" \
+  "npm run test" \
+  "" \
+  "preqstation/PROJ/rate-limit"
+```
+
+## commit_on_review Rule
+
+When `deploy_commit_on_review=true` (default):
+
+- Agents must verify the remote push before moving to review
+- Check branch exists on origin before calling `preq_complete_task`
+- Do not transition to review without successful push
+
+**Example verification:**
+```bash
+if ! git ls-remote --heads origin "$branch_name" | grep -q .; then
+  preq_block_task PROJ-284 "Remote push verification failed" claude
+  exit 1
+fi
+
+preq_complete_task PROJ-284 "..." claude
+```
+
+When `deploy_commit_on_review=false`:
+
+- Review transition is allowed without mandatory remote push
+- Useful for draft/WIP workflows
+
+## Complete Execution Flow
+
+```
+1. Fetch task: preq_get_task PROJ-284
+2. Fetch strategy: preq_get_project_settings PROJ
+3. Resolve strategy from response
+4. Execute code changes in worktree
+5. Deploy per strategy:
+   - none: skip git
+   - direct_commit: merge + push default_branch
+   - feature_branch: push <worktree_branch>, create PR if auto_pr=true
+6. Verify remote push (if commit_on_review=true)
+7. Call preq_complete_task with summary, branch, pr_url
+8. Clean up worktree: git worktree remove <cwd> --force
+```
+
+## Worktree Cleanup
+
+Always clean up the worktree as the final step:
+
+```bash
+git -C <project_cwd> worktree remove <cwd> --force
+git -C <project_cwd> worktree prune
+```
+
+This ensures isolation and prevents stale worktrees from accumulating.
+
+<Aside>
+Worktree cleanup is safe and should happen regardless of success or failure. It is part of the execution contract.
+</Aside>

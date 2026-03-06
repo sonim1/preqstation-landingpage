@@ -1,6 +1,214 @@
 ---
 title: REST API
-description: PREQSTATION REST API reference.
+description: Full PREQSTATION REST API endpoint reference.
 ---
 
-The PREQSTATION REST API allows you to programmatically manage tasks, agents, and workspace settings. This page provides a full reference of available endpoints, request formats, and responses.
+import { Aside } from '@astrojs/starlight/components';
+
+The PREQSTATION REST API enables agents to programmatically manage tasks and retrieve project settings.
+
+## Base URL
+
+```
+https://your-domain.com/api
+```
+
+## Authentication
+
+All endpoints require either:
+
+- **Bearer Token** (external/agent requests): `Authorization: Bearer <preq_xxxxx>`
+- **Session Cookie** (web UI requests): Automatic with logged-in session
+
+See [Authentication](/guide/api/authentication) for details.
+
+## External Endpoints (Bearer Token)
+
+These endpoints are designed for coding agents and external integrations.
+
+### Tasks
+
+| Method   | Endpoint                     | Description                                                                |
+| -------- | ---------------------------- | ---------------------------------------------------------------------- |
+| `GET`    | `/tasks`                 | List tasks (filter: `?status=`, `?engine=`, `?label=`, `?projectKey=`) |
+| `POST`   | `/tasks`                 | Create task                                                            |
+| `GET`    | `/tasks/:id`             | Get task by taskKey or UUID                                            |
+| `PATCH`  | `/tasks/:id`             | Update task (fields, status, result)                                   |
+| `DELETE` | `/tasks/:id`             | Delete task                                                            |
+| `PATCH`  | `/tasks/:id/status`      | Update status only                                                     |
+
+#### GET /tasks
+
+List all tasks for the owner.
+
+```bash
+curl -H "Authorization: Bearer preq_xxxxx" \
+  https://your-domain.com/api/tasks?status=todo&engine=claude
+```
+
+**Query Parameters:**
+- `status` — Filter by status (inbox, todo, in_progress, review, done, blocked)
+- `engine` — Filter by engine (claude, codex, gemini)
+- `label` — Filter by label name
+- `projectKey` — Filter by project key
+
+#### POST /tasks
+
+Create a new task (moves to `inbox` by default).
+
+```bash
+curl -X POST -H "Authorization: Bearer preq_xxxxx" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Add authentication",
+    "description": "Implement JWT auth for API",
+    "engine": "claude",
+    "priority": "high",
+    "projectKey": "MY-APP",
+    "acceptanceCriteria": [
+      "Users can sign up",
+      "Users can log in",
+      "Protected routes require auth"
+    ]
+  }' \
+  https://your-domain.com/api/tasks
+```
+
+#### GET /tasks/:id
+
+Get a single task by taskKey or UUID.
+
+```bash
+curl -H "Authorization: Bearer preq_xxxxx" \
+  https://your-domain.com/api/tasks/PROJ-123
+```
+
+#### PATCH /tasks/:id
+
+Update a task's fields, status, or result.
+
+```bash
+curl -X PATCH -H "Authorization: Bearer preq_xxxxx" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Add authentication (updated)",
+    "priority": "highest"
+  }' \
+  https://your-domain.com/api/tasks/PROJ-123
+```
+
+#### PATCH /tasks/:id/status
+
+Update only the status without changing other fields.
+
+```bash
+curl -X PATCH -H "Authorization: Bearer preq_xxxxx" \
+  -H "Content-Type: application/json" \
+  -d '{"status": "in_progress"}' \
+  https://your-domain.com/api/tasks/PROJ-123/status
+```
+
+### Projects
+
+| Method   | Endpoint                     | Description                                                                |
+| -------- | ---------------------------- | ---------------------------------------------------------------------- |
+| `GET`    | `/projects`              | List projects                                                          |
+| `POST`   | `/projects`              | Create project                                                         |
+| `GET`    | `/projects/:id/settings` | Get project deploy settings                                            |
+| `PATCH`  | `/projects/:id/settings` | Update project deploy settings                                         |
+| `PATCH`  | `/projects/:id`          | Update project                                                         |
+| `DELETE` | `/projects/:id`          | Delete project                                                         |
+
+### API Keys
+
+| Method   | Endpoint              | Description        |
+| -------- | --------------------- | ------------------- |
+| `POST`   | `/api-keys`           | Issue new API token |
+| `GET`    | `/api-keys`           | List tokens         |
+| `DELETE` | `/api-keys/:id`       | Revoke token        |
+
+### Work Logs
+
+| Method   | Endpoint          | Description               |
+| -------- | ----------------  | ----------------------- |
+| `POST`   | `/work-logs`      | Create work log entry   |
+| `GET`    | `/work-logs/:id`  | Get work log entry      |
+| `DELETE` | `/work-logs/:id`  | Delete work log entry   |
+
+### Health
+
+| Method   | Endpoint | Description |
+| -------- | -------- | ----------- |
+| `GET`    | `/health`| Health check (no auth required) |
+
+## Internal Endpoints (Session Cookie)
+
+These endpoints are for the web UI and require an authenticated session.
+
+### Todos (Internal Dashboard)
+
+| Method   | Endpoint                  | Purpose                         |
+| -------- | ------------------------- | ------------------------------- |
+| `GET`    | `/todos`                  | List todos (internal dashboard) |
+| `POST`   | `/todos`                  | Create todo                     |
+| `PATCH`  | `/todos/:id`              | Update todo                     |
+| `DELETE` | `/todos/:id`              | Delete todo                     |
+| `POST`   | `/todos/rebalance`        | Rebalance sort order            |
+| `POST`   | `/todos/archive-done`     | Archive completed todos         |
+
+### Task Labels
+
+| Method   | Endpoint                  | Purpose                         |
+| -------- | ------------------------- | ------------------------------- |
+| `GET`    | `/task-labels`            | List task labels                |
+| `POST`   | `/task-labels`            | Create task label               |
+| `PATCH`  | `/task-labels/:id`        | Update task label               |
+| `DELETE` | `/task-labels/:id`        | Delete task label               |
+
+### Events & Cleanup
+
+| Method   | Endpoint              | Purpose                    |
+| -------- | -------------------- | -------------------------- |
+| `GET`    | `/events`             | List event outbox entries  |
+| `POST`   | `/events/cleanup`     | Clean up old outbox entries|
+
+### Settings & Telegram
+
+| Method   | Endpoint                | Purpose                   |
+| -------- | ----------------------- | ------------------------- |
+| `GET`    | `/settings`             | Get/update user settings  |
+| `POST`   | `/telegram/send`        | Send Telegram message     |
+| `POST`   | `/telegram/test`        | Test Telegram connection  |
+
+## Response Format
+
+All successful responses return JSON:
+
+```json
+{
+  "data": {
+    "id": "uuid",
+    "taskKey": "PROJ-123",
+    "title": "Task title",
+    "status": "in_progress",
+    ...
+  }
+}
+```
+
+## Error Handling
+
+Error responses include an error code and message:
+
+```json
+{
+  "error": {
+    "code": "TASK_NOT_FOUND",
+    "message": "Task PROJ-123 not found"
+  }
+}
+```
+
+<Aside>
+All timestamps are in ISO 8601 format (UTC). All IDs are UUIDs unless otherwise noted.
+</Aside>

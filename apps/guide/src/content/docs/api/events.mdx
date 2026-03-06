@@ -1,6 +1,176 @@
 ---
 title: Events
-description: PREQSTATION event system and webhooks.
+description: Event system and event sourcing via events_outbox.
 ---
 
-PREQSTATION emits events when tasks change state, agents complete work, or errors occur. Learn how to subscribe to events via webhooks or server-sent events for real-time integrations.
+PREQSTATION uses event sourcing to track all mutations. Events are written to the `events_outbox` table and can be consumed for auditing, notifications, or integrations.
+
+## Event Types
+
+Events are emitted when mutations occur:
+
+### Task Events
+
+| Event | Trigger | Payload |
+|---|---|---|
+| `TASK_CREATED` | Task created | taskId, taskKey, title, engine |
+| `TASK_STATUS_CHANGED` | Status updated | taskId, oldStatus, newStatus |
+| `TASK_UPDATED` | Task fields changed | taskId, changes (title, priority, etc.) |
+| `TASK_DELETED` | Task deleted | taskId, reason |
+
+### Work Log Events
+
+| Event | Trigger | Payload |
+|---|---|---|
+| `WORKLOG_CREATED` | Agent submits results | worklogId, taskId, engine, summary, tests |
+
+### Project Events
+
+| Event | Trigger | Payload |
+|---|---|---|
+| `PROJECT_CREATED` | Project created | projectId, projectKey, name |
+| `PROJECT_DELETED` | Project deleted | projectId, reason |
+
+## Events Outbox Table
+
+Events are persisted in the `events_outbox` table:
+
+```sql
+CREATE TABLE events_outbox (
+  id UUID PRIMARY KEY,
+  event_type TEXT NOT NULL,
+  aggregate_id UUID NOT NULL,
+  aggregate_type TEXT NOT NULL,
+  payload JSONB NOT NULL,
+  created_at TIMESTAMP NOT NULL,
+  processed_at TIMESTAMP
+);
+```
+
+### Columns
+
+| Column | Type | Purpose |
+|---|---|---|
+| `id` | UUID | Unique event ID |
+| `event_type` | TEXT | Event name (TASK_CREATED, etc.) |
+| `aggregate_id` | UUID | Task or project ID |
+| `aggregate_type` | TEXT | `task`, `project`, or `worklog` |
+| `payload` | JSONB | Event data (context-specific) |
+| `created_at` | TIMESTAMP | When event occurred |
+| `processed_at` | TIMESTAMP | When event was consumed (nullable) |
+
+## Consuming Events
+
+### Via REST API
+
+```bash
+curl -H "Authorization: Bearer preq_xxxxx" \
+  https://your-domain.com/api/events
+```
+
+Returns list of events (internal API, session cookie only):
+
+```json
+{
+  "data": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "eventType": "TASK_CREATED",
+      "aggregateId": "task-uuid",
+      "aggregateType": "task",
+      "payload": {
+        "taskKey": "PROJ-123",
+        "title": "Add authentication",
+        "engine": "claude"
+      },
+      "createdAt": "2025-03-06T10:30:00Z",
+      "processedAt": null
+    }
+  ]
+}
+```
+
+### Polling Pattern
+
+Poll `/api/events` periodically to process new events:
+
+```bash
+#!/bin/bash
+
+while true; do
+  # Fetch unprocessed events
+  curl -s -H "Authorization: Bearer preq_xxxxx" \
+    https://your-domain.com/api/events \
+    | jq '.data[] | select(.processedAt == null)' \
+    | while read event; do
+      # Process event
+      echo "Processing: $event"
+
+      # Mark as processed
+      # (future: PATCH /api/events/:id endpoint)
+    done
+
+  sleep 30
+done
+```
+
+## Work Logs
+
+Work logs are automatically created when agents submit results:
+
+```bash
+curl -X POST -H "Authorization: Bearer preq_xxxxx" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "taskId": "PROJ-123",
+    "summary": "Implemented JWT auth. All tests passing.",
+    "tests": "✓ signup\n✓ login\n✓ protected routes",
+    "prUrl": "https://github.com/project/pull/456"
+  }' \
+  https://your-domain.com/api/work-logs
+```
+
+### Work Log Structure
+
+| Field | Type | Purpose |
+|---|---|---|
+| `id` | UUID | Unique work log ID |
+| `taskId` | UUID | Associated task |
+| `engine` | TEXT | Which agent executed (claude, codex, gemini) |
+| `summary` | TEXT | Execution summary |
+| `tests` | TEXT | Test results (free-form) |
+| `prUrl` | TEXT | Pull request URL (optional) |
+| `createdAt` | TIMESTAMP | When work log was created |
+| `updatedAt` | TIMESTAMP | Last update |
+
+### Retrieving Work Logs
+
+```bash
+curl -H "Authorization: Bearer preq_xxxxx" \
+  https://your-domain.com/api/work-logs/:id
+```
+
+## Cleanup
+
+Old events can be archived or deleted via:
+
+```bash
+curl -X POST -H "Authorization: Bearer preq_xxxxx" \
+  https://your-domain.com/api/events/cleanup \
+  -H "Content-Type: application/json" \
+  -d '{
+    "olderThan": "2025-01-01"
+  }'
+```
+
+This moves processed events older than the specified date to an archive table (implementation-dependent).
+
+## Use Cases
+
+**Event sourcing enables:**
+
+- ✅ Full audit trail of all mutations
+- ✅ Replayable event history
+- ✅ Downstream integrations (Slack, Discord, email)
+- ✅ Analytics and reporting
+- ✅ Compliance and record-keeping

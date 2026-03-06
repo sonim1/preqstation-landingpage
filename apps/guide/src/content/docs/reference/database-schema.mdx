@@ -1,6 +1,230 @@
 ---
 title: Database Schema
-description: PREQSTATION database schema reference.
+description: Complete database schema for PREQSTATION with table descriptions and purposes
 ---
 
-The PREQSTATION database schema defines the structure of tasks, agents, workspaces, and audit logs. This page documents each table, its columns, types, and relationships.
+import { Aside } from '@astrojs/starlight/components';
+
+The PREQSTATION database (Neon PostgreSQL) stores tasks, projects, execution results, and audit trails. All data is scoped to a single owner via Row Level Security (RLS).
+
+## Core Tables
+
+### users
+
+Single-owner account table.
+
+| Column | Type | Purpose |
+|--------|------|---------|
+| `id` | UUID | Primary key |
+| `email` | String | Account email (unique) |
+| `password` | String | Bcryptjs hash |
+| `createdAt` | DateTime | Account creation timestamp |
+
+<Aside type="note">
+PREQSTATION is single-owner. Only one user account exists per deployment. Multi-tenant support requires architectural changes.
+</Aside>
+
+### tasks
+
+Task items with lifecycle tracking.
+
+| Column | Type | Purpose |
+|--------|------|---------|
+| `id` | UUID | Primary key |
+| `taskKey` | String | Human-readable key (e.g., `PROJ-123`) |
+| `title` | String | Task title |
+| `description` | Text | Full task description/body |
+| `status` | Enum | `inbox`, `todo`, `in_progress`, `review`, `done`, `blocked`, `archived` |
+| `priority` | Enum | `highest`, `high`, `medium`, `low`, `lowest` |
+| `engine` | String | `claude`, `codex`, or `gemini` — which AI executed the task |
+| `branch` | String | Git branch name for code changes |
+| `projectId` | UUID | Foreign key to `projects` |
+| `createdAt` | DateTime | Task creation timestamp |
+| `updatedAt` | DateTime | Last modification timestamp |
+
+### task_labels
+
+Custom label taxonomy for organizing tasks.
+
+| Column | Type | Purpose |
+|--------|------|---------|
+| `id` | UUID | Primary key |
+| `name` | String | Label name (unique per owner) |
+| `taskId` | UUID | Foreign key to `tasks` |
+| `createdAt` | DateTime | Label creation timestamp |
+
+### projects
+
+GitHub/Vercel project tracking.
+
+| Column | Type | Purpose |
+|--------|------|---------|
+| `id` | UUID | Primary key |
+| `key` | String | Project key (e.g., `PROJ`) |
+| `name` | String | Project display name |
+| `description` | Text | Project description |
+| `repoUrl` | String | GitHub repository URL |
+| `backgroundImage` | String | Project display image URL |
+| `deletedAt` | DateTime | Soft delete timestamp (null = active) |
+| `createdAt` | DateTime | Project creation timestamp |
+
+### project_settings
+
+Per-project deployment strategy configuration.
+
+| Column | Type | Purpose |
+|--------|------|---------|
+| `id` | UUID | Primary key |
+| `projectId` | UUID | Foreign key to `projects` |
+| `deploy_strategy` | String | `none`, `direct_commit`, or `feature_branch` |
+| `deploy_default_branch` | String | Target branch (usually `main`) |
+| `deploy_auto_pr` | Boolean | Auto-create PR (feature_branch only) |
+| `deploy_commit_on_review` | Boolean | Require remote push before review |
+| `deploy_squash_merge` | Boolean | Squash commits on merge (direct_commit only) |
+| `updatedAt` | DateTime | Last update timestamp |
+
+## API & Authentication
+
+### api_tokens
+
+Bearer tokens for external agent authentication.
+
+| Column | Type | Purpose |
+|--------|------|---------|
+| `id` | UUID | Primary key |
+| `token` | String | Token hash (SHA-256) |
+| `prefix` | String | Token prefix (always `preq_`) for identification |
+| `name` | String | Token display name |
+| `expiresAt` | DateTime | Optional expiration (null = no expiration) |
+| `createdAt` | DateTime | Token creation timestamp |
+
+<Aside>
+Tokens are hashed in the database for security. The plaintext token is shown only once during creation.
+</Aside>
+
+## Audit & Results
+
+### work_logs
+
+Durable audit trail of agent execution results.
+
+| Column | Type | Purpose |
+|--------|------|---------|
+| `id` | UUID | Primary key |
+| `taskId` | UUID | Foreign key to `tasks` |
+| `projectId` | UUID | Foreign key to `projects` |
+| `engine` | String | Engine that performed the work |
+| `summary` | Text | Execution summary |
+| `result` | JSON | Full result payload (branch, pr_url, tests, etc.) |
+| `branch` | String | Git branch used |
+| `prUrl` | String | Pull request URL |
+| `tests` | Text | Test command or results |
+| `notes` | Text | Additional notes |
+| `completedAt` | DateTime | Completion timestamp |
+| `createdAt` | DateTime | Log entry creation timestamp |
+
+### events_outbox
+
+Event sourcing table for downstream processing.
+
+| Column | Type | Purpose |
+|--------|------|---------|
+| `id` | UUID | Primary key |
+| `eventType` | Enum | `TASK_CREATED`, `TASK_STATUS_CHANGED`, `TASK_UPDATED`, `TASK_DELETED`, `WORKLOG_CREATED`, `PROJECT_CREATED`, `PROJECT_DELETED` |
+| `entityType` | String | `task`, `project`, or `worklog` |
+| `entityId` | UUID | ID of affected entity |
+| `payload` | JSON | Event payload (changes, metadata) |
+| `processedAt` | DateTime | When event was processed (null = pending) |
+| `createdAt` | DateTime | Event creation timestamp |
+
+### audit_logs
+
+Immutable mutation log of all API actions.
+
+| Column | Type | Purpose |
+|--------|------|---------|
+| `id` | UUID | Primary key |
+| `action` | String | API action (e.g., `CREATE_TASK`, `UPDATE_STATUS`) |
+| `resourceType` | String | `task`, `project`, `api_token`, etc. |
+| `resourceId` | UUID | ID of modified resource |
+| `changes` | JSON | Before/after values |
+| `status` | Enum | `success` or `failure` |
+| `errorMessage` | Text | Error details if failed |
+| `createdAt` | DateTime | Action timestamp |
+
+### security_events
+
+Login and authentication event tracking.
+
+| Column | Type | Purpose |
+|--------|------|---------|
+| `id` | UUID | Primary key |
+| `eventType` | String | `LOGIN_SUCCESS`, `LOGIN_FAILURE`, `TOKEN_CREATED`, `TOKEN_REVOKED` |
+| `ipAddress` | String | Client IP address |
+| `userAgent` | String | Client user agent string |
+| `status` | String | `success` or `failure` |
+| `reason` | Text | Failure reason if applicable |
+| `createdAt` | DateTime | Event timestamp |
+
+## Configuration
+
+### user_settings
+
+Key-value configuration for user preferences and integrations.
+
+| Column | Type | Purpose |
+|--------|------|---------|
+| `id` | UUID | Primary key |
+| `key` | String | Setting key (e.g., `telegram_bot_token`) |
+| `value` | Text | Setting value |
+| `encrypted` | Boolean | Whether value is encrypted at rest |
+| `updatedAt` | DateTime | Last update timestamp |
+
+**Common settings:**
+- `telegram_bot_token` — Telegram bot token (encrypted)
+- `telegram_chat_id` — Telegram chat ID for notifications
+- `telegram_enabled` — Boolean flag for Telegram integration
+
+## Data Access & Security
+
+### Row Level Security (RLS)
+
+All tables have RLS policies scoped to the owner:
+
+```sql
+-- All rows are filtered by owner_id = current_user_id
+-- Single-owner deployments: owner_id is always the same
+```
+
+### Backup Strategy
+
+- Neon auto-backups: kept for 7 days (default)
+- Export critical data: Tasks, work_logs, audit_logs
+- Production deployments: enable Point-in-Time Recovery
+
+### Soft Deletes
+
+Projects use soft delete (`deletedAt` column):
+- Archived projects are filtered from queries
+- Historical data retained for audit
+- Hard delete not supported (prevents data loss)
+
+## Schema Diagram
+
+```
+users (1)
+├── projects (N) [deploy settings]
+│   └── project_settings
+│   └── tasks (N)
+│       ├── task_labels (N)
+│       └── work_logs (N) [execution results]
+└── api_tokens (N)
+
+Audit:
+├── events_outbox [event sourcing]
+├── audit_logs [mutation trail]
+└── security_events [auth trail]
+
+User Config:
+└── user_settings [key-value]
+```

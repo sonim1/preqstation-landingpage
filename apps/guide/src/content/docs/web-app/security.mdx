@@ -1,6 +1,167 @@
 ---
 title: Security
-description: Security best practices and settings for PREQSTATION.
+description: PREQSTATION's security model, auth, and best practices.
 ---
 
-Learn about PREQSTATION's security model, including authentication, authorization, token scoping, and best practices for keeping your workspace secure.
+import { Aside } from '@astrojs/starlight/components';
+
+PREQSTATION is designed as a single-owner system with comprehensive security controls.
+
+## Authentication
+
+### Session Cookies (Web UI)
+
+- **Type**: HMAC-signed session cookies
+- **Flags**: `httpOnly`, `sameSite=strict`, `secure` (HTTPS only)
+- **Expiration**: Configurable session timeout
+- **Signing**: HMAC-SHA256 with `AUTH_SECRET`
+
+Cookies are signed to prevent tampering and cannot be accessed by JavaScript.
+
+### Bearer Tokens (REST API)
+
+- **Format**: `preq_` prefix + 32 random characters
+- **Storage**: SHA-256 hashed in database
+- **Authentication**: `Authorization: Bearer <token>`
+- **Expiration**: Optional per-token expiration date
+
+## Authorization
+
+### Row Level Security (RLS)
+
+All data is scoped to the owner at the database level via PostgreSQL RLS policies:
+
+```sql
+CREATE POLICY owner_isolation ON tasks
+  FOR ALL USING (owner_id = auth.uid());
+```
+
+This means:
+
+- Tasks belong only to the owner who created them
+- API tokens cannot access other users' data (single-owner only)
+- Even direct database access respects RLS policies
+
+### Scope Enforcement
+
+API tokens can:
+
+- ✅ Read and update tasks
+- ✅ Create tasks and work logs
+- ✅ List projects and settings
+- ❌ Issue new tokens
+- ❌ Modify user settings
+- ❌ Access audit logs or security events
+
+## Rate Limiting
+
+Protected endpoints are rate limited:
+
+- **Authentication routes** — 10 requests per 15 minutes per IP
+- **API routes** — 100 requests per 15 minutes per token
+- **Public endpoints** (`/api/health`) — No limit
+
+Rate limit headers:
+
+```
+X-RateLimit-Limit: 100
+X-RateLimit-Remaining: 95
+X-RateLimit-Reset: 1709812345
+```
+
+## Audit Trails
+
+### Audit Logs
+
+Immutable record of all API mutations:
+
+- Who made the change (user, token, or agent)
+- What changed (resource type and ID)
+- When it happened (timestamp)
+- IP address and user-agent
+
+View in **Settings > Audit Logs**.
+
+### Security Events
+
+Tracks authentication attempts:
+
+- Login successes and failures
+- Authorization failures
+- IP address and user-agent
+- Timestamp and reason for failures
+
+View in **Settings > Security Events**.
+
+### Work Logs
+
+Records agent execution results:
+
+- Task ID and project
+- Agent (engine: claude, codex, gemini)
+- Execution summary and test results
+- PR URL if deployed
+- Timestamp and duration
+
+## Best Practices
+
+<Aside type="tip">
+Follow these practices to keep PREQSTATION secure:
+</Aside>
+
+### 1. **Secure AUTH_SECRET**
+
+- Generate with: `openssl rand -hex 32`
+- Use at least 32 random characters
+- Store in `.env` (never commit)
+- Rotate periodically
+
+### 2. **Rotate API Tokens**
+
+- Issue new token
+- Update agent configuration
+- Revoke old token
+- Frequency: every 90 days minimum
+
+### 3. **Monitor Audit Logs**
+
+- Check for unexpected changes
+- Review security events for failed logins
+- Investigate unusual activity
+
+### 4. **Use HTTPS in Production**
+
+- Session cookies require HTTPS
+- Bearer tokens should be sent over HTTPS only
+- Disable HTTP fallback
+
+### 5. **Restrict ALLOWED_ORIGINS**
+
+Configure `ALLOWED_ORIGINS` to prevent CSRF:
+
+```bash
+ALLOWED_ORIGINS=https://your-domain.com,https://app.your-domain.com
+```
+
+### 6. **Protect Bot Token**
+
+- Store Telegram bot token in `.env`
+- Never share or commit to version control
+- Revoke at [@BotFather](https://t.me/BotFather) if exposed
+
+### 7. **Encrypt Sensitive Data**
+
+- Telegram bot tokens encrypted with AES-GCM
+- API tokens hashed with SHA-256
+- Session cookies signed with HMAC
+
+## Compliance
+
+PREQSTATION provides:
+
+- ✅ Single-owner data isolation (RLS)
+- ✅ Immutable audit logs
+- ✅ Encrypted sensitive data
+- ✅ Rate limiting on auth routes
+- ✅ Session security (httpOnly, sameSite=strict)
+- ✅ CSRF protection (same-origin verification)

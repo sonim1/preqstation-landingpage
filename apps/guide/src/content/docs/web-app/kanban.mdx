@@ -1,6 +1,80 @@
 ---
 title: Kanban Board
-description: Using the PREQSTATION Kanban board to manage tasks.
+description: Manage tasks visually with the Kanban board.
 ---
 
-The PREQSTATION Kanban board gives you a visual overview of all your tasks. Learn how to create, assign, and move tasks through your workflow using the drag-and-drop interface.
+The Kanban board is your main interface for managing tasks. It displays tasks in six columns representing the task lifecycle.
+
+## Task Statuses
+
+| Status | Meaning | Action |
+|---|---|---|
+| **Inbox** | New tasks waiting for planning | Agent should run `preq_plan_task` to move to Todo |
+| **Todo** | Planned and ready for agents | Agent can start work with `preq_start_task` |
+| **In Progress** | Agent is actively working | Agent submits results with `preq_complete_task` |
+| **Review** | Results ready for inspection | You review and run `preq_review_task` to approve or block |
+| **Done** | Task complete and deployed | Archive or reopen if needed |
+| **Blocked** | Cannot proceed; needs attention | Fix issue and reopen to Todo |
+
+## Creating a Task
+
+Click **+ New Task** to create a task:
+
+1. **Title** — What needs to be done (concise)
+2. **Description** — Context and detailed requirements
+3. **Engine** — Which agent will execute: `claude`, `codex`, or `gemini`
+4. **Priority** — `highest`, `high`, `medium`, `none`, `low`, `lowest`
+5. **Labels** — Custom tags for organization (e.g., `backend`, `urgent`)
+6. **Acceptance Criteria** — Checklist of what "done" means
+
+## Drag and Drop
+
+Drag task cards between columns to update status:
+
+- **Inbox → Todo** — Task is planned and ready
+- **Todo → In Progress** — Agent starts work
+- **In Progress → Review** — Results submitted for inspection
+- **Review → Done** — Task approved and deployed
+- **Any → Blocked** — Task cannot proceed
+
+## Today Focus
+
+Pin important tasks to the **Today** section:
+
+1. Open a task card
+2. Click the **Pin** icon
+3. Pinned tasks appear at the top of the board
+
+Use this to surface your current priorities.
+
+## Command Palette
+
+Press `/` or `Cmd+K` to open the command palette:
+
+- Search tasks by title or ID
+- Quick-navigate to a task
+- Filter by status or label
+
+## Task Card Details
+
+Each card shows:
+
+- **Task ID** — Unique identifier (e.g., `PROJ-123`)
+- **Title** — Task name
+- **Priority** — Color-coded indicator
+- **Engine** — Which agent will work on it
+- **Status indicator** — Current state with timestamp
+- **Labels** — Custom tags
+
+Click a card to view full details, edit, or add comments.
+
+## Bulk Actions
+
+Select multiple tasks:
+
+1. Hold `Cmd/Ctrl` and click cards
+2. Use the action menu to:
+   - Change priority
+   - Add/remove labels
+   - Archive completed tasks
+   - Reassign engine
