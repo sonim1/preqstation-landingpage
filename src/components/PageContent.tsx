@@ -29,12 +29,12 @@ export default function PageContent({ translations, locale }: Props) {
         <Hero />
         <Problem />
         <Solution />
+        <WhoIsItFor />
         <WhyPreq />
         <Features />
         <Pipeline />
         <MultiEngine />
         <Pricing />
-        <WhoIsItFor />
         <FAQ />
         <CTA />
       </main>

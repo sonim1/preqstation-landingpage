@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import { motion, useInView } from "motion/react";
 import { useT } from "../../i18n/context";
 
@@ -26,10 +26,38 @@ function ScrollRow({
   rowIndex: number;
 }) {
   const isFor = variant === "for";
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  const checkScroll = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    setCanScrollLeft(el.scrollLeft > 4);
+    setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 4);
+  }, []);
+
+  useEffect(() => {
+    checkScroll();
+    const el = scrollRef.current;
+    if (!el) return;
+    el.addEventListener("scroll", checkScroll, { passive: true });
+    window.addEventListener("resize", checkScroll);
+    return () => {
+      el.removeEventListener("scroll", checkScroll);
+      window.removeEventListener("resize", checkScroll);
+    };
+  }, [checkScroll]);
+
+  const scroll = (dir: "left" | "right") => {
+    const el = scrollRef.current;
+    if (!el) return;
+    el.scrollBy({ left: dir === "left" ? -300 : 300, behavior: "smooth" });
+  };
 
   return (
     <div className="mb-12 last:mb-0">
-      {/* Row label */}
+      {/* Row label + arrows */}
       <motion.div
         initial={{ opacity: 0, x: -16 }}
         animate={inView ? { opacity: 1, x: 0 } : { opacity: 0, x: -16 }}
@@ -44,7 +72,7 @@ function ScrollRow({
               : "bg-coral/15 text-coral",
           ].join(" ")}
         >
-          {isFor ? "✓" : "✕"}
+          {isFor ? "\u2713" : "\u2715"}
         </span>
         <span
           className={[
@@ -61,90 +89,135 @@ function ScrollRow({
             isFor ? "bg-mint/20" : "bg-coral/20",
           ].join(" ")}
         />
+
+        {/* Scroll arrows */}
+        <div className="hidden md:flex items-center gap-1 ml-auto">
+          <button
+            onClick={() => scroll("left")}
+            aria-label="Scroll left"
+            className={[
+              "w-8 h-8 rounded-full flex items-center justify-center border transition-all duration-200",
+              canScrollLeft
+                ? isFor
+                  ? "border-mint/40 text-mint hover:bg-mint/10"
+                  : "border-coral/40 text-coral hover:bg-coral/10"
+                : "border-white/10 text-white/20 cursor-default",
+            ].join(" ")}
+            disabled={!canScrollLeft}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+          </button>
+          <button
+            onClick={() => scroll("right")}
+            aria-label="Scroll right"
+            className={[
+              "w-8 h-8 rounded-full flex items-center justify-center border transition-all duration-200",
+              canScrollRight
+                ? isFor
+                  ? "border-mint/40 text-mint hover:bg-mint/10"
+                  : "border-coral/40 text-coral hover:bg-coral/10"
+                : "border-white/10 text-white/20 cursor-default",
+            ].join(" ")}
+            disabled={!canScrollRight}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </button>
+        </div>
       </motion.div>
 
       {/* Horizontal scroll track */}
-      <div
-        className="flex gap-4 overflow-x-auto pb-3 px-6 md:px-0"
-        style={{
-          scrollSnapType: "x mandatory",
-          WebkitOverflowScrolling: "touch",
-          scrollbarWidth: "none",
-          msOverflowStyle: "none",
-        }}
-      >
-        <style>{`.who-scroll::-webkit-scrollbar { display: none; }`}</style>
+      <div className="relative">
+        {/* Left fade gradient */}
+        {canScrollLeft && (
+          <div className="absolute left-0 top-0 bottom-3 w-12 z-10 pointer-events-none bg-gradient-to-r from-charcoal/85 to-transparent md:block hidden" />
+        )}
 
-        {items.map((item, i) => (
-          <motion.div
-            key={item.title}
-            initial={{ opacity: 0, y: 20, scale: 0.96 }}
-            animate={
-              inView
-                ? { opacity: 1, y: 0, scale: 1 }
-                : { opacity: 0, y: 20, scale: 0.96 }
-            }
-            transition={{
-              duration: 0.42,
-              delay: rowIndex * 0.12 + i * 0.07 + 0.15,
-              ease: [0.22, 1, 0.36, 1],
-            }}
-            whileHover={
-              isFor
-                ? {
-                    y: -4,
-                    boxShadow: "0 8px 32px -4px rgba(0,184,148,0.18)",
-                  }
-                : { y: -2 }
-            }
-            className={[
-              "flex-shrink-0 w-[272px] md:w-[288px] rounded-2xl p-6 border transition-colors duration-200 cursor-default",
-              "bg-white/5 backdrop-blur-xl",
-              isFor
-                ? "border-white/10 hover:border-mint/40"
-                : "border-coral/20 hover:border-coral/40",
-            ].join(" ")}
-            style={{ scrollSnapAlign: "start" }}
-          >
-            {/* Icon */}
-            <div
-              className={[
-                "w-11 h-11 rounded-xl flex items-center justify-center text-xl mb-4",
-                isFor ? "bg-mint/10" : "bg-coral/10",
-              ].join(" ")}
-              style={
-                isFor
-                  ? { filter: "drop-shadow(0 0 8px rgba(0,184,148,0.25))" }
-                  : {}
+        <div
+          ref={scrollRef}
+          className="flex gap-4 overflow-x-auto pb-3 px-6 md:px-0"
+          style={{
+            scrollSnapType: "x mandatory",
+            WebkitOverflowScrolling: "touch",
+            scrollbarWidth: "none",
+            msOverflowStyle: "none",
+          }}
+        >
+          {items.map((item, i) => (
+            <motion.div
+              key={item.title}
+              initial={{ opacity: 0, y: 20, scale: 0.96 }}
+              animate={
+                inView
+                  ? { opacity: 1, y: 0, scale: 1 }
+                  : { opacity: 0, y: 20, scale: 0.96 }
               }
-            >
-              {item.icon}
-            </div>
-
-            {/* Title */}
-            <h3
+              transition={{
+                duration: 0.42,
+                delay: rowIndex * 0.12 + i * 0.07 + 0.15,
+                ease: [0.22, 1, 0.36, 1],
+              }}
+              whileHover={
+                isFor
+                  ? {
+                      y: -4,
+                      boxShadow: "0 8px 32px -4px rgba(0,184,148,0.18)",
+                    }
+                  : { y: -2 }
+              }
               className={[
-                "font-display font-semibold text-[15px] leading-snug mb-2",
-                isFor ? "text-white" : "text-white/80",
+                "flex-shrink-0 w-[272px] md:w-[288px] rounded-2xl p-6 border transition-colors duration-200 cursor-default",
+                "bg-white/5 backdrop-blur-xl",
+                isFor
+                  ? "border-white/10 hover:border-mint/40"
+                  : "border-coral/20 hover:border-coral/40",
               ].join(" ")}
+              style={{ scrollSnapAlign: "start" }}
             >
-              {item.title}
-            </h3>
+              {/* Icon */}
+              <div
+                className={[
+                  "w-11 h-11 rounded-xl flex items-center justify-center text-xl mb-4",
+                  isFor ? "bg-mint/10" : "bg-coral/10",
+                ].join(" ")}
+                style={
+                  isFor
+                    ? { filter: "drop-shadow(0 0 8px rgba(0,184,148,0.25))" }
+                    : {}
+                }
+              >
+                {item.icon}
+              </div>
 
-            {/* Desc */}
-            <p
-              className={[
-                "text-sm leading-relaxed",
-                isFor ? "text-white/50" : "text-white/60",
-              ].join(" ")}
-            >
-              {item.desc}
-            </p>
-          </motion.div>
-        ))}
+              {/* Title */}
+              <h3
+                className={[
+                  "font-display font-semibold text-[15px] leading-snug mb-2",
+                  isFor ? "text-white" : "text-white/80",
+                ].join(" ")}
+              >
+                {item.title}
+              </h3>
 
-        {/* trailing spacer for edge breathing room on mobile */}
-        <div className="flex-shrink-0 w-2 md:hidden" aria-hidden />
+              {/* Desc */}
+              <p
+                className={[
+                  "text-sm leading-relaxed",
+                  isFor ? "text-white/50" : "text-white/60",
+                ].join(" ")}
+              >
+                {item.desc}
+              </p>
+            </motion.div>
+          ))}
+
+          {/* trailing spacer for edge breathing room on mobile */}
+          <div className="flex-shrink-0 w-2 md:hidden" aria-hidden />
+        </div>
+
+        {/* Right fade gradient */}
+        {canScrollRight && (
+          <div className="absolute right-0 top-0 bottom-3 w-12 z-10 pointer-events-none bg-gradient-to-l from-charcoal/85 to-transparent md:block hidden" />
+        )}
       </div>
     </div>
   );
