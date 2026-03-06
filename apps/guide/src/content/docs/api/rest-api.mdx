@@ -132,8 +132,6 @@ curl -X PATCH -H "Authorization: Bearer preq_xxxxx" \
 | Method   | Endpoint          | Description               |
 | -------- | ----------------  | ----------------------- |
 | `POST`   | `/work-logs`      | Create work log entry   |
-| `GET`    | `/work-logs/:id`  | Get work log entry      |
-| `DELETE` | `/work-logs/:id`  | Delete work log entry   |
 
 ### Health
 
@@ -164,6 +162,13 @@ These endpoints are for the web UI and require an authenticated session.
 | `POST`   | `/task-labels`            | Create task label               |
 | `PATCH`  | `/task-labels/:id`        | Update task label               |
 | `DELETE` | `/task-labels/:id`        | Delete task label               |
+
+### Work Log Details
+
+| Method   | Endpoint          | Purpose                   |
+| -------- | ----------------  | ------------------------- |
+| `GET`    | `/work-logs/:id`  | Get work log entry        |
+| `DELETE` | `/work-logs/:id`  | Delete work log entry     |
 
 ### Events & Cleanup
 

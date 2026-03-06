@@ -10,6 +10,9 @@
   "devDependencies": {
     "turbo": "^2.5.4"
   },
+  "engines": {
+    "node": ">=22"
+  },
   "packageManager": "pnpm@10.6.5",
   "pnpm": {
     "onlyBuiltDependencies": ["@tsparticles/engine", "esbuild", "sharp"]

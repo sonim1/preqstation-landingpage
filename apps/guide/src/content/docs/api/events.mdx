@@ -63,12 +63,9 @@ CREATE TABLE events_outbox (
 
 ### Via REST API
 
-```bash
-curl -H "Authorization: Bearer preq_xxxxx" \
-  https://your-domain.com/api/events
-```
+This is an internal API endpoint that requires an authenticated session cookie (not Bearer token).
 
-Returns list of events (internal API, session cookie only):
+Returns list of events:
 
 ```json
 {
@@ -92,27 +89,7 @@ Returns list of events (internal API, session cookie only):
 
 ### Polling Pattern
 
-Poll `/api/events` periodically to process new events:
-
-```bash
-#!/bin/bash
-
-while true; do
-  # Fetch unprocessed events
-  curl -s -H "Authorization: Bearer preq_xxxxx" \
-    https://your-domain.com/api/events \
-    | jq '.data[] | select(.processedAt == null)' \
-    | while read event; do
-      # Process event
-      echo "Processing: $event"
-
-      # Mark as processed
-      # (future: PATCH /api/events/:id endpoint)
-    done
-
-  sleep 30
-done
-```
+Poll `/api/events` periodically to process new events. This endpoint requires an authenticated session (internal API).
 
 ## Work Logs
 
@@ -145,25 +122,11 @@ curl -X POST -H "Authorization: Bearer preq_xxxxx" \
 
 ### Retrieving Work Logs
 
-```bash
-curl -H "Authorization: Bearer preq_xxxxx" \
-  https://your-domain.com/api/work-logs/:id
-```
+Retrieve individual work logs via the `/api/work-logs/:id` endpoint (internal API, session cookie required). View work logs in the web UI under task details.
 
 ## Cleanup
 
-Old events can be archived or deleted via:
-
-```bash
-curl -X POST -H "Authorization: Bearer preq_xxxxx" \
-  https://your-domain.com/api/events/cleanup \
-  -H "Content-Type: application/json" \
-  -d '{
-    "olderThan": "2025-01-01"
-  }'
-```
-
-This moves processed events older than the specified date to an archive table (implementation-dependent).
+Old events can be archived or deleted via the `/api/events/cleanup` endpoint (internal API, session cookie required). This removes processed events older than a specified date.
 
 ## Use Cases
 
