@@ -14,7 +14,7 @@ const containerVariants = {
 export default function Problem() {
   const t = useT();
   return (
-    <section className="py-24 bg-kitchen-white">
+    <section className="py-24 bg-[#1e2528]/90">
       <div className="max-w-6xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
@@ -23,10 +23,10 @@ export default function Problem() {
           transition={{ duration: 0.5 }}
           className="text-center"
         >
-          <h2 className="font-display text-3xl md:text-5xl font-bold text-charcoal">
+          <h2 className="font-display text-3xl md:text-5xl font-bold text-white">
             {t.problem.title}
           </h2>
-          <p className="text-charcoal/60 text-center mt-4 text-lg">
+          <p className="text-white/50 text-center mt-4 text-lg">
             {t.problem.subtitle}
           </p>
         </motion.div>
@@ -42,13 +42,13 @@ export default function Problem() {
             <motion.div
               key={point.title}
               variants={cardVariants}
-              className="bg-white p-8 rounded-xl border border-steel/50 hover:border-coral/50 transition"
+              className="bg-white/5 backdrop-blur-xl p-8 rounded-xl border border-white/10 hover:border-coral/50 transition"
             >
               <div className="text-3xl mb-4">{point.icon}</div>
-              <h3 className="font-display text-lg font-semibold text-charcoal mb-2">
+              <h3 className="font-display text-lg font-semibold text-white mb-2">
                 {point.title}
               </h3>
-              <p className="text-charcoal/60 text-sm">{point.desc}</p>
+              <p className="text-white/50 text-sm">{point.desc}</p>
             </motion.div>
           ))}
         </motion.div>
@@ -65,7 +65,7 @@ export default function Problem() {
               <div className={`font-display text-4xl font-bold ${stat.color}`}>
                 {stat.value}
               </div>
-              <div className="text-sm text-charcoal/60 mt-1">{stat.label}</div>
+              <div className="text-sm text-white/50 mt-1">{stat.label}</div>
             </div>
           ))}
         </motion.div>

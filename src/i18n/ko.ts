@@ -13,6 +13,8 @@ const ko: typeof en = {
     badge: "\uac1c\ubc1c\uc790\uc758 \uc8fc\ubc29",
     title: "Task\ub97c \uc62c\ub9ac\uc138\uc694.\nAI\uac00 prep\ud569\ub2c8\ub2e4.",
     description: "Telegram\uc5d0 \uba54\uc2dc\uc9c0 \ud558\ub098 \ubcf4\ub0b4\uba74, AI\uac00 \uc790\ub3d9\uc73c\ub85c \ucf54\ub4dc\ub97c \uc791\uc131\ud558\uace0, \ud14c\uc2a4\ud2b8\ud558\uace0, PR\uc744 \uc62c\ub9bd\ub2c8\ub2e4. \uac1c\ubc1c\uc790\ub294 \ub9ac\ubdf0\ub9cc \ud569\ub2c8\ub2e4.",
+    preqTagline: "\ud050\uc5d0 \ub358\uc838\uc694. AI\uac00 \ucf54\ub529\ud574\uc694.",
+    prepTagline: "\uc900\ube44\ud558\uc138\uc694. AI\uac00 \ubc30\ud3ec\ud574\uc694.",
     cta: "Start Prepping",
     github: "View on GitHub",
     socialProof: "\uc624\ud508\uc18c\uc2a4 \u00b7 Self-hosted \u00b7 \uba40\ud2f0 AI \uc5d0\uc774\uc804\ud2b8",
@@ -140,6 +142,29 @@ const ko: typeof en = {
         bestFor: ["UI/UX \ub514\uc790\uc778", "\ubb38\uc11c \uc791\uc5c5", "\ub300\uaddc\ubaa8 \ucee8\ud14d\uc2a4\ud2b8"],
       },
     ],
+  },
+  whoIsItFor: {
+    title: "누가 쓸까요?",
+    forYou: {
+      title: "이런 분께 필요합니다",
+      items: [
+        { icon: "📱", title: "이동 중 아이디어", desc: "언제 어디서든 AI에 태스크를 던져요" },
+        { icon: "⚡", title: "멀티 프로젝트 진행", desc: "프로젝트마다 컨텍스트 잃지 않고 코딩" },
+        { icon: "🧠", title: "컨텍스트 스위칭", desc: "프리랜서라면? '여기서 뭘 했더라?' 끝" },
+        { icon: "🤖", title: "엔진별 전략 운영", desc: "태스크마다 Claude, Codex, Gemini 선택" },
+        { icon: "✅", title: "품질 중심 개발자", desc: "AI 결과물을 체계적으로 검수하는 개발자" },
+      ],
+    },
+    notForYou: {
+      title: "이런 분은 안 필요합니다",
+      items: [
+        { icon: "📋", title: "단순 이슈 트래커", desc: "Linear나 Jira를 추천합니다" },
+        { icon: "👥", title: "팀 협업 도구", desc: "Notion이나 Asana를 추천합니다" },
+        { icon: "🚫", title: "AI 코딩을 안 함", desc: "Preq는 AI 기반 워크플로우용이에요" },
+        { icon: "🐢", title: "프로젝트 하나만", desc: "여러 프로젝트를 동적으로 운영할 때 최적" },
+        { icon: "📅", title: "스프린트 관리", desc: "Jira나 Todoist를 추천합니다" },
+      ],
+    },
   },
   pricing: {
     title: "\ubb34\ub8cc. \uc624\ud508\uc18c\uc2a4. \uc601\uc6d0\ud788.",

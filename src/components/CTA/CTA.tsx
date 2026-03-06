@@ -5,7 +5,7 @@ export default function CTA() {
   const t = useT();
 
   return (
-    <section className="py-24 bg-charcoal text-white text-center">
+    <section className="py-24 bg-charcoal/90 text-white text-center">
       <div className="max-w-4xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 24 }}

@@ -4,7 +4,7 @@ export default function Footer() {
   const t = useT();
 
   return (
-    <footer className="py-12 bg-charcoal border-t border-white/10 text-white/50">
+    <footer className="relative z-10 py-12 bg-charcoal/90 border-t border-white/10 text-white/50">
       <div className="max-w-6xl mx-auto px-6">
         <div className="flex flex-col md:flex-row justify-between items-center gap-4">
           <div>

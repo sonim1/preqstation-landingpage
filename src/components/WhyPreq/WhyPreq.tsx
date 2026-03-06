@@ -5,7 +5,7 @@ export default function WhyPreq() {
   const t = useT();
 
   return (
-    <section className="py-24 bg-charcoal text-white">
+    <section className="py-24 bg-charcoal/90 text-white">
       <div className="max-w-6xl mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="font-display text-3xl md:text-5xl font-bold">
@@ -24,7 +24,7 @@ export default function WhyPreq() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ delay: i * 0.1, duration: 0.5 }}
-              className="bg-white/5 rounded-2xl p-8 border border-white/10 hover:border-mint/40 transition-colors"
+              className="bg-white/5 backdrop-blur-xl rounded-2xl p-8 border border-white/10 hover:border-mint/40 transition-colors"
             >
               <span className="text-4xl">{item.icon}</span>
               <h3 className="font-display text-xl font-bold text-white mt-4">

@@ -53,7 +53,7 @@ export default function Pipeline() {
   }, []);
 
   return (
-    <section className="py-24 bg-charcoal text-white overflow-hidden" ref={sectionRef}>
+    <section className="py-24 bg-charcoal/90 text-white overflow-hidden" ref={sectionRef}>
       <div className="max-w-6xl mx-auto px-6">
         <div className="text-center">
           <h2 className="font-display text-3xl md:text-5xl font-bold">

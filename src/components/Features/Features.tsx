@@ -14,7 +14,7 @@ const cardVariants = {
 export default function Features() {
   const t = useT();
   return (
-    <section className="py-24 bg-kitchen-white">
+    <section className="py-24 bg-[#1e2528]/90">
       <div className="max-w-6xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
@@ -23,10 +23,10 @@ export default function Features() {
           transition={{ duration: 0.5 }}
           className="text-center"
         >
-          <h2 className="font-display text-3xl md:text-5xl font-bold text-charcoal">
+          <h2 className="font-display text-3xl md:text-5xl font-bold text-white">
             {t.features.title}
           </h2>
-          <p className="text-charcoal/60 text-center mt-4 text-lg">
+          <p className="text-white/50 text-center mt-4 text-lg">
             {t.features.subtitle}
           </p>
         </motion.div>
@@ -42,7 +42,7 @@ export default function Features() {
             <motion.div
               key={feature.number}
               variants={cardVariants}
-              className="bg-white rounded-b-xl shadow-lg overflow-hidden"
+              className="bg-white/5 backdrop-blur-xl rounded-b-xl shadow-lg overflow-hidden"
             >
               {/* Torn ticket top edge */}
               <div
@@ -58,14 +58,14 @@ export default function Features() {
               />
 
               <div className="p-8">
-                <span className="font-mono text-6xl font-bold text-steel/50 leading-none block">
+                <span className="font-mono text-6xl font-bold text-white/20 leading-none block">
                   {feature.number}
                 </span>
                 <div className="text-3xl mt-2">{feature.icon}</div>
-                <h3 className="font-display text-xl font-bold text-charcoal mt-4">
+                <h3 className="font-display text-xl font-bold text-white mt-4">
                   {feature.title}
                 </h3>
-                <p className="text-charcoal/70 mt-2 text-sm leading-relaxed">
+                <p className="text-white/50 mt-2 text-sm leading-relaxed">
                   {feature.desc}
                 </p>
               </div>

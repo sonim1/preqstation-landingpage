@@ -4,7 +4,7 @@ import { useT } from "../../i18n/context";
 export default function Solution() {
   const t = useT();
   return (
-    <section className="py-24 bg-steel/20">
+    <section className="py-24 bg-charcoal/85">
       <div className="max-w-6xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
@@ -13,7 +13,7 @@ export default function Solution() {
           transition={{ duration: 0.5 }}
           className="text-center"
         >
-          <h2 className="font-display text-3xl md:text-5xl font-bold text-charcoal">
+          <h2 className="font-display text-3xl md:text-5xl font-bold text-white">
             {t.solution.title}{" "}
             <span className="text-mint">{t.solution.highlight}</span>
           </h2>
@@ -29,18 +29,18 @@ export default function Solution() {
             <div className="bg-charcoal text-white p-4 rounded-t-xl font-display text-lg font-semibold">
               {t.solution.chefHeader}
             </div>
-            <div className="bg-white p-6 rounded-b-xl">
+            <div className="bg-white/5 backdrop-blur-xl p-6 rounded-b-xl">
               {t.solution.chefItems.map((item) => (
                 <div
                   key={item.title}
-                  className="flex items-start gap-4 py-4 border-b border-steel/50 last:border-0"
+                  className="flex items-start gap-4 py-4 border-b border-white/10 last:border-0"
                 >
-                  <div className="w-2 h-2 rounded-full bg-charcoal mt-2 shrink-0" />
+                  <div className="w-2 h-2 rounded-full bg-white mt-2 shrink-0" />
                   <div>
-                    <div className="font-display font-semibold text-charcoal">
+                    <div className="font-display font-semibold text-white">
                       {item.title}
                     </div>
-                    <div className="text-sm text-charcoal/60 mt-0.5">
+                    <div className="text-sm text-white/50 mt-0.5">
                       {item.desc}
                     </div>
                   </div>
@@ -58,18 +58,18 @@ export default function Solution() {
             <div className="bg-mint text-white p-4 rounded-t-xl font-display text-lg font-semibold">
               {t.solution.aiHeader}
             </div>
-            <div className="bg-white p-6 rounded-b-xl">
+            <div className="bg-white/5 backdrop-blur-xl p-6 rounded-b-xl">
               {t.solution.aiItems.map((item) => (
                 <div
                   key={item.title}
-                  className="flex items-start gap-4 py-4 border-b border-steel/50 last:border-0"
+                  className="flex items-start gap-4 py-4 border-b border-white/10 last:border-0"
                 >
                   <div className="w-2 h-2 rounded-full bg-mint mt-2 shrink-0" />
                   <div>
-                    <div className="font-display font-semibold text-charcoal">
+                    <div className="font-display font-semibold text-white">
                       {item.title}
                     </div>
-                    <div className="text-sm text-charcoal/60 mt-0.5">
+                    <div className="text-sm text-white/50 mt-0.5">
                       {item.desc}
                     </div>
                   </div>
@@ -86,7 +86,7 @@ export default function Solution() {
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
-          <span className="font-display text-2xl md:text-3xl font-bold text-charcoal relative inline-block">
+          <span className="font-display text-2xl md:text-3xl font-bold text-white relative inline-block">
             {t.solution.bottomMessage}
             <span className="absolute inset-x-0 bottom-0 h-3 bg-mint/20 -z-10 translate-y-1" />
           </span>

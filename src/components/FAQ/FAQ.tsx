@@ -9,7 +9,7 @@ export default function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
-    <section className="py-24 bg-kitchen-white">
+    <section className="py-24 bg-[#1e2528]/90">
       <div className="max-w-3xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
@@ -18,7 +18,7 @@ export default function FAQ() {
           transition={{ duration: 0.5 }}
           className="text-center"
         >
-          <h2 className="font-display text-3xl md:text-5xl font-bold text-charcoal">
+          <h2 className="font-display text-3xl md:text-5xl font-bold text-white">
             {t.faq.title}
           </h2>
         </motion.div>
@@ -31,17 +31,17 @@ export default function FAQ() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: i * 0.08 }}
-              className="bg-white rounded-xl border border-steel overflow-hidden"
+              className="bg-white/5 backdrop-blur-xl rounded-xl border border-white/10 overflow-hidden"
             >
               <button
-                className="w-full flex justify-between items-center p-6 cursor-pointer hover:bg-steel/10 transition text-left"
+                className="w-full flex justify-between items-center p-6 cursor-pointer hover:bg-white/5 transition text-left"
                 onClick={() => setOpenIndex(openIndex === i ? null : i)}
               >
-                <span className="font-display font-semibold text-lg text-charcoal">
+                <span className="font-display font-semibold text-lg text-white">
                   {item.question}
                 </span>
                 <span
-                  className="text-charcoal/50 transition-transform duration-300 ml-4 flex-shrink-0"
+                  className="text-white/50 transition-transform duration-300 ml-4 flex-shrink-0"
                   style={{ transform: openIndex === i ? "rotate(180deg)" : "rotate(0deg)" }}
                 >
                   ▼
@@ -58,7 +58,7 @@ export default function FAQ() {
                     transition={{ duration: 0.3, ease: "easeInOut" }}
                     style={{ overflow: "hidden" }}
                   >
-                    <p className="px-6 pb-6 text-charcoal/70 leading-relaxed">
+                    <p className="px-6 pb-6 text-white/60 leading-relaxed">
                       {item.answer}
                     </p>
                   </motion.div>

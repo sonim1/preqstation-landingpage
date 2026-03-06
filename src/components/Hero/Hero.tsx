@@ -1,23 +1,30 @@
 import { motion } from "motion/react";
 import { useT } from "../../i18n/context";
+import LetterFlip from "./LetterFlip";
 
 export default function Hero() {
   const t = useT();
   return (
-    <section className="min-h-screen flex items-center bg-gradient-to-b from-kitchen-white to-steel/30">
+    <section className="min-h-screen flex items-center bg-gradient-to-b from-charcoal/80 to-[#1e2528]/80">
       <div className="max-w-4xl mx-auto text-center px-6 py-24">
         {/* Subtitle badge */}
-        <span className="inline-block bg-steel rounded-full px-4 py-1 text-sm font-body text-charcoal/70 mb-6">
+        <span className="inline-block bg-white/10 rounded-full px-4 py-1 text-sm font-body text-white/70 mb-6">
           {t.hero.badge}
         </span>
 
+        {/* Preq/Prep Station flip */}
+        <LetterFlip
+          preqTagline={t.hero.preqTagline}
+          prepTagline={t.hero.prepTagline}
+        />
+
         {/* Main title */}
-        <h1 className="font-display text-5xl md:text-7xl font-bold leading-tight text-charcoal whitespace-pre-line">
+        <h1 className="font-display text-5xl md:text-7xl font-bold leading-tight text-white whitespace-pre-line mt-6">
           {t.hero.title}
         </h1>
 
         {/* Description */}
-        <p className="text-lg text-charcoal/70 max-w-2xl mx-auto mt-6 font-body leading-relaxed">
+        <p className="text-lg text-white/60 max-w-2xl mx-auto mt-6 font-body leading-relaxed">
           {t.hero.description}
         </p>
 
@@ -31,14 +38,14 @@ export default function Hero() {
           </a>
           <a
             href="https://github.com"
-            className="border-2 border-charcoal text-charcoal px-8 py-4 rounded-full text-lg font-semibold hover:bg-charcoal hover:text-white transition font-body"
+            className="border-2 border-white text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-white hover:text-charcoal transition font-body"
           >
             {t.hero.github}
           </a>
         </div>
 
         {/* Social proof */}
-        <p className="text-sm text-charcoal/50 mt-8 font-body">
+        <p className="text-sm text-white/40 mt-8 font-body">
           {t.hero.socialProof}
         </p>
 
@@ -58,18 +65,18 @@ export default function Hero() {
                   ease: "easeInOut",
                 },
               }}
-              className="bg-white rounded-lg shadow-lg p-4 border border-steel w-48 text-left"
+              className="bg-white/5 backdrop-blur-xl rounded-lg shadow-lg p-4 border border-white/10 w-48 text-left"
             >
               {/* Perforated edge */}
-              <div className="border-b-2 border-dashed border-steel pb-2 mb-3" />
+              <div className="border-b-2 border-dashed border-white/10 pb-2 mb-3" />
 
-              <p className="font-mono text-xs text-charcoal/50 mb-1">{ticket.number}</p>
-              <p className="font-body text-sm font-semibold text-charcoal mb-3 leading-snug">
+              <p className="font-mono text-xs text-white/50 mb-1">{ticket.number}</p>
+              <p className="font-body text-sm font-semibold text-white mb-3 leading-snug">
                 {ticket.task}
               </p>
               <div className="flex items-center gap-2">
                 <span className={`w-2 h-2 rounded-full flex-shrink-0 ${ticket.dotColor}`} />
-                <span className="font-body text-xs text-charcoal/70">
+                <span className="font-body text-xs text-white/70">
                   {ticket.statusEmoji} {ticket.status}
                 </span>
               </div>

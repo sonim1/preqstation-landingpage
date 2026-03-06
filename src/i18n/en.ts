@@ -11,6 +11,8 @@ export default {
     badge: "The Developer's Kitchen",
     title: "Submit your task.\nAI preps the rest.",
     description: "Send one message on Telegram, and AI automatically writes code, runs tests, and creates a PR. You just review.",
+    preqTagline: "Queue your dreams. AI codes them.",
+    prepTagline: "Ready your code. AI ships it.",
     cta: "Start Prepping",
     github: "View on GitHub",
     socialProof: "Open Source \u00b7 Self-hosted \u00b7 Multi AI Agent",
@@ -138,6 +140,29 @@ export default {
         bestFor: ["UI/UX design", "Documentation", "Large-context tasks"],
       },
     ],
+  },
+  whoIsItFor: {
+    title: "Who is it for?",
+    forYou: {
+      title: "Perfect for you if...",
+      items: [
+        { icon: "📱", title: "Ideas on the go", desc: "Fire AI tasks from anywhere, anytime on mobile" },
+        { icon: "⚡", title: "Multi-project juggler", desc: "Vibe code across projects without context loss" },
+        { icon: "🧠", title: "Context switcher", desc: "Freelancing? No more 'What did I do here?'" },
+        { icon: "🤖", title: "Multi-engine strategist", desc: "Pick Claude, Codex, or Gemini per task" },
+        { icon: "✅", title: "Quality-focused dev", desc: "Systematically review and verify AI output" },
+      ],
+    },
+    notForYou: {
+      title: "Probably not for you if...",
+      items: [
+        { icon: "📋", title: "Need simple issue tracker", desc: "Try Linear or Jira instead" },
+        { icon: "👥", title: "Want team collab tool", desc: "Try Notion or Asana instead" },
+        { icon: "🚫", title: "Don't use AI for coding", desc: "Preq is built for AI-driven workflows" },
+        { icon: "🐢", title: "Single project, slow pace", desc: "Works best with ongoing, dynamic work" },
+        { icon: "📅", title: "Need sprint management", desc: "Try Jira or Todoist instead" },
+      ],
+    },
   },
   pricing: {
     title: "Free. Open Source. Forever.",
