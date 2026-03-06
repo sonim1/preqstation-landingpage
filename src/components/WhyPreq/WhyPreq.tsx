@@ -5,13 +5,13 @@ export default function WhyPreq() {
   const t = useT();
 
   return (
-    <section className="py-24 bg-kitchen-white">
+    <section className="py-24 bg-charcoal text-white">
       <div className="max-w-6xl mx-auto px-6">
         <div className="text-center mb-16">
-          <h2 className="font-display text-3xl md:text-5xl font-bold text-charcoal">
+          <h2 className="font-display text-3xl md:text-5xl font-bold">
             {t.whyPreq.title}
           </h2>
-          <p className="text-charcoal/60 mt-4 text-lg">
+          <p className="text-white/60 mt-4 text-lg">
             {t.whyPreq.subtitle}
           </p>
         </div>
@@ -24,13 +24,13 @@ export default function WhyPreq() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ delay: i * 0.1, duration: 0.5 }}
-              className="bg-white rounded-2xl p-8 border border-steel/50 hover:border-mint/50 transition-colors"
+              className="bg-white/5 rounded-2xl p-8 border border-white/10 hover:border-mint/40 transition-colors"
             >
               <span className="text-4xl">{item.icon}</span>
-              <h3 className="font-display text-xl font-bold text-charcoal mt-4">
+              <h3 className="font-display text-xl font-bold text-white mt-4">
                 {item.title}
               </h3>
-              <p className="text-charcoal/60 mt-2 leading-relaxed">
+              <p className="text-white/60 mt-2 leading-relaxed">
                 {item.desc}
               </p>
             </motion.div>
