@@ -88,7 +88,7 @@ export default function Pipeline() {
                 <span className="font-display text-sm md:text-base mt-3 text-center text-white">
                   {step.label}
                 </span>
-                <span className="text-xs text-white/40 mt-1">{step.id}</span>
+                <span className="text-xs text-white/50 mt-1">{step.id}</span>
               </div>
             ))}
           </div>

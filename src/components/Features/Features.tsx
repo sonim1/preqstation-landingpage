@@ -26,7 +26,7 @@ export default function Features() {
           <h2 className="font-display text-3xl md:text-5xl font-bold text-white">
             {t.features.title}
           </h2>
-          <p className="text-white/50 text-center mt-4 text-lg">
+          <p className="text-white/60 text-center mt-4 text-lg">
             {t.features.subtitle}
           </p>
         </motion.div>
@@ -65,7 +65,7 @@ export default function Features() {
                 <h3 className="font-display text-xl font-bold text-white mt-4">
                   {feature.title}
                 </h3>
-                <p className="text-white/50 mt-2 text-sm leading-relaxed">
+                <p className="text-white/60 mt-2 text-sm leading-relaxed">
                   {feature.desc}
                 </p>
               </div>

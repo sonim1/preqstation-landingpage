@@ -26,7 +26,7 @@ export default function Problem() {
           <h2 className="font-display text-3xl md:text-5xl font-bold text-white">
             {t.problem.title}
           </h2>
-          <p className="text-white/50 text-center mt-4 text-lg">
+          <p className="text-white/60 text-center mt-4 text-lg">
             {t.problem.subtitle}
           </p>
         </motion.div>
@@ -48,7 +48,7 @@ export default function Problem() {
               <h3 className="font-display text-lg font-semibold text-white mb-2">
                 {point.title}
               </h3>
-              <p className="text-white/50 text-sm">{point.desc}</p>
+              <p className="text-white/60 text-sm">{point.desc}</p>
             </motion.div>
           ))}
         </motion.div>
@@ -65,7 +65,7 @@ export default function Problem() {
               <div className={`font-display text-4xl font-bold ${stat.color}`}>
                 {stat.value}
               </div>
-              <div className="text-sm text-white/50 mt-1">{stat.label}</div>
+              <div className="text-sm text-white/60 mt-1">{stat.label}</div>
             </div>
           ))}
         </motion.div>

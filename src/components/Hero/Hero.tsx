@@ -32,7 +32,7 @@ export default function Hero() {
         <div className="flex gap-4 justify-center mt-10 flex-wrap">
           <a
             href="#"
-            className="bg-mint text-white px-8 py-4 rounded-full text-lg font-semibold hover:scale-105 transition font-body"
+            className="bg-mint text-charcoal px-8 py-4 rounded-full text-lg font-semibold hover:scale-105 transition font-body"
           >
             {t.hero.cta}
           </a>
@@ -45,7 +45,7 @@ export default function Hero() {
         </div>
 
         {/* Social proof */}
-        <p className="text-sm text-white/40 mt-8 font-body">
+        <p className="text-sm text-white/50 mt-8 font-body">
           {t.hero.socialProof}
         </p>
 
@@ -70,7 +70,7 @@ export default function Hero() {
               {/* Perforated edge */}
               <div className="border-b-2 border-dashed border-white/10 pb-2 mb-3" />
 
-              <p className="font-mono text-xs text-white/50 mb-1">{ticket.number}</p>
+              <p className="font-mono text-xs text-white/60 mb-1">{ticket.number}</p>
               <p className="font-body text-sm font-semibold text-white mb-3 leading-snug">
                 {ticket.task}
               </p>

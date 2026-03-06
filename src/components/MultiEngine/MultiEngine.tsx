@@ -16,7 +16,7 @@ export default function MultiEngine() {
           <h2 className="font-display text-3xl md:text-5xl font-bold text-white">
             {t.multiEngine.title}
           </h2>
-          <p className="text-white/50 text-center mt-4">
+          <p className="text-white/60 text-center mt-4">
             {t.multiEngine.subtitle}
           </p>
         </motion.div>
@@ -40,7 +40,7 @@ export default function MultiEngine() {
                 <div className="font-display text-xl font-bold mt-4 text-white">
                   {engine.name}
                 </div>
-                <div className="text-white/40 text-sm">{engine.company}</div>
+                <div className="text-white/50 text-sm">{engine.company}</div>
                 <p className="text-white/60 mt-3 flex-1">{engine.desc}</p>
                 <div className="flex flex-wrap gap-2 mt-4">
                   {engine.bestFor.map((item) => (

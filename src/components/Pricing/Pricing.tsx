@@ -16,7 +16,7 @@ export default function Pricing() {
           <h2 className="font-display text-3xl md:text-5xl font-bold text-white">
             {t.pricing.title}
           </h2>
-          <p className="text-white/50 mt-4">
+          <p className="text-white/60 mt-4">
             {t.pricing.subtitle}
           </p>
         </motion.div>
@@ -29,7 +29,7 @@ export default function Pricing() {
           className="mt-16 bg-white/5 backdrop-blur-xl rounded-2xl shadow-xl p-12 border border-white/10"
         >
           <div className="font-display text-6xl font-bold text-mint">{t.pricing.price}</div>
-          <div className="text-white/40 text-lg mt-2">{t.pricing.priceLabel}</div>
+          <div className="text-white/50 text-lg mt-2">{t.pricing.priceLabel}</div>
 
           <div className="h-px bg-white/10 my-8" />
 
@@ -44,7 +44,7 @@ export default function Pricing() {
 
           <a
             href="https://github.com"
-            className="inline-block bg-mint text-white px-8 py-4 rounded-full mt-8 hover:bg-mint/80 transition font-display font-semibold"
+            className="inline-block bg-mint text-charcoal px-8 py-4 rounded-full mt-8 hover:bg-mint/80 transition font-display font-semibold"
           >
             {t.pricing.cta}
           </a>

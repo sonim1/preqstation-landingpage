@@ -118,7 +118,7 @@ export default function LetterFlip({ preqTagline, prepTagline }: Props) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 4 }}
             transition={{ duration: 0.25 }}
-            className="text-base md:text-lg text-white/50 font-body"
+            className="text-base md:text-lg text-white/60 font-body"
           >
             {showP ? prepTagline : preqTagline}
           </motion.p>

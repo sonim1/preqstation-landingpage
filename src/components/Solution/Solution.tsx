@@ -40,7 +40,7 @@ export default function Solution() {
                     <div className="font-display font-semibold text-white">
                       {item.title}
                     </div>
-                    <div className="text-sm text-white/50 mt-0.5">
+                    <div className="text-sm text-white/60 mt-0.5">
                       {item.desc}
                     </div>
                   </div>
@@ -69,7 +69,7 @@ export default function Solution() {
                     <div className="font-display font-semibold text-white">
                       {item.title}
                     </div>
-                    <div className="text-sm text-white/50 mt-0.5">
+                    <div className="text-sm text-white/60 mt-0.5">
                       {item.desc}
                     </div>
                   </div>

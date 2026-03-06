@@ -30,7 +30,7 @@ export default function Nav({ locale }: { locale: string }) {
           </span>
           <a
             href="#"
-            className="bg-mint text-white rounded-full px-6 py-2 text-sm font-semibold hover:opacity-90 transition"
+            className="bg-mint text-charcoal rounded-full px-6 py-2 text-sm font-semibold hover:opacity-90 transition"
           >
             {t.nav.cta}
           </a>
