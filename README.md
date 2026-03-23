@@ -1,43 +1,92 @@
-# Astro Starter Kit: Minimal
+# PREQSTATION Landingpage
 
-```sh
-npm create astro@latest -- --template minimal
+This repository contains the public PREQSTATION website monorepo:
+
+- `apps/landing` — the landing page served at `/`
+- `apps/guide` — the Astro Starlight guide served at `/guide`
+
+The repo uses `pnpm` workspaces and `turbo`.
+
+## Requirements
+
+- Node.js `22`
+- `pnpm` `10.6.5`
+
+## Local Development
+
+Install dependencies from the repository root:
+
+```bash
+pnpm install
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+Run both apps in development:
 
-## 🚀 Project Structure
+```bash
+pnpm dev
+```
 
-Inside of your Astro project, you'll see the following folders and files:
+Typical local URLs:
+
+- landing: `http://localhost:4321/`
+- guide: `http://localhost:4322/guide`
+
+Run a single app:
+
+```bash
+pnpm --filter @preqstation/landing dev
+pnpm --filter @preqstation/guide dev
+```
+
+## Build
+
+Build both apps:
+
+```bash
+pnpm build
+```
+
+Build the Cloudflare Pages artifact:
+
+```bash
+pnpm run build:pages
+```
+
+That command creates a merged static output in `.cf-pages-dist`:
+
+- `.cf-pages-dist/` for the landing page
+- `.cf-pages-dist/guide/` for the guide
+
+## Deployment
+
+The default deployment target is a single Cloudflare Pages project:
+
+- site root: `https://preqstation.com/`
+- guide: `https://preqstation.com/guide`
+
+Recommended Pages settings:
+
+- Root directory: `/`
+- Build command: `pnpm run build:pages`
+- Build output directory: `.cf-pages-dist`
+
+See [DEPLOY.md](./DEPLOY.md) for the full deployment notes.
+
+## Repository Layout
 
 ```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+.
+├── apps/
+│   ├── guide/
+│   └── landing/
+├── scripts/
+│   └── build-pages.sh
+├── DEPLOY.md
+├── package.json
+├── pnpm-workspace.yaml
+└── turbo.json
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## License
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
-
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+MIT. See [LICENSE](./LICENSE).

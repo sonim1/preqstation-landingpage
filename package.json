@@ -2,6 +2,12 @@
   "name": "preqstation-monorepo",
   "private": true,
   "version": "0.0.1",
+  "license": "MIT",
+  "homepage": "https://preqstation.com",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:sonim1/preqstation-landingpage.git"
+  },
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
