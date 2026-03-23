@@ -10,18 +10,18 @@ interface Props {
 
 const {
   title = "Preq Station — AI Agent Execution Platform",
-  description = "Submit a task. AI preps it. An open-source AI agent execution platform that solves the Last Mile of vibe coding.",
+  description = "Queue a task, let agents plan and execute it, then verify the result. An open-source, self-hosted AI agent execution platform.",
   lang = "en",
   locale = "en",
 } = Astro.props;
 
 const schemaDescription = locale === "ko"
-  ? "AI 에이전트 실행 플랫폼 - Task를 올리면 AI가 코드를 작성하고, 테스트하고, PR을 올립니다."
-  : "AI Agent Execution Platform - Submit a task and AI writes code, runs tests, and creates PRs.";
+  ? "AI 에이전트 실행 플랫폼 - 태스크를 큐에 넣고, 에이전트가 계획과 구현을 수행한 뒤, Ready에서 검증하고 Done으로 완료합니다."
+  : "AI Agent Execution Platform - Queue tasks, let agents plan and execute, then verify in Ready before Done.";
 
 const schemaFeatures = locale === "ko"
-  ? ["AI Task 자동화", "멀티 AI 에이전트 (Claude, Codex, Gemini)", "Telegram 원격 트리거", "Self-hosted 오픈소스"]
-  : ["AI Task Automation", "Multi AI Agent (Claude, Codex, Gemini)", "Telegram Remote Trigger", "Self-hosted Open Source"];
+  ? ["워크플로우와 run_state 분리", "멀티 AI 에이전트 (Claude, Codex, Gemini)", "Telegram 및 OpenClaw 릴레이", "Self-hosted 오픈소스"]
+  : ["Workflow and run-state separation", "Multi AI Agent (Claude, Codex, Gemini)", "Telegram and OpenClaw relays", "Self-hosted Open Source"];
 ---
 
 <html lang={lang}>

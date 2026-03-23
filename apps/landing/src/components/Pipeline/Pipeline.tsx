@@ -7,8 +7,8 @@ gsap.registerPlugin(ScrollTrigger);
 
 const stepStyles = [
   { bg: "bg-steel", text: "text-charcoal" },
-  { bg: "bg-steel", text: "text-charcoal" },
   { bg: "bg-warm-yellow", text: "text-charcoal" },
+  { bg: "bg-coral", text: "text-white" },
   { bg: "bg-review-blue", text: "text-charcoal" },
   { bg: "bg-mint", text: "text-charcoal" },
 ];
@@ -92,7 +92,14 @@ export default function Pipeline() {
               </div>
             ))}
           </div>
-
+          <div className="mt-10 max-w-3xl mx-auto rounded-2xl border border-white/10 bg-white/5 px-6 py-5 text-center">
+            <p className="font-display text-xs uppercase tracking-[0.24em] text-mint">
+              {t.pipeline.blocked}
+            </p>
+            <p className="mt-3 text-sm text-white/60 leading-relaxed">
+              {t.pipeline.blockedTooltip}
+            </p>
+          </div>
         </div>
       </div>
     </section>

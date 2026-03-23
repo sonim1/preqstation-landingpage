@@ -1,10 +1,13 @@
 import { defineConfig } from 'astro/config';
+import sitemap from '@astrojs/sitemap';
 import starlight from '@astrojs/starlight';
 
 export default defineConfig({
+  site: 'https://preqstation.com',
   base: '/guide',
   legacy: { collections: true },
   integrations: [
+    sitemap(),
     starlight({
       title: 'PREQSTATION Guide',
       customCss: ['./src/styles/custom.css'],

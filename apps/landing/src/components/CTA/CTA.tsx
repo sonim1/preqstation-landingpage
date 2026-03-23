@@ -22,13 +22,13 @@ export default function CTA() {
 
           <div className="flex gap-4 justify-center mt-12 flex-wrap">
             <a
-              href="#"
+              href="/guide/getting-started/overview"
               className="bg-mint text-charcoal px-10 py-5 rounded-full text-lg font-display font-bold hover:scale-105 transition"
             >
               {t.cta.primary}
             </a>
             <a
-              href="https://github.com"
+              href="https://github.com/preq"
               className="border-2 border-white text-white px-10 py-5 rounded-full text-lg font-display font-semibold hover:bg-white hover:text-charcoal transition"
             >
               {t.cta.secondary}

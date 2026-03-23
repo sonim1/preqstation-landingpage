@@ -31,13 +31,13 @@ export default function Hero() {
         {/* CTA buttons */}
         <div className="flex gap-4 justify-center mt-10 flex-wrap">
           <a
-            href="#"
+            href="/guide/getting-started/overview"
             className="bg-mint text-charcoal px-8 py-4 rounded-full text-lg font-semibold hover:scale-105 transition font-body"
           >
             {t.hero.cta}
           </a>
           <a
-            href="https://github.com"
+            href="https://github.com/preq"
             className="border-2 border-white text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-white hover:text-charcoal transition font-body"
           >
             {t.hero.github}

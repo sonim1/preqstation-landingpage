@@ -3,7 +3,7 @@ title: Kanban Board
 description: Manage tasks visually with the Kanban board.
 ---
 
-The Kanban board is your main interface for managing tasks. It displays tasks in six columns representing the task lifecycle.
+The Kanban board is your main interface for managing tasks. It displays the five active workflow columns: Inbox, Todo, Hold, Ready, and Done.
 
 ## Task Statuses
 
@@ -11,10 +11,11 @@ The Kanban board is your main interface for managing tasks. It displays tasks in
 |---|---|---|
 | **Inbox** | New tasks waiting for planning | Agent should run `preq_plan_task` to move to Todo |
 | **Todo** | Planned and ready for agents | Agent can start work with `preq_start_task` |
-| **In Progress** | Agent is actively working | Agent submits results with `preq_complete_task` |
-| **Review** | Results ready for inspection | You review and run `preq_review_task` to approve or block |
-| **Done** | Task complete and deployed | Archive or reopen if needed |
-| **Blocked** | Cannot proceed; needs attention | Fix issue and reopen to Todo |
+| **Hold** | Blocked or paused | Agent or user resolves the blocker, then retries |
+| **Ready** | Implementation submitted for verification | You review and run `preq_review_task` to move to Done |
+| **Done** | Task verified and complete | Archive or reopen if needed |
+
+Archived tasks are hidden from the active board and handled through manual archive actions.
 
 ## Creating a Task
 
@@ -22,7 +23,7 @@ Click **+ New Task** to create a task:
 
 1. **Title** — What needs to be done (concise)
 2. **Description** — Context and detailed requirements
-3. **Engine** — Which agent will execute: `claude`, `codex`, or `gemini`
+3. **Engine** — Which agent will execute: `claude-code`, `codex`, or `gemini-cli`
 4. **Priority** — `highest`, `high`, `medium`, `low`, `lowest`
 5. **Labels** — Custom tags for organization (e.g., `backend`, `urgent`)
 6. **Acceptance Criteria** — Checklist of what "done" means
@@ -32,10 +33,10 @@ Click **+ New Task** to create a task:
 Drag task cards between columns to update status:
 
 - **Inbox → Todo** — Task is planned and ready
-- **Todo → In Progress** — Agent starts work
-- **In Progress → Review** — Results submitted for inspection
-- **Review → Done** — Task approved and deployed
-- **Any → Blocked** — Task cannot proceed
+- **Todo ↔ Hold** — Pause or resume blocked work
+- **Todo/Hold → Ready** — Implementation is complete and ready for verification
+- **Ready → Done** — Verification passed
+- **Done → Todo/Hold** — Reopen for follow-up work
 
 ## Today Focus
 
@@ -63,7 +64,8 @@ Each card shows:
 - **Title** — Task name
 - **Priority** — Color-coded indicator
 - **Engine** — Which agent will work on it
-- **Status indicator** — Current state with timestamp
+- **Status indicator** — Current workflow state with timestamp
+- **Execution overlay** — Optional `Queued` or `Working` badge independent from the column
 - **Labels** — Custom tags
 
 Click a card to view full details, edit, or add comments.

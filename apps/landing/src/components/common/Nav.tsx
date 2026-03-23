@@ -40,7 +40,7 @@ export default function Nav({ locale }: { locale: string }) {
         <span className="font-display text-xl font-bold text-white">Preq Station</span>
         <div className="flex items-center gap-5">
           <a
-            href="https://github.com"
+            href="https://github.com/preq"
             className="text-white/70 hover:text-white transition text-sm font-medium"
           >
             {t.nav.github}
@@ -88,7 +88,7 @@ export default function Nav({ locale }: { locale: string }) {
           </div>
 
           <a
-            href="#"
+            href="/guide/getting-started/overview"
             className="bg-mint text-charcoal rounded-full px-6 py-2 text-sm font-semibold hover:opacity-90 transition"
           >
             {t.nav.cta}

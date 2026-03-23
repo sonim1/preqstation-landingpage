@@ -1,81 +1,97 @@
 # Cloudflare Pages Deployment
 
-This monorepo deploys as two separate Cloudflare Pages projects.
+This monorepo should deploy to Cloudflare Pages as one public site:
 
-## Projects
+- `https://preqstation.com/` for the landing site
+- `https://preqstation.com/guide` for the guide
 
-### Project 1: preqstation-landing (main site)
+That matches the current code:
 
-| Setting | Value |
-|---|---|
-| Build command | `pnpm run build --filter=@preqstation/landing` |
-| Build output directory | `apps/landing/dist` |
-| Root directory | `/` (repo root) |
-| Node version | `22` |
+- landing already uses `site: 'https://preqstation.com'`
+- guide already uses `base: '/guide'`
+- guide content already links with `/guide/...` paths
 
-**Environment variables:**
-```
-NODE_VERSION=22
-```
+## Recommended Topology
 
-**Custom domain:** `preqstation.dev`
-
----
-
-### Project 2: preqstation-guide (docs)
+Use one Cloudflare Pages project that publishes a merged static artifact.
 
 | Setting | Value |
 |---|---|
-| Build command | `pnpm run build --filter=@preqstation/guide` |
-| Build output directory | `apps/guide/dist` |
-| Root directory | `/` (repo root) |
+| Framework preset | `None` |
+| Root directory | `/` |
+| Build command | `pnpm run build:pages` |
+| Build output directory | `.cf-pages-dist` |
 | Node version | `22` |
+| pnpm version | `10.6.5` |
 
-**Environment variables:**
-```
+Environment variables:
+
+```text
 NODE_VERSION=22
+PNPM_VERSION=10.6.5
 ```
 
-**Custom domain:** `guide.preqstation.dev`
+Recommended build watch paths:
 
----
-
-## Routing /guide/* to the guide project
-
-To serve the guide under `preqstation.dev/guide`, set up a Cloudflare Rule (Transform Rule or Page Rule) to proxy requests:
-
-1. In the **preqstation-landing** Cloudflare Pages project, go to **Settings → Functions → Proxy**.
-2. Alternatively, add a Cloudflare **Transform Rule** at the zone level:
-   - Match: `http.request.uri.path matches "^/guide(/.*)?$"`
-   - Action: Rewrite / proxy to `guide.preqstation.dev`
-
-Or use a `_worker.js` / `_routes.json` in the landing app to forward `/guide/*` to the guide Pages project URL.
-
----
-
-## Two-project strategy
-
-```
-preqstation.dev          → preqstation-landing Pages project
-preqstation.dev/guide/*  → proxied to guide.preqstation.dev (preqstation-guide Pages project)
-guide.preqstation.dev    → preqstation-guide Pages project (direct)
+```text
+apps/landing/*
+apps/guide/*
+package.json
+pnpm-lock.yaml
+pnpm-workspace.yaml
+turbo.json
+.node-version
 ```
 
-The guide app has `base: '/guide'` set in `apps/guide/astro.config.mjs`, so all its internal links and assets are prefixed correctly.
+## How The Merged Artifact Works
 
----
+`pnpm run build:pages` does this:
 
-## Local build verification
+1. Builds both Astro apps
+2. Copies `apps/landing/dist` to `.cf-pages-dist/`
+3. Copies `apps/guide/dist` to `.cf-pages-dist/guide/`
+4. Preserves the root `_headers` file from landing
+
+Expected output:
+
+```text
+.cf-pages-dist/index.html
+.cf-pages-dist/guide/index.html
+.cf-pages-dist/_headers
+```
+
+## Local Verification
 
 ```bash
-# Build both apps
-pnpm run build
-
-# Build individually
-pnpm run build --filter=@preqstation/landing
-pnpm run build --filter=@preqstation/guide
+pnpm install
+pnpm run build:pages
 ```
 
-Output directories:
-- Landing: `apps/landing/dist/`
-- Guide: `apps/guide/dist/`
+Optional checks:
+
+```bash
+pnpm --filter @preqstation/landing build
+pnpm --filter @preqstation/guide build
+rg -n "https://preqstation.com/guide" apps/guide/dist/index.html apps/guide/dist/api/task-lifecycle/index.html
+```
+
+## Why This Is The Default
+
+The guide is path-coupled today:
+
+- `apps/guide/astro.config.mjs` sets `base: '/guide'`
+- guide docs use absolute `/guide/...` links
+- the built HTML outputs `/guide/...` asset and route paths
+
+Because of that, a single Pages project is simpler than running a second Pages project plus proxy rules.
+
+## Alternative: Two Pages Projects
+
+Only use this if you intentionally want a separate docs host such as `guide.preqstation.com`.
+
+If you do that, you must also revisit:
+
+- `apps/guide/astro.config.mjs`
+- guide absolute `/guide/...` links
+- canonical URLs and sitemap host
+- preview deployment behavior across both projects

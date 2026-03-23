@@ -12,14 +12,14 @@ PREQSTATION is a task management platform designed for AI-agent-driven developme
 PREQSTATION consists of three interconnected services:
 
 <CardGrid>
-	<Card title="project-manager" icon="setting">
-		Central web service. Manages tasks, renders the Kanban UI, exposes the REST API, sends Telegram notifications.
+	<Card title="projects-manager" icon="setting">
+		Central web app. Manages tasks, renders the Kanban UI, exposes the REST API, and can relay Telegram/OpenClaw messages.
 	</Card>
 	<Card title="preqstation-openclaw" icon="rocket">
-		Trigger layer. Receives Telegram messages and launches coding agents in isolated git worktrees.
+		Execution skill package. OpenClaw imports it to resolve projects, create worktrees, and launch coding agents.
 	</Card>
 	<Card title="preqstation-skill" icon="approve">
-		Agent client. MCP server and shell helpers for agents to call project-manager APIs during execution.
+		Agent client. MCP server and shell helpers for agents to call projects-manager APIs during execution.
 	</Card>
 </CardGrid>
 
@@ -27,14 +27,14 @@ PREQSTATION consists of three interconnected services:
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
-│                   project-manager (Web Service)              │
+│                  projects-manager (Web App)                  │
 │                                                              │
-│  Next.js 16 · React 19 · Mantine 8 · Prisma 6 · Neon PG    │
+│  Next.js 16 · React 19 · Mantine 8 · Drizzle · Neon PG     │
 │                                                              │
 │  ┌────────────┐  ┌──────────────┐  ┌───────────────────┐    │
 │  │ Kanban UI  │  │  REST API    │  │  Telegram Client  │    │
-│  │ Dashboard  │  │  /api/tasks  │  │  /api/telegram    │    │
-│  │ Settings   │  │  /api/keys   │  │                   │    │
+│  │ Dashboard  │  │  /api/tasks  │  │ /api/telegram/*   │    │
+│  │ Settings   │  │ /api/api-keys│  │                   │    │
 │  └────────────┘  └──────┬───────┘  └────────┬──────────┘    │
 │                         │                    │               │
 └─────────────────────────┼────────────────────┼───────────────┘
@@ -46,12 +46,12 @@ PREQSTATION consists of three interconnected services:
                           │           │    Telegram     │
                           │           └────────┬────────┘
                           │                    │
-                          │                    │ User forwards / bot relays
+                          │                    │ User message / bot relay
                           │                    ▼
                           │           ┌─────────────────────────────────┐
                           │           │      OpenClaw (Runtime)         │
                           │           │                                 │
-                          │           │  Receives message, triggers     │
+                          │           │  Receives request, imports      │
                           │           │  preqstation-openclaw skill     │
                           │           └────────────────┬────────────────┘
                           │                            │
@@ -62,7 +62,8 @@ PREQSTATION consists of three interconnected services:
                           │                            ▼
                           │           ┌─────────────────────────────────┐
                           │           │     Coding Agent                │
-                          │           │     (Claude / Codex / Gemini)   │
+                          │           │ ("claude-code" / "codex" /      │
+                          │           │   "gemini-cli")                 │
                           │           │                                 │
                           │           │  Runs in isolated worktree      │
                           │           │  Implements code changes        │
@@ -77,18 +78,18 @@ PREQSTATION consists of three interconnected services:
 
 ```
 User creates task in Kanban UI
-  → project-manager stores in PostgreSQL
+  → projects-manager stores in PostgreSQL
   → (optional) sends Telegram notification
 ```
 
-### Agent Trigger via Telegram + OpenClaw
+### Agent Trigger via OpenClaw
 
 ```
-Developer sends task request via Telegram
-  → OpenClaw receives message
+Developer sends task request to OpenClaw
+  → OpenClaw runtime receives message
     → preqstation-openclaw skill triggers
-      → Parses: engine, task ID, project key
-      → Resolves project path from MEMORY.md
+      → Parses: engine key, task ID, project key
+      → Resolves project path from agent memory
       → Creates isolated git worktree
       → Launches coding agent (claude/codex/gemini CLI)
 ```
@@ -98,16 +99,17 @@ Developer sends task request via Telegram
 ```
 Coding agent fetches task via preq_get_task, then:
 
-  inbox       → preq_plan_task (write plan, → todo)
-  todo        → preq_start_task (→ in_progress)
+  inbox       → preq_start_task (run_state → working)
+              → preq_plan_task (write plan, → todo, clear run_state)
+  todo/hold   → preq_start_task (run_state → working)
               → Implement + test + deploy per strategy
-              → preq_complete_task (→ review)
-  in_progress → Continue implement + test
-              → preq_complete_task (→ review)
-  review      → Run verification (tests, build, lint)
-              → preq_review_task (→ done)
+              → preq_complete_task (→ ready, clear run_state)
+  ready       → preq_start_task (run_state → working)
+              → Run verification (tests, build, lint)
+              → preq_review_task (→ done, clear run_state)
 
-  On any failure → preq_block_task (→ blocked)
+  Telegram dispatch before pickup may set run_state=queued
+  On any failure → preq_block_task (→ hold)
 ```
 
 ## Tech Stack
@@ -116,7 +118,7 @@ Coding agent fetches task via preq_get_task, then:
 | ---------- | ------------------------------------------- |
 | Framework  | Next.js 16 (App Router)                     |
 | UI         | React 19, Mantine 8, Tabler Icons, Recharts |
-| ORM        | Prisma 6                                    |
+| ORM        | Drizzle ORM                                 |
 | Database   | Neon PostgreSQL (Row Level Security)        |
 | Validation | Zod                                         |
 | Auth       | Session cookies (HMAC-signed), bcryptjs     |

@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
+    "build:pages": "bash ./scripts/build-pages.sh",
     "lint": "turbo run lint"
   },
   "devDependencies": {
