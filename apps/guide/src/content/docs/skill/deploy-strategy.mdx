@@ -49,7 +49,7 @@ When strategy is missing or invalid:
 | `deploy_strategy` | string | `direct_commit`, `feature_branch`, or `none` |
 | `deploy_default_branch` | string | Target branch name (usually `main`) |
 | `deploy_auto_pr` | boolean | Auto-create PR (feature_branch only) |
-| `deploy_commit_on_review` | boolean | Require remote push before review transition |
+| `deploy_commit_on_review` | boolean | Require remote push before the task can move to `ready` |
 | `deploy_squash_merge` | boolean | Squash commits (direct_commit only) |
 
 ## Strategy: none
@@ -63,8 +63,8 @@ Use this for:
 
 **Implementation:**
 ```bash
-# Just update the task status without any git push
-preq_complete_task PROJ-284 "Implementation complete" claude
+# Just update the task without any git push
+preq_complete_task PROJ-284 "Implementation complete" claude-code
 ```
 
 ## Strategy: direct_commit
@@ -94,7 +94,7 @@ git -C <project_cwd> push origin <default_branch>
 
 # Verify push succeeded before completing
 git ls-remote --heads origin <default_branch> | grep -q . && \
-  preq_complete_task PROJ-284 "Implemented rate limiting" claude
+  preq_complete_task PROJ-284 "Implemented rate limiting" claude-code
 ```
 </TabItem>
 <TabItem label="Regular Merge">
@@ -130,7 +130,7 @@ git -C <project_cwd> push origin <worktree_branch>
 
 # Verify push succeeded
 git ls-remote --heads origin <worktree_branch> | grep -q . || \
-  { preq_block_task PROJ-284 "Failed to push feature branch" claude; exit 1; }
+  { preq_block_task PROJ-284 "Failed to push feature branch" claude-code; exit 1; }
 
 # If auto_pr=true, create PR (requires GitHub MCP or gh CLI)
 if [ "$deploy_auto_pr" = "true" ]; then
@@ -142,7 +142,7 @@ fi
 # Complete task with branch and PR URL
 preq_complete_task PROJ-284 \
   "Implemented rate limiting" \
-  claude \
+  claude-code \
   "https://github.com/org/repo/pull/123" \
   "npm run test" \
   "" \
@@ -153,23 +153,23 @@ preq_complete_task PROJ-284 \
 
 When `deploy_commit_on_review=true` (default):
 
-- Agents must verify the remote push before moving to review
+- Agents must verify the remote push before moving the task to `ready`
 - Check branch exists on origin before calling `preq_complete_task`
-- Do not transition to review without successful push
+- Do not call `preq_complete_task` without a successful push
 
 **Example verification:**
 ```bash
 if ! git ls-remote --heads origin "$branch_name" | grep -q .; then
-  preq_block_task PROJ-284 "Remote push verification failed" claude
+  preq_block_task PROJ-284 "Remote push verification failed" claude-code
   exit 1
 fi
 
-preq_complete_task PROJ-284 "..." claude
+preq_complete_task PROJ-284 "..." claude-code
 ```
 
 When `deploy_commit_on_review=false`:
 
-- Review transition is allowed without mandatory remote push
+- Moving to `ready` is allowed without mandatory remote push
 - Useful for draft/WIP workflows
 
 ## Complete Execution Flow

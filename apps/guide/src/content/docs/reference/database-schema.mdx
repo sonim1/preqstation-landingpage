@@ -1,11 +1,11 @@
 ---
 title: Database Schema
-description: Complete database schema for PREQSTATION with table descriptions and purposes
+description: Current database tables and key columns in PREQSTATION.
 ---
 
 import { Aside } from '@astrojs/starlight/components';
 
-The PREQSTATION database (Neon PostgreSQL) stores tasks, projects, execution results, and audit trails. All data is scoped to a single owner via Row Level Security (RLS).
+The PREQSTATION database stores tasks, project metadata, work logs, and audit history. The current schema is defined in `projects-manager/lib/db/schema.ts`.
 
 ## Core Tables
 
@@ -14,217 +14,223 @@ The PREQSTATION database (Neon PostgreSQL) stores tasks, projects, execution res
 Single-owner account table.
 
 | Column | Type | Purpose |
-|--------|------|---------|
+|---|---|---|
 | `id` | UUID | Primary key |
-| `email` | String | Account email (unique) |
-| `password` | String | Bcryptjs hash |
-| `createdAt` | DateTime | Account creation timestamp |
+| `email` | Text | Login email |
+| `name` | Text | Optional display name |
+| `isOwner` | Boolean | Single-owner flag |
+| `createdAt` | Timestamp | Creation time |
+| `updatedAt` | Timestamp | Last update |
 
 <Aside type="note">
-PREQSTATION is single-owner. Only one user account exists per deployment. Multi-tenant support requires architectural changes.
+PREQSTATION is still modeled as a single-owner system. Multi-user support would require structural changes.
 </Aside>
-
-### tasks
-
-Task items with lifecycle tracking.
-
-| Column | Type | Purpose |
-|--------|------|---------|
-| `id` | UUID | Primary key |
-| `taskKey` | String | Human-readable key (e.g., `PROJ-123`) |
-| `title` | String | Task title |
-| `description` | Text | Full task description/body |
-| `status` | Enum | `inbox`, `todo`, `in_progress`, `review`, `done`, `blocked`, `archived` |
-| `priority` | Enum | `highest`, `high`, `medium`, `low`, `lowest` |
-| `engine` | String | `claude`, `codex`, or `gemini` — which AI executed the task |
-| `branch` | String | Git branch name for code changes |
-| `projectId` | UUID | Foreign key to `projects` |
-| `createdAt` | DateTime | Task creation timestamp |
-| `updatedAt` | DateTime | Last modification timestamp |
-
-### task_labels
-
-Custom label taxonomy for organizing tasks.
-
-| Column | Type | Purpose |
-|--------|------|---------|
-| `id` | UUID | Primary key |
-| `name` | String | Label name (unique per owner) |
-| `taskId` | UUID | Foreign key to `tasks` |
-| `createdAt` | DateTime | Label creation timestamp |
 
 ### projects
 
-GitHub/Vercel project tracking.
+Tracked repositories and deployment targets.
 
 | Column | Type | Purpose |
-|--------|------|---------|
+|---|---|---|
 | `id` | UUID | Primary key |
-| `key` | String | Project key (e.g., `PROJ`) |
-| `name` | String | Project display name |
-| `description` | Text | Project description |
-| `repoUrl` | String | GitHub repository URL |
-| `backgroundImage` | String | Project display image URL |
-| `deletedAt` | DateTime | Soft delete timestamp (null = active) |
-| `createdAt` | DateTime | Project creation timestamp |
+| `ownerId` | UUID | Owner foreign key |
+| `projectKey` | Text | Stable project key such as `PROJ` |
+| `name` | Text | Project display name |
+| `description` | Text | Optional description |
+| `repoUrl` | Text | Repository URL |
+| `vercelUrl` | Text | Optional deployment URL |
+| `status` | Text | Project status |
+| `priority` | Integer | Ordering priority |
+| `bgImage` | Text | Background image or preset |
+| `bgImageCredit` | JSONB | Attribution metadata |
+| `deletedAt` | Timestamp | Soft delete timestamp |
+| `createdAt` | Timestamp | Creation time |
+| `updatedAt` | Timestamp | Last update |
 
 ### project_settings
 
-Per-project deployment strategy configuration.
+Per-project configuration is stored as key/value rows, not as wide columns.
 
 | Column | Type | Purpose |
-|--------|------|---------|
+|---|---|---|
 | `id` | UUID | Primary key |
-| `projectId` | UUID | Foreign key to `projects` |
-| `deploy_strategy` | String | `none`, `direct_commit`, or `feature_branch` |
-| `deploy_default_branch` | String | Target branch (usually `main`) |
-| `deploy_auto_pr` | Boolean | Auto-create PR (feature_branch only) |
-| `deploy_commit_on_review` | Boolean | Require remote push before review |
-| `deploy_squash_merge` | Boolean | Squash commits on merge (direct_commit only) |
-| `updatedAt` | DateTime | Last update timestamp |
+| `projectId` | UUID | Project foreign key |
+| `key` | Text | Setting name |
+| `value` | Text | Setting value |
+| `createdAt` | Timestamp | Creation time |
+| `updatedAt` | Timestamp | Last update |
 
-## API & Authentication
+Common keys:
+
+- `deploy_strategy`
+- `deploy_default_branch`
+- `deploy_auto_pr`
+- `deploy_commit_on_review`
+- `deploy_squash_merge`
+- `agent_instructions`
+
+### tasks
+
+Task cards with workflow status plus execution overlay fields.
+
+| Column | Type | Purpose |
+|---|---|---|
+| `id` | UUID | Primary key |
+| `ownerId` | UUID | Owner foreign key |
+| `projectId` | UUID | Related project |
+| `labelId` | UUID | Legacy primary label pointer |
+| `taskKey` | Text | Human-readable key such as `PROJ-123` |
+| `taskPrefix` | Text | Project key portion |
+| `taskNumber` | Integer | Sequence number within the project |
+| `title` | Text | Task title |
+| `note` | Text | Description plus acceptance criteria markdown |
+| `status` | Text | `inbox`, `todo`, `hold`, `ready`, `done`, `archived` |
+| `taskPriority` | Text | `highest`, `high`, `medium`, `none`, `low`, `lowest` |
+| `branch` | Text | Branch name used for work |
+| `engine` | Text | `claude-code`, `codex`, or `gemini-cli` |
+| `runState` | Text | Internal execution state: `queued`, `running`, or `null` |
+| `runStateUpdatedAt` | Timestamp | Last run-state update |
+| `dueAt` | Timestamp | Optional due date |
+| `focusedAt` | Timestamp | Today-focus pin timestamp |
+| `sortOrder` | Varchar | Fractional ordering key for Kanban |
+| `archivedAt` | Timestamp | Archive time |
+| `createdAt` | Timestamp | Creation time |
+| `updatedAt` | Timestamp | Last update |
+
+External task APIs serialize `runState="running"` as `run_state="working"` so API clients do not need to know the internal label.
+
+### task_labels
+
+Owner-scoped label taxonomy.
+
+| Column | Type | Purpose |
+|---|---|---|
+| `id` | UUID | Primary key |
+| `ownerId` | UUID | Owner foreign key |
+| `name` | Text | Unique label name per owner |
+| `color` | Text | Stored color value |
+| `createdAt` | Timestamp | Creation time |
+| `updatedAt` | Timestamp | Last update |
+
+### task_label_assignments
+
+Join table between tasks and labels.
+
+| Column | Type | Purpose |
+|---|---|---|
+| `id` | UUID | Primary key |
+| `taskId` | UUID | Task foreign key |
+| `labelId` | UUID | Label foreign key |
+| `position` | Integer | Display order within the task |
+| `createdAt` | Timestamp | Creation time |
+
+## API and Audit Tables
 
 ### api_tokens
 
-Bearer tokens for external agent authentication.
+Bearer tokens for agent authentication.
 
 | Column | Type | Purpose |
-|--------|------|---------|
+|---|---|---|
 | `id` | UUID | Primary key |
-| `token` | String | Token hash (SHA-256) |
-| `prefix` | String | Token prefix (always `preq_`) for identification |
-| `name` | String | Token display name |
-| `expiresAt` | DateTime | Optional expiration (null = no expiration) |
-| `createdAt` | DateTime | Token creation timestamp |
+| `ownerId` | UUID | Owner foreign key |
+| `name` | Text | Token display name |
+| `tokenPrefix` | Text | Public prefix (`preq_...`) |
+| `tokenHash` | Text | SHA-256 hash |
+| `lastUsedAt` | Timestamp | Last successful use |
+| `expiresAt` | Timestamp | Optional expiration |
+| `revokedAt` | Timestamp | Revocation time |
+| `createdAt` | Timestamp | Creation time |
+| `updatedAt` | Timestamp | Last update |
 
 <Aside>
-Tokens are hashed in the database for security. The plaintext token is shown only once during creation.
+The plaintext token is shown only once when created. After that, only the hash and prefix remain in the database.
 </Aside>
-
-## Audit & Results
 
 ### work_logs
 
-Durable audit trail of agent execution results.
+Durable timeline entries for manual work logs and agent results.
 
 | Column | Type | Purpose |
-|--------|------|---------|
+|---|---|---|
 | `id` | UUID | Primary key |
-| `taskId` | UUID | Foreign key to `tasks` |
-| `projectId` | UUID | Foreign key to `projects` |
-| `engine` | String | Engine that performed the work |
-| `summary` | Text | Execution summary |
-| `result` | JSON | Full result payload (branch, pr_url, tests, etc.) |
-| `branch` | String | Git branch used |
-| `prUrl` | String | Pull request URL |
-| `tests` | Text | Test command or results |
-| `notes` | Text | Additional notes |
-| `completedAt` | DateTime | Completion timestamp |
-| `createdAt` | DateTime | Log entry creation timestamp |
+| `ownerId` | UUID | Owner foreign key |
+| `projectId` | UUID | Optional project foreign key |
+| `taskId` | UUID | Optional task foreign key |
+| `title` | Text | Work log title |
+| `detail` | Text | Work log body |
+| `engine` | Text | Engine that produced the entry |
+| `workedAt` | Timestamp | When the work happened |
+| `createdAt` | Timestamp | Creation time |
 
 ### events_outbox
 
-Event sourcing table for downstream processing.
+Append-only event stream for downstream processing.
 
 | Column | Type | Purpose |
-|--------|------|---------|
-| `id` | UUID | Primary key |
-| `eventType` | Enum | `TASK_CREATED`, `TASK_STATUS_CHANGED`, `TASK_UPDATED`, `TASK_DELETED`, `WORKLOG_CREATED`, `PROJECT_CREATED`, `PROJECT_DELETED` |
-| `entityType` | String | `task`, `project`, or `worklog` |
-| `entityId` | UUID | ID of affected entity |
-| `payload` | JSON | Event payload (changes, metadata) |
-| `processedAt` | DateTime | When event was processed (null = pending) |
-| `createdAt` | DateTime | Event creation timestamp |
+|---|---|---|
+| `id` | BigSerial | Monotonic event cursor |
+| `ownerId` | UUID | Owner foreign key |
+| `projectId` | UUID | Related project when available |
+| `eventType` | Text | Event name such as `TASK_STATUS_CHANGED` |
+| `entityType` | Text | `task`, `project`, or `worklog` |
+| `entityId` | Text | Task key, UUID, or work log id |
+| `payload` | JSONB | Event-specific metadata |
+| `createdAt` | Timestamp | Creation time |
 
 ### audit_logs
 
-Immutable mutation log of all API actions.
+Immutable record of application mutations.
 
 | Column | Type | Purpose |
-|--------|------|---------|
+|---|---|---|
 | `id` | UUID | Primary key |
-| `action` | String | API action (e.g., `CREATE_TASK`, `UPDATE_STATUS`) |
-| `resourceType` | String | `task`, `project`, `api_token`, etc. |
-| `resourceId` | UUID | ID of modified resource |
-| `changes` | JSON | Before/after values |
-| `status` | Enum | `success` or `failure` |
-| `errorMessage` | Text | Error details if failed |
-| `createdAt` | DateTime | Action timestamp |
+| `ownerId` | UUID | Owner foreign key |
+| `action` | Text | Action name |
+| `targetType` | Text | Resource type |
+| `targetId` | Text | Resource identifier |
+| `meta` | JSONB | Structured metadata |
+| `createdAt` | Timestamp | Creation time |
 
 ### security_events
 
-Login and authentication event tracking.
+Authentication and authorization history.
 
 | Column | Type | Purpose |
-|--------|------|---------|
+|---|---|---|
 | `id` | UUID | Primary key |
-| `eventType` | String | `LOGIN_SUCCESS`, `LOGIN_FAILURE`, `TOKEN_CREATED`, `TOKEN_REVOKED` |
-| `ipAddress` | String | Client IP address |
-| `userAgent` | String | Client user agent string |
-| `status` | String | `success` or `failure` |
-| `reason` | Text | Failure reason if applicable |
-| `createdAt` | DateTime | Event timestamp |
-
-## Configuration
+| `ownerId` | UUID | Owner foreign key (nullable) |
+| `actorEmail` | Text | Email tied to the event |
+| `eventType` | Text | Event name |
+| `outcome` | Text | `success` or `failure` |
+| `ipAddress` | Text | Source IP |
+| `userAgent` | Text | User agent |
+| `path` | Text | Route involved |
+| `detail` | JSONB | Extra context |
+| `createdAt` | Timestamp | Creation time |
 
 ### user_settings
 
-Key-value configuration for user preferences and integrations.
+Owner-scoped key/value settings.
 
 | Column | Type | Purpose |
-|--------|------|---------|
+|---|---|---|
 | `id` | UUID | Primary key |
-| `key` | String | Setting key (e.g., `telegram_bot_token`) |
+| `ownerId` | UUID | Owner foreign key |
+| `key` | Text | Setting name |
 | `value` | Text | Setting value |
-| `encrypted` | Boolean | Whether value is encrypted at rest |
-| `updatedAt` | DateTime | Last update timestamp |
+| `createdAt` | Timestamp | Creation time |
+| `updatedAt` | Timestamp | Last update |
 
-**Common settings:**
-- `telegram_bot_token` — Telegram bot token (encrypted)
-- `telegram_chat_id` — Telegram chat ID for notifications
-- `telegram_enabled` — Boolean flag for Telegram integration
+Common keys:
 
-## Data Access & Security
+- `telegram_bot_token`
+- `telegram_chat_id`
+- `telegram_enabled`
 
-### Row Level Security (RLS)
+## Notes
 
-All tables have RLS policies scoped to the owner:
-
-```sql
--- All rows are filtered by owner_id = current_user_id
--- Single-owner deployments: owner_id is always the same
-```
-
-### Backup Strategy
-
-- Neon auto-backups: kept for 7 days (default)
-- Export critical data: Tasks, work_logs, audit_logs
-- Production deployments: enable Point-in-Time Recovery
-
-### Soft Deletes
-
-Projects use soft delete (`deletedAt` column):
-- Archived projects are filtered from queries
-- Historical data retained for audit
-- Hard delete not supported (prevents data loss)
-
-## Schema Diagram
-
-```
-users (1)
-├── projects (N) [deploy settings]
-│   └── project_settings
-│   └── tasks (N)
-│       ├── task_labels (N)
-│       └── work_logs (N) [execution results]
-└── api_tokens (N)
-
-Audit:
-├── events_outbox [event sourcing]
-├── audit_logs [mutation trail]
-└── security_events [auth trail]
-
-User Config:
-└── user_settings [key-value]
-```
+- Projects are soft-deleted through `deletedAt`.
+- Tasks keep workflow status and execution state separate.
+- Labels are many-to-many through `task_label_assignments`.
+- Event ids are monotonic cursors, which is why `/api/events` returns `nextCursor`.

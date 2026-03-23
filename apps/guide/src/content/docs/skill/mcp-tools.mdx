@@ -1,97 +1,96 @@
 ---
 title: MCP Tools
-description: Complete reference for all PREQSTATION MCP tools and their parameters
+description: PREQSTATION MCP tool reference for the current lifecycle model.
 ---
 
-import { Tabs, TabItem, Card, CardGrid } from '@astrojs/starlight/components';
-
-The PREQSTATION MCP server exposes tools for managing task lifecycles, reading project settings, and syncing projects. All tools use bearer token authentication.
+The PREQSTATION MCP server exposes read-only tools for discovery and mutation tools for lifecycle work. All mutation tools carry an engine identity.
 
 ## Tool Categories
 
-### Read-Only Tools
-
-These tools fetch data and don't require engine tracking.
+### Read-only tools
 
 | Tool | Purpose |
-|------|---------|
+|---|---|
 | `preq_list_tasks` | List tasks by status, label, engine, or project key |
-| `preq_get_task` | Fetch single task details by ticket number or UUID |
-| `preq_get_project_settings` | Fetch project deployment strategy configuration |
+| `preq_get_task` | Fetch one task by ticket or UUID |
+| `preq_get_project_settings` | Fetch resolved project settings by project key |
 
-### Mutation Tools
-
-These tools modify state and track which engine performed the action.
+### Mutation tools
 
 | Tool | Purpose |
-|------|---------|
-| `preq_create_task` | Create new task (starts in inbox) |
-| `preq_plan_task` | Upload plan markdown, move inbox → todo |
-| `preq_start_task` | Move task to in_progress |
-| `preq_update_task_status` | Update task status only |
-| `preq_complete_task` | Upload result, move to review |
-| `preq_review_task` | Verify and move to done (or blocked) |
-| `preq_block_task` | Mark task as blocked with reason |
-| `preq_delete_task` | Permanently delete task |
-| `preq_sync_projects` | Sync project directories with API |
+|---|---|
+| `preq_create_task` | Create a new inbox task |
+| `preq_plan_task` | Upload a plan and move inbox → todo |
+| `preq_start_task` | Claim execution and set `run_state=working` |
+| `preq_update_task_status` | Manually change workflow status only |
+| `preq_complete_task` | Upload execution result and move todo/hold → ready |
+| `preq_review_task` | Verify work and move ready → done |
+| `preq_block_task` | Upload blocking reason and move active work → hold |
+| `preq_delete_task` | Permanently delete a task |
 
-## Engine Resolution Priority
+## Engine Resolution
 
-All mutation tools track which agent performed the action using this priority:
+Mutation tools resolve engine identity in this order:
 
-1. **Explicit `engine` parameter** — if provided in tool call
-2. **Existing task `engine`** — from database (for plan/complete flows)
-3. **MCP client auto-detection** — inferred from `clientInfo.name`
-4. **`PREQSTATION_ENGINE` env var** — if set in environment
-5. **Fallback: `codex`** — default engine when all else fails
+1. Explicit `engine` argument
+2. Existing task engine when available
+3. MCP client auto-detection from `clientInfo.name`
+4. `PREQSTATION_ENGINE`
+5. `codex` fallback
 
-Engine values: `claude` | `codex` | `gemini`
+Valid engine values:
 
-## Read-Only Tools
+- `claude-code`
+- `codex`
+- `gemini-cli`
+
+## Read-only Tools
 
 ### preq_list_tasks
 
-List tasks with optional filters.
+Parameters:
 
-**Parameters:**
-- `status` (optional) — Filter by status: `inbox`, `todo`, `in_progress`, `review`, `done`, `blocked`, `archived`
-- `label` (optional) — Filter by label name
-- `engine` (optional) — Filter by engine: `claude`, `codex`, `gemini`
-- `projectKey` (optional) — Filter by project key
+- `status` (optional): `inbox`, `todo`, `hold`, `ready`, `done`, `archived`
+- `label` (optional): label name
+- `projectKey` (optional): project key filter
+- `engine` (optional): `claude-code`, `codex`, `gemini-cli`
+- `limit` (optional): max returned items
 
-**Example:**
+Example:
+
 ```json
 {
   "status": "todo",
-  "engine": "claude",
-  "projectKey": "PROJ"
+  "engine": "claude-code",
+  "projectKey": "PROJ",
+  "limit": 20
 }
 ```
 
 ### preq_get_task
 
-Fetch full task details by ticket number or UUID.
+Parameters:
 
-**Parameters:**
-- `taskId` (required) — Task ticket (e.g., `PROJ-123`) or UUID
+- `taskId` (required): task key such as `PROJ-123` or a UUID
 
-**Returns:** Complete task object including status, branch, engine, deploy_strategy, and acceptance criteria.
+Returns the full serialized task payload including `status`, `run_state`, `deploy_strategy`, `labels`, and `acceptance_criteria`.
 
 ### preq_get_project_settings
 
-Fetch deployment strategy and project configuration by project key.
+Parameters:
 
-**Parameters:**
-- `projectKey` (required) — Project key (e.g., `PROJ`)
+- `projectKey` (required): project key such as `PROJ`
 
-**Returns:**
+Returns:
+
 ```json
 {
-  "deploy_strategy": "feature_branch",
-  "deploy_default_branch": "main",
-  "deploy_auto_pr": true,
-  "deploy_commit_on_review": true,
-  "deploy_squash_merge": true
+  "project_key": "PROJ",
+  "settings": {
+    "deploy_strategy": "feature_branch",
+    "deploy_default_branch": "main",
+    "deploy_auto_pr": "true"
+  }
 }
 ```
 
@@ -99,130 +98,117 @@ Fetch deployment strategy and project configuration by project key.
 
 ### preq_create_task
 
-Create a new task in inbox (internal status).
+Creates a new task in `inbox`.
 
-**Parameters:**
-- `title` (required) — Task title
-- `description` (optional) — Task description/body
-- `projectKey` (required) — Project key
-- `engine` (required) — Engine creating task: `claude`, `codex`, `gemini`
-- `labels` (optional) — Array of label names
-- `priority` (optional) — `highest`, `high`, `medium`, `low`, `lowest`
-- `branch` (optional) — Git branch name
+Parameters:
 
-**Example:**
+- `title` (required)
+- `repo` (required): repository URL that matches an existing project
+- `description` (optional)
+- `priority` (optional)
+- `labels` (optional)
+- `acceptanceCriteria` (optional)
+- `branch` (optional)
+- `assignee` (optional)
+- `engine` (optional)
+
+Example:
+
 ```json
 {
   "title": "Implement rate limiting",
-  "projectKey": "PROJ",
-  "engine": "claude",
+  "repo": "https://github.com/acme/my-app",
+  "engine": "claude-code",
   "priority": "high"
 }
 ```
 
 ### preq_plan_task
 
-Upload a plan and move task from inbox to todo. Typically used in planning workflows where users drop short cards in inbox.
+Uploads plan markdown and moves `inbox` → `todo`.
 
-**Parameters:**
-- `taskId` (required) — Task ticket or UUID
-- `projectKey` (required) — Project key
-- `planMarkdown` (required) — Full plan markdown to upload
-- `engine` (required) — Engine performing planning: `claude`, `codex`, `gemini`
-- `acceptanceCriteria` (optional) — Array of acceptance criteria strings
+Parameters:
 
-**Example:**
-```json
-{
-  "taskId": "PROJ-284",
-  "projectKey": "PROJ",
-  "planMarkdown": "## Plan\n\n1. Add middleware...\n2. Write tests...",
-  "engine": "claude",
-  "acceptanceCriteria": ["Tests pass", "Build succeeds"]
-}
-```
+- `projectKey` (required)
+- `taskId` (required)
+- `planMarkdown` (required)
+- `acceptanceCriteria` (optional)
+- `priority` (optional)
+- `labels` (optional)
+- `engine` (optional)
 
 ### preq_start_task
 
-Move task from todo to in_progress.
+Claims execution before substantive work. This does **not** move the workflow column to `in_progress`; it only marks `run_state=working`.
 
-**Parameters:**
-- `taskId` (required) — Task ticket or UUID
-- `engine` (required) — Engine starting the work: `claude`, `codex`, `gemini`
+Parameters:
+
+- `taskId` (required)
+- `engine` (optional)
 
 ### preq_update_task_status
 
-Update task status without touching other fields. Supports status-only endpoint for quick updates.
+Manual status-only override.
 
-**Parameters:**
-- `taskId` (required) — Task ticket or UUID
-- `status` (required) — New status: `inbox`, `todo`, `in_progress`, `review`, `done`, `archived`, `blocked`
-- `engine` (required) — Engine performing update: `claude`, `codex`, `gemini`
+Parameters:
+
+- `taskId` (required)
+- `status` (required): `inbox`, `todo`, `hold`, `ready`, `done`, `archived`
+- `engine` (optional)
 
 ### preq_complete_task
 
-Upload execution result and move task from in_progress to review.
+Uploads result metadata and moves `todo` or `hold` → `ready`.
 
-**Parameters:**
-- `taskId` (required) — Task ticket or UUID
-- `summary` (required) — Brief summary of work completed
-- `engine` (required) — Engine completing the task
-- `prUrl` (optional) — Pull request URL
-- `tests` (optional) — Test command or results
-- `notes` (optional) — Additional notes
-- `branchName` (optional) — Git branch name
+Parameters:
 
-**Example:**
+- `taskId` (required)
+- `summary` (required)
+- `tests` (optional)
+- `prUrl` (optional)
+- `notes` (optional)
+- `branchName` (optional)
+- `engine` (optional)
+
+Example:
+
 ```json
 {
   "taskId": "PROJ-284",
   "summary": "Implemented rate limiting for login endpoint",
-  "engine": "claude",
+  "engine": "claude-code",
   "branchName": "preqstation/PROJ/rate-limit",
   "prUrl": "https://github.com/org/repo/pull/123",
-  "tests": "npm run test"
+  "tests": "npm test"
 }
 ```
 
 ### preq_review_task
 
-Verify completed work and move task from review to done. Run verification checks (tests, build, lint) before calling this.
+Moves `ready` → `done` after verification.
 
-**Parameters:**
-- `taskId` (required) — Task ticket or UUID
-- `engine` (required) — Engine running verification
-- `summary` (required) — Verification result summary
+Parameters:
+
+- `taskId` (required)
+- `summary` (optional): defaults to `"All checks passed"`
+- `engine` (optional)
 
 ### preq_block_task
 
-Mark task as blocked with a reason.
+Uploads a blocking reason and moves active work to `hold`.
 
-**Parameters:**
-- `taskId` (required) — Task ticket or UUID
-- `reason` (required) — Explanation of why task is blocked
-- `engine` (required) — Engine reporting the block
+Parameters:
+
+- `taskId` (required)
+- `reason` (required)
+- `engine` (optional)
 
 ### preq_delete_task
 
-Permanently delete a task.
+Parameters:
 
-**Parameters:**
-- `taskId` (required) — Task ticket or UUID
-
-### preq_sync_projects
-
-Sync project directories with the API. Verifies local repositories exist and uploads sync status.
-
-**Parameters:**
-- `projectKeys` (required) — Array of project keys to sync (e.g., `["PROJ1", "PROJ2"]`)
-- `engine` (required) — Engine performing sync
+- `taskId` (required)
 
 ## Branch Handling
 
-When tasks specify a `branch` field, use it as the canonical branch name for git operations. The `preq_complete_task` tool accepts optional `branchName` for propagating the branch back to the API.
-
-**Branch naming convention:** `preqstation/<project_key>/<branch_slug>`
-
-Example:
-- Task: `PROJ-284`
-- Branch: `preqstation/PROJ/rate-limit`
+When a task already has a `branch`, keep using it as the canonical branch name for deploy steps. `preq_complete_task` accepts `branchName` so agents can send the final branch back to PREQSTATION along with the result.

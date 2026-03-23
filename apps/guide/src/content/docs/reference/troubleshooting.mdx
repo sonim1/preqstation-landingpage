@@ -17,7 +17,7 @@ This guide covers common problems and their solutions. Check your issue below.
 
 1. Verify Node.js is installed:
 ```bash
-node --version  # Should be 16+
+node --version  # Should be 22+
 ```
 
 2. Check the script path is absolute (not relative):
@@ -56,7 +56,7 @@ echo $PREQSTATION_TOKEN  # Should output: preq_xxxxxxxxx
 ```
 
 2. Verify token is not expired:
-- Go to project-manager UI → Settings → API Keys
+- Go to projects-manager UI → Settings → API Keys
 - Check token creation date and expiration
 - Generate a new token if needed
 
@@ -81,7 +81,7 @@ curl -H "Authorization: Bearer $PREQSTATION_TOKEN" \
 
 <Tabs>
 <TabItem label="Cause: Expired Token">
-**Check:** In project-manager UI, go to Settings → API Keys and check expiration date.
+**Check:** In projects-manager UI, go to Settings → API Keys and check expiration date.
 
 **Fix:** Generate a new token:
 1. Click "New Token"
@@ -109,26 +109,6 @@ export PREQSTATION_TOKEN="preq_xxxxx"   # no extra spaces
 ```
 </TabItem>
 </Tabs>
-
-### "Bearer token required" for API health check
-
-**Symptom:**
-```bash
-curl "$PREQSTATION_API_URL/api/health"
-# Returns: {"error":"Bearer token required"}
-```
-
-**Cause:** Using unprotected `/api/health` endpoint without token.
-
-**Fix:** `/api/health` is public; token errors on other endpoints:
-```bash
-# Health check (no token needed):
-curl "$PREQSTATION_API_URL/api/health"
-
-# Task operations (token required):
-curl -H "Authorization: Bearer $PREQSTATION_TOKEN" \
-  "$PREQSTATION_API_URL/api/tasks"
-```
 
 ## Worktree & Git Issues
 
@@ -205,16 +185,15 @@ git -C <project_cwd> branch
 **Symptom:** `npm ERR! 404 Not Found` or dependency resolution errors
 
 <Tabs>
-<TabItem label="Cause: Stale lock file">
-**Check:**
-```bash
-ls <cwd>/package-lock.json
-```
+<TabItem label="Cause: Wrong package manager">
+**Check:** Use the package manager already configured by the repo.
 
-**Fix:**
+**Fix:** Do not delete lockfiles as a first step. Run the repo's intended install command instead:
 ```bash
-rm <cwd>/package-lock.json
-npm -C <cwd> install
+# examples
+pnpm install
+npm install
+yarn install
 ```
 </TabItem>
 <TabItem label="Cause: Node version mismatch">
@@ -242,60 +221,25 @@ echo "//npm.example.com/:_authToken=YOUR_TOKEN" >> ~/.npmrc
 </TabItem>
 </Tabs>
 
-### TypeScript compilation fails
+## Project Mapping Issues
 
-**Symptom:** `error TS1005: ';' expected` or type errors in build
+### "Project path not found"
 
-**Solutions:**
-
-1. Check TypeScript version:
-```bash
-npm -C <cwd> list typescript
-```
-
-2. Verify `tsconfig.json` is valid:
-```bash
-cat <cwd>/tsconfig.json | jq .
-```
-
-3. Clear build cache:
-```bash
-rm -rf <cwd>/dist <cwd>/build <cwd>/.next <cwd>/.turbo
-npm -C <cwd> run build
-```
-
-4. Check for Node version incompatibility:
-```bash
-# Node 20+ may have stricter TS checks
-node --version
-```
-
-## MEMORY.md Path Issues
-
-### "Project not found in MEMORY.md"
-
-**Symptom:** OpenClaw asks for project path even though it's in MEMORY.md
+**Symptom:** OpenClaw asks for a project path even though you thought it was already configured.
 
 **Solutions:**
 
-1. Verify MEMORY.md exists in workspace root:
-```bash
-ls -la /workspace/MEMORY.md
-cat /workspace/MEMORY.md
-```
+1. Confirm the mapping exists in OpenClaw agent memory.
 
-2. Check table format is correct:
+2. If you use the sample `MEMORY.md` format as a reference, check that the row looks like:
 ```markdown
 | key | cwd | note |
 |-----|-----|------|
 | proj | /absolute/path | Description |
 ```
 
-3. Verify project key matches:
-```bash
-# If task is PRJ-284, key should be: prj (lowercase)
-grep "| prj |" MEMORY.md
-```
+3. Verify the project key matches the task prefix:
+- `PRJ-284` should normally map to `prj`
 
 4. Ensure paths are absolute (not relative):
 ```bash
@@ -360,18 +304,18 @@ rm <cwd>/.test-write
 
 ## Common Mistakes
 
-### ❌ Forgetting to update MEMORY.md
+### ❌ Forgetting to update OpenClaw project mappings
 
 **Issue:** OpenClaw can't resolve project path, requires manual input each time.
 
-**Fix:** Update MEMORY.md whenever you clone a new project or change paths:
+**Fix:** Update the OpenClaw mapping whenever you clone a new project or change paths. If you keep a reference `MEMORY.md`, keep that in sync too:
 ```markdown
 | key | cwd | note |
 |-----|-----|------|
 | newproj | /absolute/path | Added 2026-03-06 |
 ```
 
-### ❌ Using relative paths in MEMORY.md
+### ❌ Using relative paths in project mappings
 
 **Issue:** Worktree creation fails because path doesn't expand.
 
@@ -392,11 +336,11 @@ git -C <project_cwd> worktree remove <old_path> --force
 git -C <project_cwd> worktree prune
 ```
 
-### ❌ Expecting sync without MCP
+### ❌ Expecting PREQ tools without MCP
 
-**Issue:** `project-sync` fails because MCP server isn't running.
+**Issue:** `preq_*` tools are unavailable because the MCP server was never registered.
 
-**Fix:** Ensure PREQSTATION MCP server is registered:
+**Fix:** Ensure the PREQSTATION MCP server is registered:
 ```bash
 claude mcp list | grep preqstation
 ```
@@ -423,7 +367,7 @@ If you've checked all above:
 3. **Check logs:**
    - Claude Code: Settings → Logs
    - OpenClaw: Session output via `process action:log`
-   - project-manager: Vercel dashboard logs
+   - projects-manager: Vercel dashboard logs
 
 4. **File an issue** with:
    - System info (OS, Node version)

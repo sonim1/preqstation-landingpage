@@ -1,11 +1,11 @@
 ---
 title: Shell Helpers
-description: Shell helper functions for PREQSTATION API access without MCP
+description: Shell wrappers for PREQSTATION when MCP is unavailable.
 ---
 
 import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
-When MCP is unavailable, source `scripts/preqstation-api.sh` to use shell wrapper functions. All mutation helpers accept an `engine` parameter to track which agent performed the action.
+When MCP is unavailable, source `scripts/preqstation-api.sh` and use the shell wrappers directly.
 
 ## Setup
 
@@ -25,224 +25,193 @@ source /path/to/preqstation-skill/scripts/preqstation-api.sh
 </Tabs>
 
 <Aside type="note">
-Requires `jq` for JSON parsing. Install with `brew install jq` (macOS) or `apt-get install jq` (Linux).
+The script requires `jq` for JSON construction in several helper functions.
 </Aside>
 
-## Read-Only Functions
-
-These functions fetch data and don't require engine tracking.
+## Read-only Helpers
 
 ### preq_get_tasks
 
-List tasks with optional filters.
+Signature:
 
 ```bash
-preq_get_tasks [status] [label]
+preq_get_tasks [status] [engine] [label]
 ```
 
-**Parameters:**
-- `status` (optional) — `todo`, `in_progress`, `review`, `done`, `blocked`
-- `label` (optional) — Label name to filter by
+Arguments:
 
-**Example:**
+- `status` (optional): `inbox`, `todo`, `hold`, `ready`, `done`, `archived`
+- `engine` (optional): `claude-code`, `codex`, `gemini-cli`
+- `label` (optional): label name
+
+Examples:
+
 ```bash
 preq_get_tasks todo
-preq_get_tasks in_progress claude
+preq_get_tasks ready codex
+preq_get_tasks hold claude-code backend
 ```
 
 ### preq_get_task
-
-Fetch single task details.
 
 ```bash
 preq_get_task <task_id>
 ```
 
-**Parameters:**
-- `task_id` (required) — Task ticket (e.g., `PROJ-123`) or UUID
-
-**Example:**
-```bash
-preq_get_task PROJ-284
-```
-
 ### preq_get_project_settings
-
-Fetch project deployment strategy.
 
 ```bash
 preq_get_project_settings <project_key>
 ```
 
-**Parameters:**
-- `project_key` (required) — Project key (e.g., `PROJ`)
+### preq_resolve_branch_name
 
-**Example:**
+Returns the saved task branch or a fallback.
+
 ```bash
-preq_get_project_settings PROJ
+preq_resolve_branch_name <task_id> [fallback_branch]
 ```
 
-## Mutation Functions
+## Mutation Helpers
 
-All mutation functions accept an optional `engine` parameter: `claude`, `codex`, or `gemini`.
+Valid engine values:
+
+- `claude-code`
+- `codex`
+- `gemini-cli`
 
 ### preq_create_task
-
-Create a new task.
 
 ```bash
 preq_create_task '<json_payload>'
 ```
 
-**Parameters:**
-- JSON payload must include: `title`, `projectKey`, `engine`
+Example:
 
-**Example:**
 ```bash
-preq_create_task '{"title":"Implement rate limiting","projectKey":"PROJ","engine":"claude"}'
+preq_create_task '{
+  "title": "Implement rate limiting",
+  "repo": "https://github.com/acme/my-app",
+  "engine": "claude-code"
+}'
 ```
 
 ### preq_start_task
 
-Move task to in_progress.
+Claims execution and marks `run_state=working`.
 
 ```bash
 preq_start_task <task_id> [engine]
 ```
 
-**Example:**
+Example:
+
 ```bash
-preq_start_task PROJ-284 claude
+preq_start_task PROJ-284 claude-code
 ```
 
 ### preq_update_task_status
 
-Update task status.
+Manual status-only override.
 
 ```bash
 preq_update_task_status <task_id> <status> [engine]
 ```
 
-**Status values:** `inbox`, `todo`, `in_progress`, `in_review`, `done`, `archived`, `review` (alias for `in_review`)
+Status values:
 
-**Example:**
+- `inbox`
+- `todo`
+- `hold`
+- `ready`
+- `done`
+- `archived`
+
+Example:
+
 ```bash
-preq_update_task_status PROJ-284 review claude
+preq_update_task_status PROJ-284 hold codex
 ```
 
 ### preq_plan_task
 
-Upload plan and move inbox → todo.
+Uploads plan markdown and moves `inbox` → `todo`.
 
 ```bash
 preq_plan_task <task_id> <plan_markdown> [engine]
 ```
 
-**Example:**
+Example:
+
 ```bash
 PLAN="## Plan\n\n1. Add middleware\n2. Write tests"
-preq_plan_task PROJ-284 "$PLAN" claude
+preq_plan_task PROJ-284 "$PLAN" claude-code
 ```
 
 ### preq_complete_task
 
-Upload result and move to review.
+Uploads result metadata and moves `todo` or `hold` → `ready`.
 
 ```bash
 preq_complete_task <task_id> <summary> [engine] [pr_url] [tests] [notes] [branch_name]
 ```
 
-**Parameters:**
-- `task_id` — Task ticket or UUID
-- `summary` — Brief completion summary (required)
-- `engine` — Agent engine (optional)
-- `pr_url` — Pull request URL (optional)
-- `tests` — Test command or results (optional)
-- `notes` — Additional notes (optional)
-- `branch_name` — Git branch name (optional)
+Example:
 
-**Example:**
 ```bash
 preq_complete_task PROJ-284 \
   "Implemented rate limiting for login endpoint" \
-  claude \
+  claude-code \
   "https://github.com/org/repo/pull/123" \
-  "npm run test" \
+  "npm test" \
   "All checks passed" \
   "preqstation/PROJ/rate-limit"
 ```
 
 ### preq_review_task
 
-Verify and move to done.
+Runs optional checks locally, then either moves `ready` → `done` or blocks the task.
 
 ```bash
 preq_review_task <task_id> [engine] [test_cmd] [build_cmd] [lint_cmd]
 ```
 
-**Example:**
+Example:
+
 ```bash
-preq_review_task PROJ-284 claude "npm test" "npm run build" "npm run lint"
+preq_review_task PROJ-284 codex "npm test" "npm run build" "npm run lint"
 ```
 
 ### preq_block_task
 
-Mark task as blocked.
+Moves the task to `hold` with a reason.
 
 ```bash
 preq_block_task <task_id> <reason> [engine]
 ```
 
-**Example:**
+Example:
+
 ```bash
-preq_block_task PROJ-284 "Missing required Redis environment variables" claude
+preq_block_task PROJ-284 "Missing required Redis environment variables" gemini-cli
 ```
 
 ### preq_delete_task
-
-Permanently delete task.
 
 ```bash
 preq_delete_task <task_id>
 ```
 
-**Example:**
-```bash
-preq_delete_task PROJ-284
-```
-
-### preq_resolve_branch_name
-
-Resolve canonical branch name for a task.
-
-```bash
-preq_resolve_branch_name <task_id> [fallback_branch]
-```
-
-**Example:**
-```bash
-preq_resolve_branch_name PROJ-284 "feature/rate-limit"
-```
-
-## curl Examples
-
-For direct REST API calls when shell helpers are unavailable, see the [REST API reference](/guide/api/rest-api).
-
 ## Environment Variables
 
-Ensure these are set before sourcing the script:
+Set these before sourcing the script:
 
 ```bash
 export PREQSTATION_API_URL="https://your-domain.vercel.app"
 export PREQSTATION_TOKEN="preq_xxxxxxxxxxxxxxxxx"
+export PREQSTATION_ENGINE="codex"  # optional fallback
 ```
 
-## Error Handling
+## Direct REST Calls
 
-All functions return the raw API response. Parse errors with `jq`:
-
-```bash
-preq_get_task PROJ-284 | jq '.error' -r
-```
-
-Check HTTP status by examining the response. The script does not hide API errors.
+If you need raw HTTP instead of shell wrappers, see the [REST API reference](/guide/api/rest-api).

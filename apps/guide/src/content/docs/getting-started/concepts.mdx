@@ -19,9 +19,9 @@ PREQSTATION is named after a kitchen prep station — a place where a chef direc
 | **Prep List** | Acceptance Criteria | Instructions for completing the task |
 | **Mise en Place** | Setup | Configuring API tokens and environment |
 | **Fire** | Execute | Launch a task for an agent to work on |
-| **Pass** | Review | Final inspection before deployment |
-| **Order Up** | Complete | Task finished, results ready |
-| **86'd** | Blocked | Task cannot proceed (missing context, error) |
+| **Pass** | Ready | Work is complete and waiting for verification |
+| **Order Up** | Done | Task verified and finished |
+| **86'd** | Hold | Task cannot proceed until blocker is resolved |
 
 ## The Story
 
@@ -37,8 +37,8 @@ PREQSTATION works the same way:
 
 1. **You write tasks** — describe what you want the AI to implement
 2. **Set acceptance criteria** — list what "done" means
-3. **AI agents execute** — they implement code, run tests, create PRs
-4. **You review** — check the code and accept or request changes
+3. **AI agents execute** — they plan, implement code, run tests, and move work to `ready`
+4. **You review** — verify the result, then approve to `done` or return it to `hold`
 5. **Deploy** — merge and ship
 
 <Aside>
@@ -64,10 +64,13 @@ Just like each station in a kitchen is separate, each agent runs in an isolated 
 The Kanban board shows all tasks in their current state:
 - **Inbox** — New tasks waiting for planning
 - **Todo** — Planned and ready for agents
-- **In Progress** — Agent is working
-- **Review** — Results ready for inspection
-- **Done** — Task complete and deployed
-- **Blocked** — Cannot proceed; needs input
+- **Hold** — Blocked or paused; needs more context or retry
+- **Ready** — Implementation complete, waiting for verification
+- **Done** — Task verified and complete
+
+Execution overlays are separate from workflow columns:
+- **Queued** — Requested or dispatched, waiting for pickup
+- **Working** — Claimed by an agent right now
 
 ### 4. **Asynchronous Execution**
 
@@ -78,8 +81,9 @@ Agents run independently. You don't watch them work. You check results periodica
 | Term | Meaning |
 |---|---|
 | **Task** | A unit of work with acceptance criteria and status |
-| **Engine** | Which AI agent will execute: `claude`, `codex`, or `gemini` |
-| **Status** | Current state: `inbox`, `todo`, `in_progress`, `review`, `done`, `blocked` |
+| **Engine** | Which AI agent will execute: `claude-code`, `codex`, or `gemini-cli` |
+| **Status** | Workflow state: `inbox`, `todo`, `hold`, `ready`, `done`, `archived` |
+| **Run State** | Live execution overlay: `queued`, `working`, or `null` |
 | **Acceptance Criteria** | Checklist of what must be true for task completion |
 | **Work Log** | Result of agent execution: summary, tests, PR URL, timestamp |
 | **API Token** | Bearer token for agents to authenticate to REST API (prefix: `preq_`) |

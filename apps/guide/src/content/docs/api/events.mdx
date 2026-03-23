@@ -1,139 +1,106 @@
 ---
 title: Events
-description: Event system and event sourcing via events_outbox.
+description: Event outbox structure and `/api/events` response format.
 ---
 
-PREQSTATION uses event sourcing to track all mutations. Events are written to the `events_outbox` table and can be consumed for auditing, notifications, or integrations.
+PREQSTATION writes mutation events to `events_outbox`. The web app reads those events through `/api/events` for audit and integration workflows.
 
 ## Event Types
 
-Events are emitted when mutations occur:
+Common event types include:
 
-### Task Events
+### Task events
 
-| Event | Trigger | Payload |
-|---|---|---|
-| `TASK_CREATED` | Task created | taskId, taskKey, title, engine |
-| `TASK_STATUS_CHANGED` | Status updated | taskId, oldStatus, newStatus |
-| `TASK_UPDATED` | Task fields changed | taskId, changes (title, priority, etc.) |
-| `TASK_DELETED` | Task deleted | taskId, reason |
+| Event | Meaning |
+|---|---|
+| `TASK_CREATED` | A task was created |
+| `TASK_STATUS_CHANGED` | Workflow status changed |
+| `TASK_UPDATED` | Task fields changed |
+| `TASK_DELETED` | A task was deleted |
 
-### Work Log Events
+### Work log events
 
-| Event | Trigger | Payload |
-|---|---|---|
-| `WORKLOG_CREATED` | Agent submits results | worklogId, taskId, engine, summary, tests |
+| Event | Meaning |
+|---|---|
+| `WORKLOG_CREATED` | A work log entry was created |
+| `WORKLOG_UPDATED` | A work log entry was updated |
+| `WORKLOG_DELETED` | A work log entry was deleted |
 
-### Project Events
+### Project events
 
-| Event | Trigger | Payload |
-|---|---|---|
-| `PROJECT_CREATED` | Project created | projectId, projectKey, name |
-| `PROJECT_DELETED` | Project deleted | projectId, reason |
+| Event | Meaning |
+|---|---|
+| `PROJECT_CREATED` | A project was created |
+| `PROJECT_DELETED` | A project was deleted |
 
-## Events Outbox Table
+## events_outbox Schema
 
-Events are persisted in the `events_outbox` table:
+The current table shape is:
 
 ```sql
 CREATE TABLE events_outbox (
-  id UUID PRIMARY KEY,
+  id BIGSERIAL PRIMARY KEY,
+  owner_id UUID NOT NULL,
+  project_id UUID,
   event_type TEXT NOT NULL,
-  aggregate_id UUID NOT NULL,
-  aggregate_type TEXT NOT NULL,
-  payload JSONB NOT NULL,
-  created_at TIMESTAMP NOT NULL,
-  processed_at TIMESTAMP
+  entity_type TEXT NOT NULL,
+  entity_id TEXT NOT NULL,
+  payload JSONB,
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL
 );
 ```
 
-### Columns
+Key points:
 
-| Column | Type | Purpose |
-|---|---|---|
-| `id` | UUID | Unique event ID |
-| `event_type` | TEXT | Event name (TASK_CREATED, etc.) |
-| `aggregate_id` | UUID | Task or project ID |
-| `aggregate_type` | TEXT | `task`, `project`, or `worklog` |
-| `payload` | JSONB | Event data (context-specific) |
-| `created_at` | TIMESTAMP | When event occurred |
-| `processed_at` | TIMESTAMP | When event was consumed (nullable) |
+- `id` is a monotonic cursor, not a UUID
+- `entity_id` is text because it may contain a task key such as `PROJ-123`
+- there is no `processed_at` column in the current schema
 
-## Consuming Events
+## `/api/events`
 
-### Via REST API
+`GET /api/events` is an internal session-auth endpoint.
 
-This is an internal API endpoint that requires an authenticated session cookie (not Bearer token).
+Query parameters:
 
-Returns list of events:
+- `after` (optional): last event cursor already processed
+- `projectId` (optional): filter to one project UUID
+- `limit` (optional): defaults to `50`, max `100`
+
+Response shape:
 
 ```json
 {
-  "data": [
+  "events": [
     {
-      "id": "550e8400-e29b-41d4-a716-446655440000",
-      "eventType": "TASK_CREATED",
-      "aggregateId": "task-uuid",
-      "aggregateType": "task",
+      "id": "42",
+      "eventType": "TASK_STATUS_CHANGED",
+      "entityType": "task",
+      "entityId": "PROJ-123",
       "payload": {
-        "taskKey": "PROJ-123",
-        "title": "Add authentication",
-        "engine": "claude"
+        "from": "todo",
+        "to": "ready"
       },
-      "createdAt": "2025-03-06T10:30:00Z",
-      "processedAt": null
+      "createdAt": "2026-03-12T14:35:00.000Z"
     }
-  ]
+  ],
+  "nextCursor": "42"
 }
 ```
 
-### Polling Pattern
+## Polling Pattern
 
-Poll `/api/events` periodically to process new events. This endpoint requires an authenticated session (internal API).
+1. Call `/api/events`
+2. Process returned events in order
+3. Save `nextCursor`
+4. Poll again with `?after=<nextCursor>`
 
-## Work Logs
+## Work Logs and Events
 
-Work logs are automatically created when agents submit results:
+Task lifecycle mutations often create work logs behind the scenes. For example, `preq_complete_task()` writes a work log entry and also emits `WORKLOG_CREATED` plus task events.
 
-```bash
-curl -X POST -H "Authorization: Bearer preq_xxxxx" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "taskId": "PROJ-123",
-    "summary": "Implemented JWT auth. All tests passing.",
-    "tests": "✓ signup\n✓ login\n✓ protected routes",
-    "prUrl": "https://github.com/project/pull/456"
-  }' \
-  https://your-domain.com/api/work-logs
-```
+## Typical Uses
 
-### Work Log Structure
-
-| Field | Type | Purpose |
-|---|---|---|
-| `id` | UUID | Unique work log ID |
-| `taskId` | UUID | Associated task |
-| `engine` | TEXT | Which agent executed (claude, codex, gemini) |
-| `summary` | TEXT | Execution summary |
-| `tests` | TEXT | Test results (free-form) |
-| `prUrl` | TEXT | Pull request URL (optional) |
-| `createdAt` | TIMESTAMP | When work log was created |
-| `updatedAt` | TIMESTAMP | Last update |
-
-### Retrieving Work Logs
-
-Retrieve individual work logs via the `/api/work-logs/:id` endpoint (internal API, session cookie required). View work logs in the web UI under task details.
-
-## Cleanup
-
-Old events can be archived or deleted via the `/api/events/cleanup` endpoint (internal API, session cookie required). This removes processed events older than a specified date.
-
-## Use Cases
-
-**Event sourcing enables:**
-
-- ✅ Full audit trail of all mutations
-- ✅ Replayable event history
-- ✅ Downstream integrations (Slack, Discord, email)
-- ✅ Analytics and reporting
-- ✅ Compliance and record-keeping
+- audit trails
+- notifications
+- lightweight internal integrations
+- activity timelines

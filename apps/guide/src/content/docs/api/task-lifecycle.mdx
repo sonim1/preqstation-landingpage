@@ -1,141 +1,143 @@
 ---
 title: Task Lifecycle
-description: Task status workflow and state transitions.
+description: Task status workflow, run-state overlay, and lifecycle actions.
 ---
 
 import { Aside } from '@astrojs/starlight/components';
 
-Tasks in PREQSTATION flow through six states. Understanding the lifecycle is key to using agents effectively.
+Tasks in PREQSTATION have two dimensions:
 
-## Status Workflow
+- **Workflow status** — where the card sits in the lifecycle
+- **Run state** — whether an agent has requested or claimed execution right now
+
+That split is the main difference from the older `in_progress` / `review` model.
+
+## Workflow Model
 
 ```
-inbox  →  todo  →  in_progress  →  review  →  done
-                       │                        ▲
-                       └──── blocked ────────────┘
-                              (retry)
+workflow:   inbox  →  todo  →  ready  →  done
+                       │         ▲
+                       └─→ hold ─┘
+
+run_state:  null | queued | working
 ```
 
-## Status Descriptions
+## Workflow Statuses
 
-| Status | Meaning | Who Can Move | Action |
-|---|---|---|---|
-| **Inbox** | New task, awaiting planning | Agent | Agent runs `preq_plan_task` to move to Todo |
-| **Todo** | Planned and ready | Agent | Agent runs `preq_start_task` to begin |
-| **In Progress** | Agent actively working | Agent | Agent runs `preq_complete_task` when done |
-| **Review** | Results submitted for inspection | You/Agent | Run tests, verify, then `preq_review_task` |
-| **Done** | Complete and deployed | Archive | Task is finished |
-| **Blocked** | Cannot proceed | Agent/You | Fix blocker, move back to Todo |
+| Status | Meaning | Typical next action |
+|---|---|---|
+| **Inbox** | New task, awaiting planning | Agent claims the task, reads local code, then runs `preq_plan_task()` |
+| **Todo** | Planned and ready for implementation | Agent claims the task with `preq_start_task()` and begins work |
+| **Hold** | Blocked or paused | Agent retries after resolving the blocker, or stays on hold |
+| **Ready** | Implementation is complete and waiting for verification | Agent or owner runs verification and then `preq_review_task()` |
+| **Done** | Verified and complete | Finished unless reopened manually |
+| **Archived** | Hidden from active board views | Manual archival only |
 
-## Agent Execution Flow
+## Run State Overlay
 
-When an agent receives a task, it checks the current status and proceeds:
+Run state is tracked independently from workflow status:
+
+| Run State | Meaning |
+|---|---|
+| `null` | No active execution claim |
+| `queued` | Requested or dispatched, but not yet claimed by an agent |
+| `working` | Claimed by an agent through `preq_start_task()` |
+
+OpenClaw or Telegram dispatch can mark a task as `queued` before an agent picks it up. `preq_start_task()` upgrades that to `working`.
+
+## Lifecycle Branches
+
+Agents fetch the task once, resolve the current workflow status once, then execute exactly one matching branch.
 
 ### From Inbox
 
-```
-Agent fetches task (status: inbox)
-  → Reads requirements and acceptance criteria
-  → Generates a plan and test strategy
-  → Calls preq_plan_task(planMarkdown)
-  → Task moves to: todo
-  → Agent STOPS (waits for approval)
+```text
+preq_get_task(PROJ-284)         → status=inbox
+preq_start_task(PROJ-284)       → run_state=working
+read local code + write plan
+preq_plan_task(PROJ-284, ...)   → status=todo, run_state=null
+stop
 ```
 
 ### From Todo
 
-```
-Agent fetches task (status: todo)
-  → Calls preq_start_task()
-  → Task moves to: in_progress
-  → Agent implements:
-      - Writes code
-      - Runs tests
-      - Commits and pushes (per deploy strategy)
-  → Calls preq_complete_task(summary, tests, prUrl)
-  → Task moves to: review
+```text
+preq_get_task(PROJ-284)         → status=todo
+preq_start_task(PROJ-284)       → run_state=working
+implement + test + deploy
+preq_complete_task(PROJ-284, ...) → status=ready, run_state=null
+stop
 ```
 
-### From In Progress
+### From Hold
 
-```
-Agent continues work (status: in_progress)
-  → Runs tests, verifies deployment
-  → Calls preq_complete_task(summary, tests, prUrl)
-  → Task moves to: review
-```
-
-### From Review
-
-```
-You run verification:
-  - Review the PR/code changes
-  - Run tests locally
-  - Check acceptance criteria
-
-If passing:
-  → Call preq_review_task()
-  → Task moves to: done
-
-If blocked:
-  → Call preq_block_task(reason)
-  → Task moves to: blocked
+```text
+preq_get_task(PROJ-284)         → status=hold
+preq_start_task(PROJ-284)       → run_state=working
+investigate blocker / resume work
+if resolved: preq_complete_task(PROJ-284, ...) → ready
+if still blocked: preq_block_task(PROJ-284, ...) → hold
+stop
 ```
 
-### From Blocked
+### From Ready
 
-```
-You identify and fix the issue:
-  - Add context to task description
-  - Provide missing information
-  - Resolve the blocker
-
-Then either:
-  → Move back to: todo (agent retries)
-  → Move back to: in_progress (agent continues)
+```text
+preq_get_task(PROJ-284)         → status=ready
+preq_start_task(PROJ-284)       → run_state=working
+run verification (tests, build, lint)
+if passing: preq_review_task(PROJ-284) → done
+if failing: preq_block_task(PROJ-284, ...) → hold
+stop
 ```
 
-## Valid Transitions
+<Aside>
+`preq_start_task()` is an execution-claim action. It does not create an `in_progress` workflow column anymore.
+</Aside>
 
-| From | To | Triggered By | Command |
+## Workflow Transitions
+
+| From | To | Trigger | Command |
 |---|---|---|---|
-| `inbox` | `todo` | Agent | `preq_plan_task(plan)` |
-| `todo` | `in_progress` | Agent | `preq_start_task()` |
-| `in_progress` | `review` | Agent | `preq_complete_task(result)` |
-| `in_progress` | `blocked` | Agent | `preq_block_task(reason)` |
-| `review` | `done` | You | `preq_review_task()` |
-| `review` | `blocked` | You | `preq_block_task(reason)` |
-| `blocked` | `todo` | You | Move via Kanban (status: todo) |
-| `blocked` | `in_progress` | You | Move via Kanban (status: in_progress) |
-| `done` | `todo` | You | Reopen via Kanban (for retry) |
+| `inbox` | `todo` | Agent plan is uploaded | `preq_plan_task()` |
+| `todo` | `ready` | Implementation is complete | `preq_complete_task()` |
+| `hold` | `ready` | Blocker is resolved and work is complete | `preq_complete_task()` |
+| `ready` | `done` | Verification succeeds | `preq_review_task()` |
+| `inbox` | `hold` | Planning is blocked | `preq_block_task()` |
+| `todo` | `hold` | Implementation is blocked | `preq_block_task()` |
+| `hold` | `hold` | Blocker remains | `preq_block_task()` |
+| `ready` | `hold` | Verification fails | `preq_block_task()` |
 
-## Task Result
+`preq_update_task_status()` is the manual escape hatch for direct status changes such as reopening or archiving a card.
 
-When an agent submits `preq_complete_task()`, it includes a result object:
+## Result Payload
+
+When an agent submits `preq_complete_task()`, it uploads a result object like:
 
 ```json
 {
   "summary": "Implemented JWT authentication. All tests passing.",
-  "tests": "✓ User signup\n✓ User login\n✓ Protected routes",
-  "prUrl": "https://github.com/project/pull/456",
-  "notes": "Stored JWT in httpOnly cookie as per security best practices."
+  "tests": "npm test",
+  "pr_url": "https://github.com/project/pull/456",
+  "notes": "Stored JWT in an httpOnly cookie.",
+  "completed_at": "2026-03-12T14:22:00.000Z"
 }
 ```
 
-This becomes a **Work Log** entry attached to the task for audit and review.
+PREQSTATION stores that as a work log entry attached to the task.
 
 ## Deployment Strategy
 
-Task execution respects the project's deployment strategy:
+Task execution still respects the project deployment strategy:
 
 | Strategy | Behavior |
 |---|---|
 | `none` | No git operations. Code changes only. |
-| `direct_commit` | Commit and push to default branch. Optional squash merge. |
-| `feature_branch` | Commit to task branch. Optional auto-PR creation. |
+| `direct_commit` | Merge and push to the default branch. |
+| `feature_branch` | Push the task branch and optionally create a PR. |
 
-Agents fetch the strategy via `preq_get_project_settings()` before executing.
+Agents resolve the strategy through `preq_get_project_settings()` before deploy steps.
 
 <Aside>
-Tasks can be reopened at any time by moving them back to `todo` or `in_progress` on the Kanban board. This is useful for retrying failed tasks or making additional changes.
+Because workflow status and run state are separate, you can reopen a task with the Kanban board or `/tasks/:id/status` without inventing a fake "in progress" workflow column.
 </Aside>

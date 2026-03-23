@@ -5,9 +5,9 @@ description: Complete reference of all environment variables for PREQSTATION sys
 
 import { Tabs, TabItem } from '@astrojs/starlight/components';
 
-This reference documents all environment variables used by project-manager, preqstation-skill, and preqstation-openclaw.
+This reference documents all environment variables used by projects-manager, preqstation-skill, and preqstation-openclaw.
 
-## project-manager
+## projects-manager
 
 Server-side variables for the main PREQSTATION web service.
 
@@ -46,7 +46,7 @@ Agent-side variables for MCP server and shell helpers.
 
 | Variable | Required | Default | Purpose |
 |----------|----------|---------|---------|
-| `PREQSTATION_API_URL` | Yes | — | project-manager API base URL (e.g., `https://mypreqstation.vercel.app`) |
+| `PREQSTATION_API_URL` | Yes | — | projects-manager API base URL (e.g., `https://mypreqstation.vercel.app`) |
 | `PREQSTATION_TOKEN` | Yes | — | Bearer token (format: `preq_` prefix, from `/api-keys` page) |
 | `PREQSTATION_ENGINE` | No | `codex` | Fallback engine when client auto-detection unavailable |
 
@@ -56,12 +56,12 @@ Agent-side variables for MCP server and shell helpers.
 # ~/.zshrc or ~/.bashrc
 export PREQSTATION_API_URL="https://your-preqstation-domain.vercel.app"
 export PREQSTATION_TOKEN="preq_xxxxxxxxxxxxxxxxx"
-export PREQSTATION_ENGINE="claude"  # optional
+export PREQSTATION_ENGINE="claude-code"  # optional
 ```
 
 ### Getting a Token
 
-1. Deploy project-manager
+1. Deploy projects-manager
 2. Log into web UI
 3. Go to Settings → API Keys
 4. Click "New Token"
@@ -71,9 +71,9 @@ export PREQSTATION_ENGINE="claude"  # optional
 
 | Value | Meaning |
 |-------|---------|
-| `claude` | Claude (Anthropic) |
+| `claude-code` | Claude Code |
 | `codex` | Codex (OpenAI) |
-| `gemini` | Gemini (Google) |
+| `gemini-cli` | Gemini CLI |
 
 ## preqstation-openclaw
 
@@ -112,13 +112,13 @@ export OPENCLAW_WORKTREE_ROOT="/workspace/openclaw-worktrees"
 <Tabs>
 <TabItem label="Local Development">
 ```bash
-# 1. Install project-manager (optional for local testing)
+# 1. Install projects-manager (optional for local testing)
 # Skip if using hosted instance
 
 # 2. Set preqstation-skill variables
 export PREQSTATION_API_URL="https://your-hosted-domain.vercel.app"
 export PREQSTATION_TOKEN="preq_xxxxx"  # from /api-keys page
-export PREQSTATION_ENGINE="claude"
+export PREQSTATION_ENGINE="claude-code"
 
 # 3. Set preqstation-openclaw variables (optional)
 export OPENCLAW_WORKTREE_ROOT="$HOME/openclaw-worktrees"
@@ -135,7 +135,7 @@ curl -H "Authorization: Bearer $PREQSTATION_TOKEN" \
 env:
   PREQSTATION_API_URL: https://your-preqstation-domain.vercel.app
   PREQSTATION_TOKEN: ${{ secrets.PREQSTATION_TOKEN }}
-  PREQSTATION_ENGINE: claude
+  PREQSTATION_ENGINE: claude-code
   OPENCLAW_WORKTREE_ROOT: /workspace/openclaw-worktrees
 
 steps:
@@ -147,7 +147,7 @@ steps:
 ```dockerfile
 FROM node:22-alpine
 
-# project-manager
+# projects-manager
 ENV AUTH_SECRET=your-secret
 ENV OWNER_EMAIL=you@example.com
 ENV OWNER_PASSWORD=secure
@@ -156,7 +156,7 @@ ENV DATABASE_URL=postgresql://...
 # preqstation-skill
 ENV PREQSTATION_API_URL=https://your-domain.vercel.app
 ENV PREQSTATION_TOKEN=preq_xxxxx
-ENV PREQSTATION_ENGINE=claude
+ENV PREQSTATION_ENGINE=claude-code
 
 # preqstation-openclaw
 ENV OPENCLAW_WORKTREE_ROOT=/app/worktrees
