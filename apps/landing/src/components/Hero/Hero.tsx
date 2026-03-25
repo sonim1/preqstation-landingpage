@@ -1,6 +1,7 @@
 import { motion } from "motion/react";
 import { useT } from "../../i18n/context";
 import LetterFlip from "./LetterFlip";
+import WorkflowSnapshot from "./WorkflowSnapshot";
 
 export default function Hero() {
   const t = useT();
@@ -28,6 +29,14 @@ export default function Hero() {
           {t.hero.description}
         </p>
 
+        <WorkflowSnapshot
+          steps={t.pipeline.steps}
+          title={t.hero.snapshotTitle}
+          description={t.hero.snapshotDescription}
+          holdLabel={t.hero.snapshotHoldLabel}
+          holdDescription={t.hero.snapshotHoldDescription}
+        />
+
         {/* CTA buttons */}
         <div className="flex gap-4 justify-center mt-10 flex-wrap">
           <a
@@ -37,7 +46,7 @@ export default function Hero() {
             {t.hero.cta}
           </a>
           <a
-            href="https://github.com/preq"
+            href="https://github.com/sonim1/preqstation"
             className="border-2 border-white text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-white hover:text-charcoal transition font-body"
           >
             {t.hero.github}

@@ -1,0 +1,63 @@
+---
+title: 칸반 보드
+description: 칸반 보드에서 태스크를 시각적으로 관리하는 방법을 설명합니다.
+---
+
+import Mermaid from '../../../../components/Mermaid.astro';
+
+칸반 보드는 태스크를 관리하는 메인 인터페이스입니다. 활성 워크플로우 컬럼은 Inbox, Todo, Hold, Ready, Done 다섯 개입니다.
+
+<Mermaid
+  chart={`
+flowchart LR
+  inbox[Inbox] --> todo[Todo]
+  todo --> ready[Ready]
+  ready --> done[Done]
+  todo --> hold[Hold]
+  hold --> ready
+`}
+  caption="보드는 워크플로우 상태를 보여줍니다. `queued`, `working`은 카드 위 오버레이로 표시됩니다."
+/>
+
+## 상태 의미
+
+| 상태 | 의미 | 액션 |
+|---|---|---|
+| **Inbox** | 새 태스크, 아직 계획 전 | 에이전트가 `preq_plan_task` 실행 후 Todo로 이동 |
+| **Todo** | 계획 완료, 에이전트 작업 가능 | `preq_start_task`로 작업 시작 |
+| **Hold** | 막혔거나 일시정지 | blocker 해결 후 재개 |
+| **Ready** | 구현 완료, 검증 대기 | 검증 후 `preq_review_task`로 Done 이동 |
+| **Done** | 검증 완료 | 필요 시 재오픈 또는 archive |
+
+Archived는 활성 보드에 보이지 않으며 수동 archive 흐름으로 다뤄집니다.
+
+## 태스크 생성
+
+`+ New Task`를 눌러 생성합니다.
+
+1. **Title** — 해야 할 작업
+2. **Description** — 맥락과 요구사항
+3. **Engine** — `claude-code`, `codex`, `gemini-cli`
+4. **Priority** — `highest`, `high`, `medium`, `low`, `lowest`
+5. **Labels** — 예: `backend`, `urgent`
+6. **Acceptance Criteria** — done의 기준
+
+## 드래그 앤 드롭
+
+- **Inbox -> Todo** — 계획 완료
+- **Todo ↔ Hold** — 막힘/재개
+- **Todo/Hold -> Ready** — 구현 완료, 검증 대기
+- **Ready -> Done** — 검증 통과
+- **Done -> Todo/Hold** — 후속 작업으로 재오픈
+
+## 카드 정보
+
+각 카드는 다음을 보여줍니다.
+
+- **Task ID** — 예: `PROJ-123`
+- **Title** — 작업명
+- **Priority** — 우선순위 표시
+- **Engine** — 어떤 에이전트가 작업하는지
+- **Status indicator** — 현재 워크플로우 상태
+- **Execution overlay** — 필요 시 `Queued` 또는 `Working`
+- **Labels** — 사용자 태그

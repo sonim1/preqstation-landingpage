@@ -5,12 +5,22 @@ import starlight from '@astrojs/starlight';
 export default defineConfig({
   site: 'https://preqstation.com',
   base: '/guide',
-  legacy: { collections: true },
   integrations: [
     sitemap(),
     starlight({
       title: 'PREQSTATION Guide',
       customCss: ['./src/styles/custom.css'],
+      defaultLocale: 'root',
+      locales: {
+        root: {
+          label: 'English',
+          lang: 'en',
+        },
+        ko: {
+          label: '한국어',
+          lang: 'ko',
+        },
+      },
       head: [
         {
           tag: 'script',
@@ -18,7 +28,7 @@ export default defineConfig({
         },
       ],
       social: {
-        github: 'https://github.com/preq',
+        github: 'https://github.com/sonim1/preqstation',
       },
       sidebar: [
         {

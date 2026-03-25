@@ -4,6 +4,7 @@ description: Task status workflow, run-state overlay, and lifecycle actions.
 ---
 
 import { Aside } from '@astrojs/starlight/components';
+import Mermaid from '../../../components/Mermaid.astro';
 
 Tasks in PREQSTATION have two dimensions:
 
@@ -14,13 +15,19 @@ That split is the main difference from the older `in_progress` / `review` model.
 
 ## Workflow Model
 
-```
-workflow:   inbox  →  todo  →  ready  →  done
-                       │         ▲
-                       └─→ hold ─┘
-
-run_state:  null | queued | working
-```
+<Mermaid
+  chart={`
+flowchart LR
+  inbox[Inbox] --> todo[Todo]
+  todo --> ready[Ready]
+  ready --> done[Done]
+  todo --> hold[Hold]
+  hold --> ready
+  queued[Queued overlay] -.-> todo
+  working[Working overlay] -.-> ready
+`}
+  caption="The happy path is inbox -> todo -> ready -> done. Hold is a side branch for blocked or paused work."
+/>
 
 ## Workflow Statuses
 

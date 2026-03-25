@@ -57,35 +57,37 @@
   --sl-color-text-accent: #00956f;
 
   /* Backgrounds */
-  --sl-color-bg: #F8F9FA;
+  --sl-color-bg: #f4f7f6;
   --sl-color-bg-nav: #ffffff;
-  --sl-color-bg-sidebar: #DFE6E9;
-  --sl-color-bg-inline-code: #edf0f2;
-  --sl-color-hairline-light: #DFE6E9;
-  --sl-color-hairline: #B2BEC3;
+  --sl-color-bg-sidebar: #edf3f1;
+  --sl-color-bg-inline-code: #eef3f6;
+  --sl-color-bg-accent: #ffffff;
+  --sl-color-hairline-light: #d6e0dd;
+  --sl-color-hairline: #b1c2bd;
 
   /* Text */
-  --sl-color-text: #2D3436;
+  --sl-color-text: #1f2a2d;
   --sl-color-text-invert: #F8F9FA;
-  --sl-color-white: #ffffff;
+  --sl-color-white: #1f2a2d;
+  --sl-color-black: #ffffff;
 
   /* Gray scale */
-  --sl-color-gray-1: #2D3436;
-  --sl-color-gray-2: #636e72;
-  --sl-color-gray-3: #B2BEC3;
-  --sl-color-gray-4: #DFE6E9;
-  --sl-color-gray-5: #edf0f2;
-  --sl-color-gray-6: #F8F9FA;
+  --sl-color-gray-1: #1f2a2d;
+  --sl-color-gray-2: #4a5a60;
+  --sl-color-gray-3: #738087;
+  --sl-color-gray-4: #b1c2bd;
+  --sl-color-gray-5: #dce7e3;
+  --sl-color-gray-6: #eef3f1;
   --sl-color-gray-7: #ffffff;
 }
 
 /* ─── PREQSTATION Status Colors ────────────────────────────────────────────── */
 :root {
-  --preq-todo: #DFE6E9;
-  --preq-in-progress: #FDCB6E;
-  --preq-review: #74B9FF;
+  --preq-inbox: #DFE6E9;
+  --preq-todo: #FDCB6E;
+  --preq-hold: #E17055;
+  --preq-ready: #74B9FF;
   --preq-done: #00B894;
-  --preq-blocked: #E17055;
 }
 
 /* ─── Status badge utilities ───────────────────────────────────────────────── */
@@ -98,11 +100,11 @@
   font-weight: 500;
   line-height: 1.6;
 }
-.preq-badge-todo       { background: var(--preq-todo);        color: #2D3436; }
-.preq-badge-progress   { background: var(--preq-in-progress); color: #2D3436; }
-.preq-badge-review     { background: var(--preq-review);      color: #2D3436; }
-.preq-badge-done       { background: var(--preq-done);        color: #ffffff; }
-.preq-badge-blocked    { background: var(--preq-blocked);     color: #ffffff; }
+.preq-badge-inbox      { background: var(--preq-inbox); color: #2D3436; }
+.preq-badge-todo       { background: var(--preq-todo); color: #2D3436; }
+.preq-badge-hold       { background: var(--preq-hold); color: #ffffff; }
+.preq-badge-ready      { background: var(--preq-ready); color: #2D3436; }
+.preq-badge-done       { background: var(--preq-done); color: #ffffff; }
 
 /* ─── Site title: monospace accent ─────────────────────────────────────────── */
 .site-title {
@@ -129,4 +131,32 @@ code, pre, kbd, samp {
 .hero .tagline {
   font-size: 1.15rem;
   opacity: 0.85;
+}
+
+.preq-mermaid-frame {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  border: 1px solid var(--sl-color-hairline);
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--sl-color-bg-nav) 88%, transparent);
+}
+
+.preq-mermaid {
+  overflow-x: auto;
+}
+
+.preq-mermaid svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.preq-mermaid-caption {
+  margin-top: 0.75rem;
+  font-size: 0.9rem;
+  color: var(--sl-color-gray-3);
+}
+
+:root[data-theme='light'] .preq-mermaid-frame {
+  box-shadow: 0 8px 24px rgba(31, 42, 45, 0.06);
 }

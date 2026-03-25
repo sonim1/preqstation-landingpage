@@ -43,7 +43,7 @@ export default function Pricing() {
           </ul>
 
           <a
-            href="https://github.com/preq"
+            href="https://github.com/sonim1/preqstation"
             className="inline-block bg-mint text-charcoal px-8 py-4 rounded-full mt-8 hover:bg-mint/80 transition font-display font-semibold"
           >
             {t.pricing.cta}

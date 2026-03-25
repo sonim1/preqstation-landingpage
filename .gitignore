@@ -26,3 +26,4 @@ pnpm-debug.log*
 .omc/
 .turbo/
 /docs/
+.qa-shots/

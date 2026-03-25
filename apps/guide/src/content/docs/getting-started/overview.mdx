@@ -4,8 +4,9 @@ description: Architecture, components, and data flow of PREQSTATION.
 ---
 
 import { Aside, Card, CardGrid } from '@astrojs/starlight/components';
+import Mermaid from '../../../components/Mermaid.astro';
 
-PREQSTATION is a task management platform designed for AI-agent-driven development workflows. It bridges developers and AI agents through a central task queue and REST API.
+PREQSTATION is an execution platform for AI-agent-driven development workflows. It bridges developers and coding agents through a task queue, a web app, and agent-facing APIs.
 
 ## Three-System Architecture
 
@@ -25,91 +26,69 @@ PREQSTATION consists of three interconnected services:
 
 ## System Diagram
 
-```
-┌──────────────────────────────────────────────────────────────┐
-│                  projects-manager (Web App)                  │
-│                                                              │
-│  Next.js 16 · React 19 · Mantine 8 · Drizzle · Neon PG     │
-│                                                              │
-│  ┌────────────┐  ┌──────────────┐  ┌───────────────────┐    │
-│  │ Kanban UI  │  │  REST API    │  │  Telegram Client  │    │
-│  │ Dashboard  │  │  /api/tasks  │  │ /api/telegram/*   │    │
-│  │ Settings   │  │ /api/api-keys│  │                   │    │
-│  └────────────┘  └──────┬───────┘  └────────┬──────────┘    │
-│                         │                    │               │
-└─────────────────────────┼────────────────────┼───────────────┘
-                          │                    │
-                  API calls (Bearer token)     │ Sends notifications
-                          │                    │
-                          │                    ▼
-                          │           ┌─────────────────┐
-                          │           │    Telegram     │
-                          │           └────────┬────────┘
-                          │                    │
-                          │                    │ User message / bot relay
-                          │                    ▼
-                          │           ┌─────────────────────────────────┐
-                          │           │      OpenClaw (Runtime)         │
-                          │           │                                 │
-                          │           │  Receives request, imports      │
-                          │           │  preqstation-openclaw skill     │
-                          │           └────────────────┬────────────────┘
-                          │                            │
-                          │                   Parses intent, creates
-                          │                   git worktree, launches
-                          │                   coding agent (PTY+bg)
-                          │                            │
-                          │                            ▼
-                          │           ┌─────────────────────────────────┐
-                          │           │     Coding Agent                │
-                          │           │ ("claude-code" / "codex" /      │
-                          │           │   "gemini-cli")                 │
-                          │           │                                 │
-                          │           │  Runs in isolated worktree      │
-                          │           │  Implements code changes        │
-                          ◄───────────│  Uses preqstation-skill MCP     │
-                                      │  to report status & results     │
-                                      └─────────────────────────────────┘
-```
+<Mermaid
+  chart={`
+flowchart LR
+  DEV[Developer]
+  UI[Kanban UI]
+  API[REST API]
+  TG[Telegram relay]
+  OC[OpenClaw runtime]
+  AGENT[Coding agent]
+  MCP[preqstation-skill MCP]
+  DEV --> UI
+  UI --> API
+  DEV --> TG
+  TG --> OC
+  DEV --> OC
+  OC --> AGENT
+  AGENT --> MCP
+  MCP --> API
+`}
+  caption="OpenClaw is optional. The core system is the web app plus the agent-facing API surface."
+/>
 
 ## Data Flow
 
 ### Task Creation and Notification
 
-```
-User creates task in Kanban UI
-  → projects-manager stores in PostgreSQL
-  → (optional) sends Telegram notification
+```text
+User creates task in the Kanban UI
+  -> projects-manager stores it in PostgreSQL
+  -> optional relays notify Telegram / OpenClaw
 ```
 
 ### Agent Trigger via OpenClaw
 
-```
-Developer sends task request to OpenClaw
-  → OpenClaw runtime receives message
-    → preqstation-openclaw skill triggers
-      → Parses: engine key, task ID, project key
-      → Resolves project path from agent memory
-      → Creates isolated git worktree
-      → Launches coding agent (claude/codex/gemini CLI)
+```text
+Developer sends a task request to OpenClaw
+  -> OpenClaw resolves project + task + engine
+  -> Creates an isolated git worktree
+  -> Launches the requested coding agent
 ```
 
 ### Agent Execution and Status Reporting
 
-```
-Coding agent fetches task via preq_get_task, then:
+<Mermaid
+  chart={`
+flowchart TD
+  A[Inbox] --> B[Todo]
+  B --> C[Ready]
+  C --> D[Done]
+  B --> H[Hold]
+  H --> C
+  Q[Queued overlay] -.-> B
+  W[Working overlay] -.-> C
+`}
+  caption="Workflow status and run state are separate. `queued` and `working` are overlays, not columns."
+/>
 
-  inbox       → preq_start_task (run_state → working)
-              → preq_plan_task (write plan, → todo, clear run_state)
-  todo/hold   → preq_start_task (run_state → working)
-              → Implement + test + deploy per strategy
-              → preq_complete_task (→ ready, clear run_state)
-  ready       → preq_start_task (run_state → working)
-              → Run verification (tests, build, lint)
-              → preq_review_task (→ done, clear run_state)
-
-  Telegram dispatch before pickup may set run_state=queued
-  On any failure → preq_block_task (→ hold)
+```text
+Agent lifecycle:
+  inbox -> preq_plan_task -> todo
+  todo or hold -> implement -> preq_complete_task -> ready
+  ready -> verify -> preq_review_task -> done
+  any blocked step -> preq_block_task -> hold
 ```
 
 ## Tech Stack

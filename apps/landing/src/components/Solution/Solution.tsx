@@ -14,8 +14,8 @@ export default function Solution() {
           className="text-center"
         >
           <h2 className="font-display text-3xl md:text-5xl font-bold text-white">
-            {t.solution.title}{" "}
-            <span className="text-mint">{t.solution.highlight}</span>
+            {t.solution.title}
+            <span className="ml-3 inline-block text-mint">{t.solution.highlight}</span>
           </h2>
         </motion.div>
 

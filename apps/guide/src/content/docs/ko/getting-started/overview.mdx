@@ -1,0 +1,105 @@
+---
+title: 시스템 개요
+description: PREQSTATION의 구조, 구성요소, 데이터 흐름을 설명합니다.
+---
+
+import { Aside, Card, CardGrid } from '@astrojs/starlight/components';
+import Mermaid from '../../../../components/Mermaid.astro';
+
+PREQSTATION은 AI 에이전트 기반 개발 워크플로우를 위한 실행 플랫폼입니다. 개발자와 코딩 에이전트를 태스크 큐, 웹 앱, 에이전트용 API로 연결합니다.
+
+## 세 가지 시스템
+
+<CardGrid>
+  <Card title="projects-manager" icon="setting">
+    중심 웹 앱입니다. 태스크를 관리하고, 칸반 UI를 렌더링하고, REST API를 노출하고, Telegram/OpenClaw relay를 수행할 수 있습니다.
+  </Card>
+  <Card title="preqstation-openclaw" icon="rocket">
+    실행 스킬 패키지입니다. OpenClaw가 이 패키지를 불러 프로젝트를 찾고 worktree를 만들고 코딩 에이전트를 실행합니다.
+  </Card>
+  <Card title="preqstation-skill" icon="approve">
+    에이전트 클라이언트입니다. 코딩 에이전트가 실행 중 projects-manager API를 호출할 수 있게 해주는 MCP 서버와 shell helper입니다.
+  </Card>
+</CardGrid>
+
+## 시스템 다이어그램
+
+<Mermaid
+  chart={`
+flowchart LR
+  DEV[개발자]
+  UI[칸반 UI]
+  API[REST API]
+  TG[Telegram relay]
+  OC[OpenClaw runtime]
+  AGENT[코딩 에이전트]
+  MCP[preqstation-skill MCP]
+  DEV --> UI
+  UI --> API
+  DEV --> TG
+  TG --> OC
+  DEV --> OC
+  OC --> AGENT
+  AGENT --> MCP
+  MCP --> API
+`}
+  caption="OpenClaw는 선택 사항입니다. 핵심 시스템은 웹 앱과 에이전트용 API입니다."
+/>
+
+## 데이터 흐름
+
+### 태스크 생성
+
+```text
+사용자가 칸반 UI에서 태스크를 생성
+  -> projects-manager가 PostgreSQL에 저장
+  -> 필요하면 Telegram / OpenClaw로 relay
+```
+
+### OpenClaw를 통한 실행
+
+```text
+개발자가 OpenClaw에 태스크 요청
+  -> OpenClaw가 프로젝트 + 태스크 + 엔진 해석
+  -> 격리된 git worktree 생성
+  -> 요청된 코딩 에이전트 실행
+```
+
+### 실행 및 상태 보고
+
+<Mermaid
+  chart={`
+flowchart TD
+  A[Inbox] --> B[Todo]
+  B --> C[Ready]
+  C --> D[Done]
+  B --> H[Hold]
+  H --> C
+  Q[Queued overlay] -.-> B
+  W[Working overlay] -.-> C
+`}
+  caption="워크플로우 상태와 run_state는 분리되어 있습니다."
+/>
+
+```text
+에이전트 실행 흐름:
+  inbox -> preq_plan_task -> todo
+  todo 또는 hold -> 구현 -> preq_complete_task -> ready
+  ready -> 검증 -> preq_review_task -> done
+  막히면 언제든 preq_block_task -> hold
+```
+
+## 기술 스택
+
+| 레이어 | 기술 |
+| ---------- | ------------------------------------------- |
+| Framework  | Next.js 16 (App Router)                     |
+| UI         | React 19, Mantine 8, Tabler Icons, Recharts |
+| ORM        | Drizzle ORM                                 |
+| Database   | Neon PostgreSQL (Row Level Security)        |
+| Validation | Zod                                         |
+| Auth       | Session cookies (HMAC-signed), bcryptjs     |
+
+<Aside>
+모든 데이터는 Neon PostgreSQL RLS를 통해 단일 owner 기준으로 격리됩니다. 현재 PREQSTATION은 개인 개발자 사용 흐름에 맞춰 설계되어 있습니다.
+</Aside>

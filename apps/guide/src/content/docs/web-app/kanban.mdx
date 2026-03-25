@@ -3,7 +3,21 @@ title: Kanban Board
 description: Manage tasks visually with the Kanban board.
 ---
 
+import Mermaid from '../../../components/Mermaid.astro';
+
 The Kanban board is your main interface for managing tasks. It displays the five active workflow columns: Inbox, Todo, Hold, Ready, and Done.
+
+<Mermaid
+  chart={`
+flowchart LR
+  inbox[Inbox] --> todo[Todo]
+  todo --> ready[Ready]
+  ready --> done[Done]
+  todo --> hold[Hold]
+  hold --> ready
+`}
+  caption="The board shows workflow status. `queued` and `working` appear as execution overlays on the card itself."
+/>
 
 ## Task Statuses
 

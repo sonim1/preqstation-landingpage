@@ -1,0 +1,29 @@
+---
+title: PREQSTATION Guide
+description: PREQSTATION 실행 가이드. 태스크를 라우팅하고, 에이전트가 구현하고, 검증 후 done으로 보냅니다.
+template: splash
+hero:
+  title: PREQSTATION Guide
+  tagline: "태스크를 큐에 넣고, 에이전트가 실행하고, 당신이 검증합니다."
+  actions:
+    - text: 시작하기
+      link: /guide/ko/getting-started/overview
+      icon: right-arrow
+      variant: primary
+    - text: API 레퍼런스
+      link: /guide/ko/api/task-lifecycle
+      icon: open-book
+      variant: secondary
+---
+
+PREQSTATION은 Claude, Codex, Gemini를 실제 프로젝트에 연결하기 위한 실행 시스템입니다.
+
+구성은 세 가지입니다.
+
+- **projects-manager** — 칸반 UI, REST API, Telegram relay, 실행 오버레이를 제공하는 중심 웹 앱
+- **preqstation-skill** — 코딩 에이전트가 태스크를 읽고 상태를 갱신할 때 쓰는 MCP 서버와 shell helper
+- **preqstation-openclaw** — OpenClaw 런타임에서 프로젝트를 찾고 worktree를 만들고 에이전트를 실행하는 스킬 패키지
+
+이 시스템은 “이슈를 모아두는 백로그”보다, 이미 범위가 정해진 작업을 실제로 실행시키는 데 맞습니다.
+
+태스크를 만드세요. 에이전트가 계획하고 구현하고 검증합니다. 마지막 판단과 승인만 당신이 합니다.

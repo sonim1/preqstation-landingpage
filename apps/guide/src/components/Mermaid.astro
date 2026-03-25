@@ -1,0 +1,86 @@
+---
+interface Props {
+  chart: string;
+  caption?: string;
+}
+
+const { chart, caption } = Astro.props;
+const source = chart.trim();
+---
+
+<figure class="preq-mermaid-frame">
+  <div class="preq-mermaid mermaid" data-source={source}>{source}</div>
+  {caption && <figcaption class="preq-mermaid-caption">{caption}</figcaption>}
+</figure>
+
+<script>
+  import mermaid from 'mermaid';
+
+  async function renderMermaids() {
+    const blocks = document.querySelectorAll('.preq-mermaid.mermaid');
+    const isLight = document.documentElement.dataset.theme === 'light';
+
+    mermaid.initialize({
+      startOnLoad: false,
+      securityLevel: 'loose',
+      theme: isLight ? 'default' : 'dark',
+      fontFamily: 'Inter, system-ui, sans-serif',
+      flowchart: { useMaxWidth: true, htmlLabels: true },
+      themeVariables: isLight
+        ? {
+            primaryColor: '#ffffff',
+            primaryTextColor: '#1f2a2d',
+            primaryBorderColor: '#b1c2bd',
+            lineColor: '#4a5a60',
+            tertiaryColor: '#eef3f1',
+            background: '#f4f7f6',
+          }
+        : {
+            primaryColor: '#353b48',
+            primaryTextColor: '#dfe6e9',
+            primaryBorderColor: '#4a5060',
+            lineColor: '#b2bec3',
+            tertiaryColor: '#2d3436',
+            background: '#2d3436',
+          },
+    });
+
+    for (const block of Array.from(blocks)) {
+      if (!(block instanceof HTMLElement)) continue;
+      const definition = block.dataset.source?.trim() ?? block.textContent?.trim() ?? '';
+      try {
+        block.textContent = definition;
+        block.removeAttribute('data-processed');
+        await mermaid.run({ nodes: [block] });
+      } catch (error) {
+        console.error('Failed to render Mermaid diagram.', error);
+        block.textContent = definition;
+      }
+    }
+  }
+
+  if (!window.__preqMermaidSetup) {
+    window.__preqMermaidSetup = true;
+    window.__preqRenderMermaids = renderMermaids;
+
+    const run = () => void renderMermaids();
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', run, { once: true });
+    } else {
+      run();
+    }
+
+    const observer = new MutationObserver((mutations) => {
+      if (mutations.some((mutation) => mutation.attributeName === 'data-theme')) {
+        run();
+      }
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme'],
+    });
+  } else if (window.__preqRenderMermaids) {
+    void window.__preqRenderMermaids();
+  }
+</script>
