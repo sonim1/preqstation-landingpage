@@ -10,7 +10,7 @@ type CardItem = {
   readonly desc: string;
 };
 
-type RowVariant = "for" | "not";
+type RowVariant = "for" | "fit";
 
 function ScrollRow({
   items,
@@ -26,6 +26,7 @@ function ScrollRow({
   rowIndex: number;
 }) {
   const isFor = variant === "for";
+  const isFit = variant === "fit";
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
@@ -69,15 +70,15 @@ function ScrollRow({
             "inline-flex items-center justify-center w-7 h-7 rounded-full text-sm font-bold font-mono",
             isFor
               ? "bg-mint/15 text-mint"
-              : "bg-coral/15 text-coral",
+              : "bg-review-blue/15 text-review-blue",
           ].join(" ")}
         >
-          {isFor ? "\u2713" : "\u2715"}
+          {isFor ? "\u2713" : "\u2192"}
         </span>
         <span
           className={[
             "font-display font-semibold text-base tracking-wide uppercase",
-            isFor ? "text-mint" : "text-coral",
+            isFor ? "text-mint" : "text-review-blue",
           ].join(" ")}
           style={{ letterSpacing: "0.08em" }}
         >
@@ -86,7 +87,7 @@ function ScrollRow({
         <div
           className={[
             "h-px flex-1 hidden md:block",
-            isFor ? "bg-mint/20" : "bg-coral/20",
+            isFor ? "bg-mint/20" : "bg-review-blue/20",
           ].join(" ")}
         />
 
@@ -100,7 +101,7 @@ function ScrollRow({
               canScrollLeft
                 ? isFor
                   ? "border-mint/40 text-mint hover:bg-mint/10"
-                  : "border-coral/40 text-coral hover:bg-coral/10"
+                  : "border-review-blue/40 text-review-blue hover:bg-review-blue/10"
                 : "border-white/10 text-white/20 cursor-default",
             ].join(" ")}
             disabled={!canScrollLeft}
@@ -115,7 +116,7 @@ function ScrollRow({
               canScrollRight
                 ? isFor
                   ? "border-mint/40 text-mint hover:bg-mint/10"
-                  : "border-coral/40 text-coral hover:bg-coral/10"
+                  : "border-review-blue/40 text-review-blue hover:bg-review-blue/10"
                 : "border-white/10 text-white/20 cursor-default",
             ].join(" ")}
             disabled={!canScrollRight}
@@ -169,7 +170,7 @@ function ScrollRow({
                 "bg-white/5 backdrop-blur-xl",
                 isFor
                   ? "border-white/10 hover:border-mint/40"
-                  : "border-coral/20 hover:border-coral/40",
+                  : "border-review-blue/20 hover:border-review-blue/40",
               ].join(" ")}
               style={{ scrollSnapAlign: "start" }}
             >
@@ -177,12 +178,14 @@ function ScrollRow({
               <div
                 className={[
                   "w-11 h-11 rounded-xl flex items-center justify-center text-xl mb-4",
-                  isFor ? "bg-mint/10" : "bg-coral/10",
+                  isFor ? "bg-mint/10" : "bg-review-blue/10",
                 ].join(" ")}
                 style={
                   isFor
                     ? { filter: "drop-shadow(0 0 8px rgba(0,184,148,0.25))" }
-                    : {}
+                    : isFit
+                      ? { filter: "drop-shadow(0 0 8px rgba(116,185,255,0.18))" }
+                      : {}
                 }
               >
                 {item.icon}
@@ -192,7 +195,7 @@ function ScrollRow({
               <h3
                 className={[
                   "font-display font-semibold text-[15px] leading-snug mb-2",
-                  isFor ? "text-white" : "text-white/80",
+                  isFor ? "text-white" : "text-white/90",
                 ].join(" ")}
               >
                 {item.title}
@@ -202,7 +205,7 @@ function ScrollRow({
               <p
                 className={[
                   "text-sm leading-relaxed",
-                  isFor ? "text-white/50" : "text-white/60",
+                  isFor ? "text-white/50" : "text-white/65",
                 ].join(" ")}
               >
                 {item.desc}
@@ -264,10 +267,10 @@ export default function WhoIsItFor() {
           className="h-px bg-white/10 mx-6 md:mx-0 mb-12 origin-left"
         />
 
-        {/* Not For You row */}
+        {/* Fit guidance row */}
         <ScrollRow
           items={t.whoIsItFor.notForYou.items}
-          variant="not"
+          variant="fit"
           label={t.whoIsItFor.notForYou.title}
           inView={inView}
           rowIndex={1}
