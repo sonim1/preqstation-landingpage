@@ -56,7 +56,7 @@ echo $PREQSTATION_TOKEN  # Should output: preq_xxxxxxxxx
 ```
 
 2. Verify token is not expired:
-- Go to projects-manager UI → Settings → API Keys
+- Go to the PREQSTATION web app → Settings → API Keys
 - Check token creation date and expiration
 - Generate a new token if needed
 
@@ -81,7 +81,7 @@ curl -H "Authorization: Bearer $PREQSTATION_TOKEN" \
 
 <Tabs>
 <TabItem label="Cause: Expired Token">
-**Check:** In projects-manager UI, go to Settings → API Keys and check expiration date.
+**Check:** In the PREQSTATION web app, go to Settings → API Keys and check expiration date.
 
 **Fix:** Generate a new token:
 1. Click "New Token"
@@ -367,7 +367,7 @@ If you've checked all above:
 3. **Check logs:**
    - Claude Code: Settings → Logs
    - OpenClaw: Session output via `process action:log`
-   - projects-manager: Vercel dashboard logs
+   - PREQSTATION web app: deployment or server logs
 
 4. **File an issue** with:
    - System info (OS, Node version)

@@ -10,7 +10,7 @@ The PREQSTATION MCP server enables coding agents to interact with the task manag
 ## Prerequisites
 
 - Node.js 22+ installed
-- PREQSTATION API URL and bearer token (from `/api-keys` page in projects-manager)
+- PREQSTATION API URL and bearer token (from the `/api-keys` page in the PREQSTATION web app)
 
 ## Environment Variables
 
@@ -134,5 +134,5 @@ Replace `/ABSOLUTE/PATH/TO/preqstation-skill` with the actual installation path.
 - Test connectivity: `curl -H "Authorization: Bearer $PREQSTATION_TOKEN" "$PREQSTATION_API_URL/api/health"`
 
 **Token rejected:**
-- Generate a new token from projects-manager `/api-keys` page
+- Generate a new token from the PREQSTATION web app `/api-keys` page
 - Ensure token has not expired

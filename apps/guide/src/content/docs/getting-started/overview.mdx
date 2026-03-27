@@ -13,16 +13,20 @@ PREQSTATION is an execution platform for AI-agent-driven development workflows. 
 PREQSTATION consists of three interconnected services:
 
 <CardGrid>
-	<Card title="projects-manager" icon="setting">
+	<Card title="PREQSTATION Web App" icon="setting">
 		Central web app. Manages tasks, renders the Kanban UI, exposes the REST API, and can relay Telegram/OpenClaw messages.
 	</Card>
 	<Card title="preqstation-openclaw" icon="rocket">
 		Execution skill package. OpenClaw imports it to resolve projects, create worktrees, and launch coding agents.
 	</Card>
 	<Card title="preqstation-skill" icon="approve">
-		Agent client. MCP server and shell helpers for agents to call projects-manager APIs during execution.
+		Agent client. MCP server and shell helpers for agents to call the PREQSTATION web app APIs during execution.
 	</Card>
 </CardGrid>
+
+<Aside>
+The public canonical repository is `sonim1/preqstation`. The web app source used for local development is still being migrated there, so setup instructions may reference the current development repository until that move is complete.
+</Aside>
 
 ## System Diagram
 
@@ -54,7 +58,7 @@ flowchart LR
 
 ```text
 User creates task in the Kanban UI
-  -> projects-manager stores it in PostgreSQL
+  -> PREQSTATION stores it in PostgreSQL
   -> optional relays notify Telegram / OpenClaw
 ```
 
