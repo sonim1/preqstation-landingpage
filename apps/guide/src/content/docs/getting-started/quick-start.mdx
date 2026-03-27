@@ -13,23 +13,23 @@ description: Get PREQSTATION running in 5 minutes.
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/preq/projects-manager.git
+git clone https://github.com/sonim1/project-manager.git projects-manager
 cd projects-manager
 ```
 
 ### 2. Configure Environment
 
-Copy `.env.example` to `.env` and fill in the required variables:
+Copy `.env.example` to `.env.local` and fill in the required variables:
 
 ```bash
-cp .env.example .env
+cp .env.example .env.local
 ```
 
-Then edit `.env`:
+Then edit `.env.local`:
 
 ```bash
 # Required
-AUTH_SECRET=<generate with: openssl rand -hex 32>
+AUTH_SECRET=<generate with: openssl rand -base64 48>
 OWNER_EMAIL=your-email@example.com
 OWNER_PASSWORD=<your-password>
 DATABASE_URL=postgresql://...  # Your Neon connection string
@@ -48,7 +48,7 @@ npm install
 ### 4. Apply Database Migrations
 
 ```bash
-npx prisma migrate deploy
+npm run db:migrate
 ```
 
 ### 5. Start the Development Server
@@ -57,20 +57,28 @@ npx prisma migrate deploy
 npm run dev
 ```
 
-The app runs at `http://localhost:3000`. Log in with the email and password you set in `.env`.
+The app runs at `http://localhost:3000`. If you open `/` while signed out, PREQSTATION redirects you to `/login`. Sign in with the email and password you set in `.env.local`.
 
 ## Issue Your First API Key
 
-1. Open `http://localhost:3000` and log in
-2. Navigate to **Settings > API Keys**
-3. Click **+ New Token**
-4. Name it `local-dev` and save
-5. Copy the token (starts with `preq_`)
+1. Log in, then open `http://localhost:3000/api-keys`. You can also reach the same page from the workspace sidebar by clicking **API Keys**.
+2. In the **Create API Key** form, keep the default expiration or choose one from **Expires In**.
+3. Enter a name such as `local-dev` or `codex-laptop`, then click **Create Key**.
+4. Copy the token from the green **New API key (shown once)** panel immediately. The value starts with `preq_` and the remaining characters use URL-safe letters, numbers, `_`, and `-`, for example `preq_abc123...`.
+5. Save it into your local agent environment before you close the page, because PREQSTATION only shows the full token once.
 
-Use this token to configure `preqstation-skill` on your coding agents.
+Use the token with the app URL in your agent runtime:
+
+```bash
+export PREQSTATION_API_URL=http://localhost:3000
+export PREQSTATION_TOKEN=preq_your_new_token
+```
+
+After that, continue with the setup for your agent client or MCP integration.
 
 ## Next Steps
 
+- [Web App Setup](/guide/web-app/setup) — Full local setup and first-login details
 - [Kanban Board Guide](/guide/web-app/kanban) — Learn task management
 - [Concepts](/guide/getting-started/concepts) — Understand the kitchen metaphor
 - [API Keys](/guide/web-app/api-keys) — Manage agent tokens

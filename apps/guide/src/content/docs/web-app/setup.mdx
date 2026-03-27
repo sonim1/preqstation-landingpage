@@ -14,11 +14,11 @@ Before you begin, ensure you have:
 
 ## Environment Variables
 
-Create a `.env` file in the project root. Copy from `.env.example` and fill in the required values:
+Create a `.env.local` file in the project root. Copy from `.env.example` and fill in the required values:
 
 | Variable           | Required | Description                                                                  |
 | ------------------ | -------- | ---------------------------------------------------------------------------- |
-| `AUTH_SECRET`      | Yes      | HMAC session signing secret (min 16 chars). Generate: `openssl rand -hex 32` |
+| `AUTH_SECRET`      | Yes      | HMAC session signing secret. Generate: `openssl rand -base64 48`              |
 | `OWNER_EMAIL`      | Yes      | The single owner account email                                               |
 | `OWNER_PASSWORD`   | Yes      | Owner login password (min 8 chars)                                           |
 | `DATABASE_URL`     | Yes      | PostgreSQL connection string (Neon or self-hosted)                           |
@@ -29,7 +29,7 @@ Create a `.env` file in the project root. Copy from `.env.example` and fill in t
 | `PORT`             | No       | HTTP port (default: 3000)                                                    |
 
 <Aside>
-Generate `AUTH_SECRET` with: `openssl rand -hex 32` (or any 16+ character random string)
+`drizzle-kit` reads `DATABASE_URL` from `.env.local`, so use `.env.local` for local setup before running database commands.
 </Aside>
 
 ## Installation Steps
@@ -37,7 +37,7 @@ Generate `AUTH_SECRET` with: `openssl rand -hex 32` (or any 16+ character random
 ### 1. Clone and Install
 
 ```bash
-git clone https://github.com/preq/projects-manager.git
+git clone https://github.com/sonim1/project-manager.git projects-manager
 cd projects-manager
 npm install
 ```
@@ -45,17 +45,17 @@ npm install
 ### 2. Configure Environment
 
 ```bash
-cp .env.example .env
-# Edit .env with your database URL and credentials
+cp .env.example .env.local
+# Edit .env.local with your database URL and credentials
 ```
 
 ### 3. Database Migration
 
 ```bash
-npx prisma migrate deploy
+npm run db:migrate
 ```
 
-This creates all tables, indexes, and Row Level Security policies.
+This applies the checked-in Drizzle migrations to your database.
 
 ### 4. Start Development Server
 
@@ -63,12 +63,12 @@ This creates all tables, indexes, and Row Level Security policies.
 npm run dev
 ```
 
-The app opens at `http://localhost:3000`.
+The app opens at `http://localhost:3000`. Unauthenticated visits to `/` redirect to `/login`.
 
 ## First Login
 
 1. Navigate to `http://localhost:3000/login`
-2. Use the email and password from your `.env` file
+2. Use the email and password from your `.env.local` file
 3. You are now logged in as the owner
 
 <Aside>
@@ -88,9 +88,14 @@ To enable Telegram notifications:
 
 Issue tokens for agents to authenticate:
 
-1. Navigate to **Settings > API Keys**
-2. Click **+ New Token**
-3. Name it (e.g., `local-dev`, `claude-code-prod`)
-4. Save and copy the token (starts with `preq_`)
+1. Open `/api-keys` after signing in, or click **API Keys** in the workspace sidebar
+2. Use the **Create API Key** form to enter a name and optional expiration
+3. Click **Create Key**
+4. Copy the token from the success panel right away. It starts with `preq_` and is shown only once.
 
-Use these tokens in your `preqstation-skill` MCP configuration.
+Use these tokens in your agent environment or `preqstation-skill` MCP configuration:
+
+```bash
+export PREQSTATION_API_URL=http://localhost:3000
+export PREQSTATION_TOKEN=preq_your_new_token
+```
