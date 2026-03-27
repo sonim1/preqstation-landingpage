@@ -10,7 +10,7 @@ import { Aside } from '@astrojs/starlight/components';
 Before you begin, ensure you have:
 
 - **Node.js 22** or later
-- **PostgreSQL 13+** (or Neon for cloud hosting)
+- **PostgreSQL 13+** (self-hosted or managed)
 
 ## Environment Variables
 
@@ -21,10 +21,7 @@ Create a `.env.local` file in the project root. Copy from `.env.example` and fil
 | `AUTH_SECRET`      | Yes      | HMAC session signing secret. Generate: `openssl rand -base64 48`              |
 | `OWNER_EMAIL`      | Yes      | The single owner account email                                               |
 | `OWNER_PASSWORD`   | Yes      | Owner login password (min 8 chars)                                           |
-| `DATABASE_URL`     | Yes      | PostgreSQL connection string (Neon or self-hosted)                           |
-| `NEON_API_KEY`     | No       | Enables one-click pg_cron setup from `/settings`                             |
-| `NEON_PROJECT_ID`  | No       | Neon project ID (used with `NEON_API_KEY`)                                   |
-| `NEON_ENDPOINT_ID` | No       | Neon endpoint ID (used with `NEON_API_KEY`)                                  |
+| `DATABASE_URL`     | Yes      | PostgreSQL connection string                                                 |
 | `ALLOWED_ORIGINS`  | No       | Comma-separated CORS origins (e.g., `http://localhost:3000`)                 |
 | `PORT`             | No       | HTTP port (default: 3000)                                                    |
 

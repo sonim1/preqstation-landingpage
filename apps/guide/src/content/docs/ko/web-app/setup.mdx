@@ -10,7 +10,7 @@ import { Aside } from '@astrojs/starlight/components';
 시작하기 전에 다음 항목을 준비하세요.
 
 - **Node.js 22** 이상
-- **PostgreSQL 13+** 또는 클라우드 호스팅용 **Neon**
+- **PostgreSQL 13+** 이상
 
 ## 환경 변수
 
@@ -21,10 +21,7 @@ import { Aside } from '@astrojs/starlight/components';
 | `AUTH_SECRET` | 예 | HMAC 세션 서명 비밀값. 생성 예시: `openssl rand -base64 48` |
 | `OWNER_EMAIL` | 예 | 단일 owner 계정 이메일 |
 | `OWNER_PASSWORD` | 예 | owner 로그인 비밀번호, 최소 8자 |
-| `DATABASE_URL` | 예 | PostgreSQL 연결 문자열, Neon 또는 자체 호스팅 |
-| `NEON_API_KEY` | 아니오 | `/settings`에서 pg_cron 원클릭 설정 활성화 |
-| `NEON_PROJECT_ID` | 아니오 | `NEON_API_KEY`와 함께 사용하는 Neon 프로젝트 ID |
-| `NEON_ENDPOINT_ID` | 아니오 | `NEON_API_KEY`와 함께 사용하는 Neon 엔드포인트 ID |
+| `DATABASE_URL` | 예 | PostgreSQL 연결 문자열 |
 | `ALLOWED_ORIGINS` | 아니오 | 쉼표로 구분한 CORS origin 목록, 예: `http://localhost:3000` |
 | `PORT` | 아니오 | HTTP 포트, 기본값 `3000` |
 
