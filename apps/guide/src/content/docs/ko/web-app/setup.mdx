@@ -1,0 +1,96 @@
+---
+title: 웹 앱 설정
+description: PREQSTATION 웹 애플리케이션을 설치하고 구성하는 방법을 설명합니다.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+## 사전 준비
+
+시작하기 전에 다음 항목을 준비하세요.
+
+- **Node.js 22** 이상
+- **PostgreSQL 13+** 또는 클라우드 호스팅용 **Neon**
+
+## 환경 변수
+
+프로젝트 루트에 `.env` 파일을 만들고 `.env.example`을 복사한 뒤 필요한 값을 채우세요.
+
+| 변수 | 필수 | 설명 |
+| --- | --- | --- |
+| `AUTH_SECRET` | 예 | HMAC 세션 서명 비밀값, 최소 16자. 생성 예시: `openssl rand -hex 32` |
+| `OWNER_EMAIL` | 예 | 단일 owner 계정 이메일 |
+| `OWNER_PASSWORD` | 예 | owner 로그인 비밀번호, 최소 8자 |
+| `DATABASE_URL` | 예 | PostgreSQL 연결 문자열, Neon 또는 자체 호스팅 |
+| `NEON_API_KEY` | 아니오 | `/settings`에서 pg_cron 원클릭 설정 활성화 |
+| `NEON_PROJECT_ID` | 아니오 | `NEON_API_KEY`와 함께 사용하는 Neon 프로젝트 ID |
+| `NEON_ENDPOINT_ID` | 아니오 | `NEON_API_KEY`와 함께 사용하는 Neon 엔드포인트 ID |
+| `ALLOWED_ORIGINS` | 아니오 | 쉼표로 구분한 CORS origin 목록, 예: `http://localhost:3000` |
+| `PORT` | 아니오 | HTTP 포트, 기본값 `3000` |
+
+<Aside>
+`AUTH_SECRET`은 `openssl rand -hex 32` 또는 16자 이상 임의 문자열로 생성하세요.
+</Aside>
+
+## 설치 단계
+
+### 1. 저장소 클론 및 설치
+
+```bash
+git clone https://github.com/preq/projects-manager.git
+cd projects-manager
+npm install
+```
+
+### 2. 환경 변수 설정
+
+```bash
+cp .env.example .env
+# 데이터베이스 URL과 계정을 포함해 .env 값을 수정합니다
+```
+
+### 3. 데이터베이스 마이그레이션
+
+```bash
+npx prisma migrate deploy
+```
+
+이 명령은 모든 테이블, 인덱스, Row Level Security 정책을 생성합니다.
+
+### 4. 개발 서버 시작
+
+```bash
+npm run dev
+```
+
+앱은 `http://localhost:3000`에서 열립니다.
+
+## 첫 로그인
+
+1. `http://localhost:3000/login`으로 이동합니다.
+2. `.env` 파일에 설정한 이메일과 비밀번호로 로그인합니다.
+3. owner 계정으로 로그인된 상태가 됩니다.
+
+<Aside>
+PREQSTATION은 single-owner 구조입니다. 모든 데이터는 PostgreSQL RLS를 통해 이 계정 기준으로 격리됩니다.
+</Aside>
+
+## Telegram 설정 (선택 사항)
+
+Telegram 알림을 사용하려면 다음 순서로 설정하세요.
+
+1. **Settings > Telegram**으로 이동합니다.
+2. Telegram 봇 토큰을 입력합니다.
+3. 연결 테스트를 실행합니다.
+4. 토큰은 AES-GCM으로 암호화되어 저장됩니다.
+
+## API 키 설정
+
+에이전트 인증에 사용할 토큰을 발급합니다.
+
+1. **Settings > API Keys**로 이동합니다.
+2. **+ New Token**을 클릭합니다.
+3. `local-dev`, `claude-code-prod`처럼 이름을 정합니다.
+4. 저장한 뒤 토큰을 복사합니다. 토큰 접두사는 `preq_`입니다.
+
+이 토큰은 `preqstation-skill` MCP 설정에 사용합니다.
