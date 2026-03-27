@@ -11,6 +11,7 @@ import { Aside } from '@astrojs/starlight/components';
 
 - **Node.js 22** 이상
 - **PostgreSQL 13+** 이상
+- private PREQSTATION 웹 앱 저장소에 대한 **GitHub 접근 권한**
 
 ## 환경 변수
 
@@ -33,11 +34,15 @@ import { Aside } from '@astrojs/starlight/components';
 
 ### 1. 저장소 클론 및 설치
 
+이미 private 웹 앱 저장소 접근 권한이 있다면 SSH로 클론하세요.
+
 ```bash
-git clone https://github.com/sonim1/project-manager.git projects-manager
+git clone git@github.com:sonim1/project-manager.git projects-manager
 cd projects-manager
 npm install
 ```
+
+아직 접근 권한이 없다면 계속 진행하기 전에 maintainer에게 GitHub 초대를 요청하세요.
 
 ### 2. 환경 변수 설정
 

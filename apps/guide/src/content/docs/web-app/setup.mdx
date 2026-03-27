@@ -11,6 +11,7 @@ Before you begin, ensure you have:
 
 - **Node.js 22** or later
 - **PostgreSQL 13+** (self-hosted or managed)
+- **GitHub access** to the private PREQSTATION web app repository
 
 ## Environment Variables
 
@@ -33,11 +34,15 @@ Create a `.env.local` file in the project root. Copy from `.env.example` and fil
 
 ### 1. Clone and Install
 
+If you already have access to the private web app repository, clone it with SSH:
+
 ```bash
-git clone https://github.com/sonim1/project-manager.git projects-manager
+git clone git@github.com:sonim1/project-manager.git projects-manager
 cd projects-manager
 npm install
 ```
+
+If you do not have access yet, ask the maintainer to invite your GitHub account before continuing.
 
 ### 2. Configure Environment
 
