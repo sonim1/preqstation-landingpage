@@ -92,8 +92,8 @@ export default function WorkflowSnapshot({
   evidenceTitle: string;
   evidenceItems: readonly EvidenceItem[];
 }) {
-  const holdStep = steps.find((step) => step.id === "hold");
   const mainSteps = steps.filter((step) => step.id !== "hold");
+  const holdStage = stages.find((stage) => stage.id === "hold");
 
   return (
     <section
@@ -148,8 +148,12 @@ export default function WorkflowSnapshot({
           <p className="text-xs uppercase tracking-[0.18em] text-coral/80">{holdLabel}</p>
           <p className="mt-3 text-sm leading-relaxed text-white/60">{holdDescription}</p>
           <div className="mt-5 rounded-2xl border border-coral/30 bg-coral/10 p-4">
-            <p className="font-mono text-xs text-coral/80">status = blocked</p>
-            <p className="mt-2 text-sm leading-relaxed text-white/70">{holdDescription}</p>
+            <p className="font-mono text-xs text-coral/80">
+              status = {holdStage?.status ?? holdLabel}
+            </p>
+            <p className="mt-2 text-sm leading-relaxed text-white/70">
+              {holdStage?.detail ?? holdDescription}
+            </p>
           </div>
         </div>
       </div>

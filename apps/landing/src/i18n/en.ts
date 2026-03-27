@@ -48,6 +48,11 @@ export default {
         status: "10:14 verified",
         detail: "Build passed, the hero was spot-checked, and the result was committed.",
       },
+      {
+        id: "hold",
+        status: "blocked",
+        detail: "Use hold only when review or implementation is blocked and the task needs a real branch out of the happy path.",
+      },
     ],
     snapshotEvidenceTitle: "Review evidence",
     snapshotEvidenceItems: [

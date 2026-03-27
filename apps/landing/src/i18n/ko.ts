@@ -50,6 +50,11 @@ const ko: typeof en = {
         status: "10:14 \uac80\uc99d \uc644\ub8cc",
         detail: "\ube4c\ub4dc\uac00 \ud1b5\uacfc\ud588\uace0 hero\ub97c spot-check\ud55c \ub4a4 \uacb0\uacfc\ub97c commit\ud588\uc2b5\ub2c8\ub2e4.",
       },
+      {
+        id: "hold",
+        status: "\ub9c9\ud798",
+        detail: "\ub9ac\ubdf0\ub098 \uad6c\ud604\uc774 \uc2e4\uc81c\ub85c \ub9c9\ud614\uace0 \ud589\ubcf5 \uacbd\ub85c\uc5d0\uc11c \ube7c\uc57c \ud560 \ub54c\ub9cc hold\ub97c \uc0ac\uc6a9\ud558\uc138\uc694.",
+      },
     ],
     snapshotEvidenceTitle: "\ub9ac\ubdf0 \uc99d\uac70",
     snapshotEvidenceItems: [
