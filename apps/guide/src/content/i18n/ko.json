@@ -1,0 +1,21 @@
+{
+  "i18n.untranslatedContent": "이 페이지는 아직 한국어로 번역되지 않았습니다. 현재 영어 원문을 보고 있습니다.",
+  "search.label": "검색",
+  "search.cancelLabel": "취소",
+  "search.ctrlKey": "Ctrl",
+  "page.previousLink": "이전",
+  "page.nextLink": "다음",
+  "expressiveCode.copyButtonTooltip": "클립보드에 복사",
+  "expressiveCode.copyButtonCopied": "복사됨!",
+  "expressiveCode.terminalWindowFallbackTitle": "터미널 창",
+  "pagefind.search_label": "문서 검색",
+  "pagefind.clear_search": "지우기",
+  "pagefind.load_more": "결과 더 보기",
+  "pagefind.filters_label": "필터",
+  "pagefind.zero_results": "\"[SEARCH_TERM]\"에 대한 결과가 없습니다",
+  "pagefind.one_result": "\"[SEARCH_TERM]\"에 대한 결과 [COUNT]개",
+  "pagefind.many_results": "\"[SEARCH_TERM]\"에 대한 결과 [COUNT]개",
+  "pagefind.alt_search": "\"[SEARCH_TERM]\"에 대한 결과가 없어 \"[DIFFERENT_TERM]\" 결과를 대신 표시합니다",
+  "pagefind.search_suggestion": "\"[SEARCH_TERM]\"에 대한 결과가 없습니다. 다음 검색어를 시도해 보세요:",
+  "pagefind.searching": "\"[SEARCH_TERM]\" 검색 중..."
+}
