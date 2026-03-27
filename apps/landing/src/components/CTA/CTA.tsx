@@ -22,14 +22,20 @@ export default function CTA() {
 
           <div className="flex gap-4 justify-center mt-12 flex-wrap">
             <a
-              href="/guide/getting-started/overview"
+              href="#execution-proof"
               className="bg-mint text-charcoal px-10 py-5 rounded-full text-lg font-display font-bold hover:scale-105 transition"
             >
               {t.cta.primary}
             </a>
             <a
-              href="https://github.com/sonim1/preqstation"
+              href="/guide/getting-started/overview"
               className="border-2 border-white text-white px-10 py-5 rounded-full text-lg font-display font-semibold hover:bg-white hover:text-charcoal transition"
+            >
+              {t.cta.guide}
+            </a>
+            <a
+              href="https://github.com/sonim1/preqstation"
+              className="px-6 py-5 text-lg font-display font-semibold text-white/80 underline-offset-4 hover:text-white hover:underline transition"
             >
               {t.cta.secondary}
             </a>

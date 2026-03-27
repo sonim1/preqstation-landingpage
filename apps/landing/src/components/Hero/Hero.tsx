@@ -29,25 +29,23 @@ export default function Hero() {
           {t.hero.description}
         </p>
 
-        <WorkflowSnapshot
-          steps={t.pipeline.steps}
-          title={t.hero.snapshotTitle}
-          description={t.hero.snapshotDescription}
-          holdLabel={t.hero.snapshotHoldLabel}
-          holdDescription={t.hero.snapshotHoldDescription}
-        />
-
         {/* CTA buttons */}
         <div className="flex gap-4 justify-center mt-10 flex-wrap">
           <a
-            href="/guide/getting-started/overview"
+            href="#execution-proof"
             className="bg-mint text-charcoal px-8 py-4 rounded-full text-lg font-semibold hover:scale-105 transition font-body"
           >
             {t.hero.cta}
           </a>
           <a
-            href="https://github.com/sonim1/preqstation"
+            href="/guide/getting-started/overview"
             className="border-2 border-white text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-white hover:text-charcoal transition font-body"
+          >
+            {t.hero.guideCta}
+          </a>
+          <a
+            href="https://github.com/sonim1/preqstation"
+            className="px-4 py-4 text-lg font-semibold text-white/80 underline-offset-4 hover:text-white hover:underline transition font-body"
           >
             {t.hero.github}
           </a>
@@ -57,6 +55,27 @@ export default function Hero() {
         <p className="text-sm text-white/50 mt-8 font-body">
           {t.hero.socialProof}
         </p>
+
+        <WorkflowSnapshot
+          steps={t.pipeline.steps}
+          title={t.hero.snapshotTitle}
+          description={t.hero.snapshotDescription}
+          taskLabel={t.hero.snapshotTaskLabel}
+          engineLabel={t.hero.snapshotEngineLabel}
+          sessionLabel={t.hero.snapshotSessionLabel}
+          branchLabel={t.hero.snapshotBranchLabel}
+          taskNumber={t.hero.snapshotTaskNumber}
+          taskTitle={t.hero.snapshotTaskTitle}
+          taskSummary={t.hero.snapshotTaskSummary}
+          engineValue={t.hero.snapshotEngineValue}
+          sessionValue={t.hero.snapshotSessionValue}
+          branchValue={t.hero.snapshotBranchValue}
+          holdLabel={t.hero.snapshotHoldLabel}
+          holdDescription={t.hero.snapshotHoldDescription}
+          stages={t.hero.snapshotStages}
+          evidenceTitle={t.hero.snapshotEvidenceTitle}
+          evidenceItems={t.hero.snapshotEvidenceItems}
+        />
 
         {/* Ticket cards */}
         <div className="flex gap-6 justify-center mt-16 flex-wrap">
