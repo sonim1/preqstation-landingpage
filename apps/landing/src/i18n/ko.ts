@@ -8,6 +8,9 @@ const ko: typeof en = {
   nav: {
     github: "GitHub",
     cta: "\uac00\uc774\ub4dc \ubcf4\uae30",
+    localeLabel: "\uc5b8\uc5b4",
+    openMenu: "\uba54\ub274 \uc5f4\uae30",
+    closeMenu: "\uba54\ub274 \ub2eb\uae30",
   },
   hero: {
     badge: "\uac1c\ubc1c\uc790\uc758 \uc8fc\ubc29",

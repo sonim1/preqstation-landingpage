@@ -126,8 +126,56 @@ function ScrollRow({
         </div>
       </motion.div>
 
-      {/* Horizontal scroll track */}
-      <div className="relative">
+      <div className="flex flex-col gap-4 px-6 md:hidden">
+        {items.map((item, i) => (
+          <motion.div
+            key={item.title}
+            initial={{ opacity: 0, y: 20, scale: 0.96 }}
+            animate={
+              inView
+                ? { opacity: 1, y: 0, scale: 1 }
+                : { opacity: 0, y: 20, scale: 0.96 }
+            }
+            transition={{
+              duration: 0.42,
+              delay: rowIndex * 0.12 + i * 0.07 + 0.15,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+            className={[
+              "rounded-2xl border p-6",
+              "bg-white/5 backdrop-blur-xl",
+              isFor ? "border-white/10" : "border-review-blue/20",
+            ].join(" ")}
+          >
+            <div
+              className={[
+                "mb-4 flex h-11 w-11 items-center justify-center rounded-xl text-xl",
+                isFor ? "bg-mint/10" : "bg-review-blue/10",
+              ].join(" ")}
+            >
+              {item.icon}
+            </div>
+            <h3
+              className={[
+                "mb-2 font-display text-[15px] font-semibold leading-snug",
+                isFor ? "text-white" : "text-white/90",
+              ].join(" ")}
+            >
+              {item.title}
+            </h3>
+            <p
+              className={[
+                "text-sm leading-relaxed",
+                isFor ? "text-white/50" : "text-white/65",
+              ].join(" ")}
+            >
+              {item.desc}
+            </p>
+          </motion.div>
+        ))}
+      </div>
+
+      <div className="relative hidden md:block">
         {/* Left fade gradient */}
         {canScrollLeft && (
           <div className="absolute left-0 top-0 bottom-3 w-12 z-10 pointer-events-none bg-gradient-to-r from-charcoal/85 to-transparent md:block hidden" />

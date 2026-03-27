@@ -19,26 +19,46 @@ function getLocalePath(locale: string) {
 
 export default function Nav({ locale }: { locale: string }) {
   const t = useT();
-  const [open, setOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [isLocaleOpen, setIsLocaleOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setOpen(false);
+      if (navRef.current && !navRef.current.contains(e.target as Node)) {
+        setIsLocaleOpen(false);
+        setIsMenuOpen(false);
       }
     }
+
+    function handleEscape(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        setIsLocaleOpen(false);
+        setIsMenuOpen(false);
+      }
+    }
+
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleEscape);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
+    };
   }, []);
 
   const otherLocales = Object.keys(localeLabels).filter((l) => l !== locale);
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-white/10 backdrop-blur-md bg-charcoal/90">
-      <div className="max-w-6xl mx-auto px-6 flex items-center justify-between h-16">
-        <span className="font-display text-xl font-bold text-white">Preq Station</span>
-        <div className="flex items-center gap-5">
+    <nav
+      ref={navRef}
+      className="sticky top-0 z-50 border-b border-white/10 bg-charcoal/90 backdrop-blur-md"
+    >
+      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:h-16 sm:px-6">
+        <span className="font-display text-lg font-bold text-white sm:text-xl">
+          Preq Station
+        </span>
+
+        <div className="hidden items-center gap-5 sm:flex">
           <a
             href="https://github.com/sonim1/preqstation"
             className="text-white/70 hover:text-white transition text-sm font-medium"
@@ -46,12 +66,12 @@ export default function Nav({ locale }: { locale: string }) {
             {t.nav.github}
           </a>
 
-          {/* Language switcher */}
-          <div ref={dropdownRef} className="relative">
+          <div className="relative">
             <button
-              onClick={() => setOpen(!open)}
+              onClick={() => setIsLocaleOpen((current) => !current)}
               className="flex items-center gap-1.5 text-sm text-white/70 hover:text-white transition px-2 py-1 rounded-lg hover:bg-white/5"
-              aria-label="Change language"
+              aria-label={t.nav.localeLabel}
+              aria-expanded={isLocaleOpen}
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-70">
                 <circle cx="12" cy="12" r="10"/>
@@ -59,25 +79,23 @@ export default function Nav({ locale }: { locale: string }) {
                 <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
               </svg>
               <span className="font-medium">{localeFlags[locale]}</span>
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={`opacity-50 transition-transform duration-200 ${open ? "rotate-180" : ""}`}>
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={`opacity-50 transition-transform duration-200 ${isLocaleOpen ? "rotate-180" : ""}`}>
                 <path d="M6 9l6 6 6-6"/>
               </svg>
             </button>
 
-            {open && (
+            {isLocaleOpen && (
               <div className="absolute right-0 mt-2 bg-charcoal border border-white/10 rounded-xl shadow-xl overflow-hidden min-w-[140px] backdrop-blur-xl">
-                {/* Current locale */}
                 <div className="px-4 py-2.5 text-sm text-white/40 flex items-center gap-2 border-b border-white/10">
                   <span>{localeFlags[locale]}</span>
                   <span>{localeLabels[locale]}</span>
                 </div>
-                {/* Other locales */}
                 {otherLocales.map((l) => (
                   <a
                     key={l}
                     href={getLocalePath(l)}
                     className="block px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/5 transition flex items-center gap-2"
-                    onClick={() => setOpen(false)}
+                    onClick={() => setIsLocaleOpen(false)}
                   >
                     <span>{localeFlags[l]}</span>
                     <span>{localeLabels[l]}</span>
@@ -94,7 +112,88 @@ export default function Nav({ locale }: { locale: string }) {
             {t.nav.cta}
           </a>
         </div>
+
+        <button
+          type="button"
+          onClick={() => setIsMenuOpen((current) => !current)}
+          className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white transition hover:bg-white/10 sm:hidden"
+          aria-label={isMenuOpen ? t.nav.closeMenu : t.nav.openMenu}
+          aria-expanded={isMenuOpen}
+          aria-controls="mobile-nav-panel"
+        >
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            {isMenuOpen ? (
+              <>
+                <path d="M18 6 6 18" />
+                <path d="m6 6 12 12" />
+              </>
+            ) : (
+              <>
+                <path d="M4 7h16" />
+                <path d="M4 12h16" />
+                <path d="M4 17h16" />
+              </>
+            )}
+          </svg>
+        </button>
       </div>
+
+      {isMenuOpen && (
+        <div
+          id="mobile-nav-panel"
+          className="border-t border-white/10 bg-charcoal/95 px-4 py-4 sm:hidden"
+        >
+          <div className="flex flex-col gap-3">
+            <a
+              href="https://github.com/sonim1/preqstation"
+              className="rounded-2xl border border-white/10 px-4 py-3 text-sm font-medium text-white/80 transition hover:bg-white/5 hover:text-white"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              {t.nav.github}
+            </a>
+
+            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+              <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-white/45">
+                {t.nav.localeLabel}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {[locale, ...otherLocales].map((value) => (
+                  <a
+                    key={value}
+                    href={getLocalePath(value)}
+                    className={[
+                      "rounded-full px-3 py-1.5 text-sm font-medium transition",
+                      value === locale
+                        ? "bg-white text-charcoal"
+                        : "border border-white/10 text-white/75 hover:bg-white/5 hover:text-white",
+                    ].join(" ")}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {localeLabels[value]}
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            <a
+              href="/guide/getting-started/overview"
+              className="rounded-full bg-mint px-5 py-3 text-center text-sm font-semibold text-charcoal transition hover:opacity-90"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              {t.nav.cta}
+            </a>
+          </div>
+        </div>
+      )}
     </nav>
   );
 }

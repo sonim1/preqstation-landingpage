@@ -6,6 +6,9 @@ export default {
   nav: {
     github: "GitHub",
     cta: "Read the Guide",
+    localeLabel: "Language",
+    openMenu: "Open menu",
+    closeMenu: "Close menu",
   },
   hero: {
     badge: "The Developer's Kitchen",
