@@ -42,7 +42,7 @@ Get your Neon PostgreSQL connection string:
 
 ## preqstation-skill
 
-Agent-side variables for MCP server and shell helpers.
+Agent-side variables for shell-helper mode and the legacy local stdio bridge. The recommended remote `/mcp` setup for Claude Code and Codex uses OAuth and does not require exporting these variables just to register the server.
 
 | Variable | Required | Default | Purpose |
 |----------|----------|---------|---------|
@@ -112,21 +112,28 @@ export OPENCLAW_WORKTREE_ROOT="/workspace/openclaw-worktrees"
 <Tabs>
 <TabItem label="Local Development">
 ```bash
-# 1. Install the PREQSTATION web app locally (optional)
-# Skip if using a hosted instance
+# 1. Install the skill for the agent you actually use
+npx skills add sonim1/preqstation-skill -g -a claude-code
+# or:
+npx skills add sonim1/preqstation-skill -g -a codex
 
-# 2. Set preqstation-skill variables
+# 2. Register the remote MCP endpoint
+claude mcp add --transport http preqstation https://your-hosted-domain.vercel.app/mcp
+# or:
+codex mcp add preqstation --url https://your-hosted-domain.vercel.app/mcp
+
+# 3. If you need shell-helper mode, set token-based vars
 export PREQSTATION_API_URL="https://your-hosted-domain.vercel.app"
 export PREQSTATION_TOKEN="preq_xxxxx"  # from /api-keys page
 export PREQSTATION_ENGINE="claude-code"
 
-# 3. Set preqstation-openclaw variables (optional)
+# 4. Set preqstation-openclaw variables (optional)
 export OPENCLAW_WORKTREE_ROOT="$HOME/openclaw-worktrees"
 
-# 4. Verify connectivity
-curl -H "Authorization: Bearer $PREQSTATION_TOKEN" \
-  "$PREQSTATION_API_URL/api/health"
-# Should return: {"status":"ok"}
+# 5. Verify MCP registration
+claude mcp get preqstation
+# or:
+codex mcp get preqstation
 ```
 </TabItem>
 <TabItem label="CI/CD Pipeline">
@@ -139,8 +146,8 @@ env:
   OPENCLAW_WORKTREE_ROOT: /workspace/openclaw-worktrees
 
 steps:
-  - name: Install preqstation-skill
-    run: npm install -g sonim1/preqstation-skill
+  - name: Install preqstation-skill for Codex
+    run: npx skills add sonim1/preqstation-skill -g -a codex
 ```
 </TabItem>
 <TabItem label="Docker">
@@ -162,7 +169,7 @@ ENV PREQSTATION_ENGINE=claude-code
 ENV OPENCLAW_WORKTREE_ROOT=/app/worktrees
 
 WORKDIR /app
-RUN npm install -g sonim1/preqstation-skill
+RUN npx skills add sonim1/preqstation-skill -g -a codex
 ```
 </TabItem>
 </Tabs>
@@ -172,7 +179,7 @@ RUN npm install -g sonim1/preqstation-skill
 | Layer | Variables | Scope |
 |-------|-----------|-------|
 | **Web Service** | `AUTH_SECRET`, `OWNER_EMAIL`, `OWNER_PASSWORD`, `DATABASE_URL`, `ALLOWED_ORIGINS`, `CRON_SECRET` | Server-side only, set during deployment |
-| **MCP Server** | `PREQSTATION_API_URL`, `PREQSTATION_TOKEN`, `PREQSTATION_ENGINE` | Available to all MCP tools and shell helpers |
+| **Shell Helper / Legacy Bridge** | `PREQSTATION_API_URL`, `PREQSTATION_TOKEN`, `PREQSTATION_ENGINE` | Available to the token-based shell helper flow and legacy local MCP bridge |
 | **Execution** | `OPENCLAW_WORKTREE_ROOT` | Affects where worktrees are created during task execution |
 
 ## Secrets Best Practices

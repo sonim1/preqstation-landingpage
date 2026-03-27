@@ -3,15 +3,52 @@ title: Troubleshooting
 description: Common issues and solutions for PREQSTATION task execution
 ---
 
-import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+import { Tabs, TabItem } from '@astrojs/starlight/components';
 
 This guide covers common problems and their solutions. Check your issue below.
 
 ## MCP Connection Issues
 
-### MCP server fails to start
+### Remote MCP stays unauthenticated or tools do not appear
 
-**Symptom:** `Error: Cannot find module` or MCP tools unavailable in Claude Code
+**Symptom:** Claude Code shows `Needs authentication`, Codex cannot finish setup, or PREQ tools do not appear after registration.
+
+**Solutions:**
+
+1. Confirm you registered the remote endpoint, not the legacy local script:
+```bash
+claude mcp add --transport http preqstation https://<your-domain>/mcp
+# or:
+codex mcp add preqstation --url https://<your-domain>/mcp
+```
+
+2. Make sure the URL ends with `/mcp`:
+```bash
+# ❌ Bad: https://your-domain.com
+# ✅ Good: https://your-domain.com/mcp
+```
+
+3. Trigger the first real connection:
+```bash
+claude mcp get preqstation
+# or:
+codex mcp get preqstation
+```
+
+4. Complete the browser login flow when prompted.
+
+5. If the client still looks stuck, remove and re-add the server:
+```bash
+claude mcp remove preqstation
+claude mcp add --transport http preqstation https://<your-domain>/mcp
+# or:
+codex mcp remove preqstation
+codex mcp add preqstation --url https://<your-domain>/mcp
+```
+
+### Legacy local MCP bridge fails to start
+
+**Symptom:** `Error: Cannot find module` or local stdio bridge never boots.
 
 **Solutions:**
 
@@ -37,7 +74,7 @@ echo $PREQSTATION_API_URL
 echo $PREQSTATION_TOKEN
 ```
 
-5. Restart Claude Code or re-add the MCP server:
+5. Re-register the legacy local bridge if needed:
 ```bash
 claude mcp remove preqstation
 claude mcp add -s user \
@@ -48,7 +85,7 @@ claude mcp add -s user \
 
 ### Tools appear in MCP but return errors
 
-**Symptom:** `preq_list_tasks` or other tools fail with `401 Unauthorized`
+**Symptom:** `preq_list_tasks` or other tools fail with `401 Unauthorized` in shell-helper mode or the legacy local bridge
 
 1. Verify token format (should start with `preq_`):
 ```bash
@@ -77,7 +114,7 @@ curl -H "Authorization: Bearer $PREQSTATION_TOKEN" \
 
 ### "Invalid token" error on every MCP call
 
-**Symptom:** Token auth fails even with correct-looking token
+**Symptom:** Token auth fails even with correct-looking token in shell-helper mode or the legacy local bridge
 
 <Tabs>
 <TabItem label="Cause: Expired Token">

@@ -1,51 +1,58 @@
 ---
 title: Installation
-description: Set up PREQSTATION MCP server for Claude Code, Codex, and Gemini CLI
+description: Install preqstation-skill and connect Claude Code or Codex to the PREQSTATION MCP endpoint
 ---
 
 import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
-The PREQSTATION MCP server enables coding agents to interact with the task management API. Install for your platform below.
+`preqstation-skill` is the core agent-side package for PREQSTATION. It owns the `preqstation` skill name, documents the lifecycle rules, and includes optional shell-helper and legacy stdio bridge support.
 
 ## Prerequisites
 
 - Node.js 22+ installed
-- PREQSTATION API URL and bearer token (from the `/api-keys` page in the PREQSTATION web app)
+- A running PREQSTATION deployment at `https://<your-domain>`
+- Access to the PREQSTATION web app if you want to use the recommended remote MCP login flow
+- A PREQSTATION API token only if you plan to use shell-helper mode or the legacy local stdio bridge
 
-## Environment Variables
+## Install Skill (Recommended Per Agent)
 
-Set these before registering the MCP server:
-
-```bash
-export PREQSTATION_API_URL="https://your-preqstation-domain.vercel.app"
-export PREQSTATION_TOKEN="preq_xxxxxxxxxxxxxxxxx"
-```
-
-Optional fallback engine (only needed if client auto-detection is unavailable):
+Install the skill only for the agents that should own the core `preqstation` skill:
 
 ```bash
-export PREQSTATION_ENGINE="claude-code"  # or codex, gemini-cli
+npx skills add sonim1/preqstation-skill -g -a claude-code
+npx skills add sonim1/preqstation-skill -g -a codex
+npx skills add sonim1/preqstation-skill -g -a gemini-cli
 ```
+
+Avoid a bare shared install if you do not want OpenClaw-linked skills exposed through the global skills store.
+
+PREQ engine values match these agent targets:
+
+```bash
+claude-code
+codex
+gemini-cli
+```
+
+## Recommended MCP Setup (HTTP + OAuth)
+
+The recommended MCP runtime now lives in the PREQSTATION service itself at `/mcp`. Claude Code and Codex should connect to that remote endpoint and complete the browser OAuth flow when prompted.
 
 ## Claude Code
 
-Register the PREQSTATION MCP server with environment variables:
+Register the remote PREQSTATION MCP endpoint:
 
 <Tabs>
 <TabItem label="Install">
 ```bash
-claude mcp add -s user \
-  --env='PREQSTATION_API_URL=https://<your-domain>' \
-  --env='PREQSTATION_TOKEN=preq_xxxxx' \
-  preqstation -- \
-  node /Users/kendrick/projects/preqstation-skill/scripts/preqstation-mcp-server.mjs
+claude mcp add --transport http preqstation https://<your-domain>/mcp
 ```
 </TabItem>
 <TabItem label="Update">
 If already registered, remove and re-add:
 
 ```bash
-claude mcp remove -s user preqstation
+claude mcp remove preqstation
 ```
 
 Then run the install command above.
@@ -60,15 +67,12 @@ claude mcp get preqstation
 
 ## Codex CLI
 
-Register the PREQSTATION MCP server:
+Register the remote PREQSTATION MCP endpoint:
 
 <Tabs>
 <TabItem label="Install">
 ```bash
-codex mcp add preqstation \
-  --env='PREQSTATION_API_URL=https://<your-domain>' \
-  --env='PREQSTATION_TOKEN=preq_xxxxx' \
-  -- node /Users/kendrick/projects/preqstation-skill/scripts/preqstation-mcp-server.mjs
+codex mcp add preqstation --url https://<your-domain>/mcp
 ```
 </TabItem>
 <TabItem label="Update">
@@ -88,20 +92,37 @@ codex mcp get preqstation
 </TabItem>
 </Tabs>
 
+## When Authentication Starts
+
+- Codex often probes the server during `add`, so the browser login flow may start immediately.
+- Claude Code usually saves the server first and may show `Needs authentication` until first use.
+- In Claude Code, authentication commonly starts when you first use the server or run `claude mcp get preqstation`.
+
 ## Gemini CLI
 
-Gemini uses environment variables directly. Set them in your shell:
+Gemini CLI does not use the documented remote MCP registration flow here. Install the `preqstation` skill for `gemini-cli`, then use shell-helper mode if you need direct REST access:
 
 ```bash
 export PREQSTATION_API_URL="https://your-preqstation-domain.vercel.app"
 export PREQSTATION_TOKEN="preq_xxxxxxxxxxxxxxxxx"
+export PREQSTATION_ENGINE="gemini-cli"  # optional fallback
 ```
 
-Then invoke Gemini with access to these variables. MCP server setup not required for Gemini CLI.
+## Shell Helper or Legacy Local Bridge (Optional)
+
+If MCP is unavailable, you can still use the shell helper or the legacy local stdio bridge.
+
+Set these variables first:
+
+```bash
+export PREQSTATION_API_URL="https://your-preqstation-domain.vercel.app"
+export PREQSTATION_TOKEN="preq_xxxxxxxxxxxxxxxxx"
+export PREQSTATION_ENGINE="claude-code"  # or codex, gemini-cli
+```
 
 ## JSON Configuration Example
 
-If you need to manually configure the MCP server in settings:
+If you must manually configure the legacy local stdio bridge in settings:
 
 ```json
 {
@@ -119,17 +140,22 @@ If you need to manually configure the MCP server in settings:
 ```
 
 <Aside>
-Replace `/ABSOLUTE/PATH/TO/preqstation-skill` with the actual installation path. Relative paths will not work.
+Replace `/ABSOLUTE/PATH/TO/preqstation-skill` with the actual installation path. Relative paths will not work. The recommended remote `/mcp` setup above does not need a local script path.
 </Aside>
 
 ## Troubleshooting
 
-**MCP server fails to start:**
+**Remote MCP shows `Needs authentication`:**
+- Confirm the server URL ends with `/mcp`
+- Run `claude mcp get preqstation` or `codex mcp get preqstation` to trigger the first real connection
+- Complete the browser login flow when prompted
+
+**Legacy local bridge fails to start:**
 - Verify Node.js is installed: `node --version`
 - Check the script path is absolute
-- Confirm PREQSTATION_API_URL is valid (should start with https://)
+- Confirm `PREQSTATION_API_URL` is valid (should start with `https://`)
 
-**Connection errors:**
+**Shell helper or legacy bridge returns `401 Unauthorized`:**
 - Verify token format (should start with `preq_`)
 - Test connectivity: `curl -H "Authorization: Bearer $PREQSTATION_TOKEN" "$PREQSTATION_API_URL/api/health"`
 

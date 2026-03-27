@@ -260,6 +260,10 @@ export default {
         answer: "On your server. Self-hosted for complete data sovereignty. Secured with Row Level Security and AES-GCM encryption.",
       },
       {
+        question: "Why are there no due dates?",
+        answer: "PREQSTATION is not built around traditional task-manager deadlines. If work should start, you can tell an AI agent to start it now. The system is designed to track what is queued, working, held, or ready next, so execution state matters more than calendar promises.",
+      },
+      {
         question: "Which AI does it use?",
         answer: "Choose from Claude Code, Codex CLI, or Gemini CLI. Assign different AIs per project and switch anytime.",
       },

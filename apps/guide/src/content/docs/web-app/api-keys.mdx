@@ -23,14 +23,30 @@ API tokens allow coding agents to authenticate to the PREQSTATION REST API and p
 
 ## Using a Token
 
-Configure your agent's environment:
+The recommended Claude Code and Codex MCP setup now uses the remote PREQSTATION endpoint at `/mcp` and browser OAuth.
+
+### Recommended Remote MCP Setup
+
+```bash
+# Claude Code
+claude mcp add --transport http preqstation https://your-domain.com/mcp
+
+# Codex
+codex mcp add preqstation --url https://your-domain.com/mcp
+```
+
+OAuth usually starts on the first real request. Codex often triggers it during `add`, while Claude Code commonly starts it when you first use the server or run `claude mcp get preqstation`.
+
+### Token-Based Shell Helper or Legacy Local Bridge
+
+Use API tokens when you need shell-helper mode or the legacy local stdio bridge. Configure your environment like this:
 
 ```bash
 export PREQSTATION_API_URL=https://your-domain.com
 export PREQSTATION_TOKEN=preq_xxxxxxxxxxxxx
 ```
 
-Or in your MCP configuration:
+If you must use the legacy local bridge, the MCP configuration looks like this:
 
 ```json
 {
