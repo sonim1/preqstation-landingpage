@@ -9,6 +9,7 @@ export default defineConfig({
     sitemap(),
     starlight({
       title: 'PREQSTATION Guide',
+      favicon: '/favicon.png',
       customCss: ['./src/styles/custom.css'],
       defaultLocale: 'root',
       locales: {
@@ -22,6 +23,14 @@ export default defineConfig({
         },
       },
       head: [
+        {
+          tag: 'link',
+          attrs: {
+            rel: 'icon',
+            type: 'image/webp',
+            href: '/guide/favicon.webp',
+          },
+        },
         {
           tag: 'script',
           content: `(function(){if(!localStorage.getItem('starlight-theme')){localStorage.setItem('starlight-theme','dark');document.documentElement.setAttribute('data-theme','dark');}})();`,

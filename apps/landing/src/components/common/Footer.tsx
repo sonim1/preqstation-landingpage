@@ -7,9 +7,22 @@ export default function Footer() {
     <footer className="relative z-10 py-12 bg-charcoal/90 border-t border-white/10 text-white/50">
       <div className="max-w-6xl mx-auto px-6">
         <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-          <div>
-            <span className="font-display font-bold text-white">Preq Station</span>
-            <span> — {t.footer.tagline}</span>
+          <div className="flex items-center gap-3">
+            <img
+              src="/brand/logo.webp"
+              alt=""
+              aria-hidden="true"
+              className="h-8 w-auto"
+              loading="lazy"
+              decoding="async"
+            />
+            <span
+              className="text-sm font-semibold tracking-[0.16em] text-white sm:text-base"
+              style={{ fontFamily: '"Outfit", system-ui, sans-serif' }}
+            >
+              PREQSTATION
+            </span>
+            <span>— {t.footer.tagline}</span>
           </div>
           <div>{t.footer.madeWith}</div>
           <div className="text-sm">{t.footer.copyright}</div>

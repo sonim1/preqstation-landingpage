@@ -54,9 +54,26 @@ export default function Nav({ locale }: { locale: string }) {
       className="sticky top-0 z-50 border-b border-white/10 bg-charcoal/90 backdrop-blur-md"
     >
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:h-16 sm:px-6">
-        <span className="font-display text-lg font-bold text-white sm:text-xl">
-          Preq Station
-        </span>
+        <a
+          href={getLocalePath(locale)}
+          aria-label="PREQSTATION home"
+          className="inline-flex items-center gap-2.5 transition hover:opacity-95"
+        >
+          <img
+            src="/brand/logo.webp"
+            alt=""
+            aria-hidden="true"
+            className="h-8 w-auto sm:h-9"
+            loading="eager"
+            decoding="async"
+          />
+          <span
+            className="text-sm font-semibold tracking-[0.16em] text-white sm:text-base"
+            style={{ fontFamily: '"Outfit", system-ui, sans-serif' }}
+          >
+            PREQSTATION
+          </span>
+        </a>
 
         <div className="hidden items-center gap-5 sm:flex">
           <a
