@@ -13,7 +13,7 @@ export default {
   hero: {
     badge: "The Developer's Kitchen",
     title: "Queue the task.\nAgents do the work.",
-    description: "PREQSTATION is a self-hosted execution queue for developers using AI coding engines. It takes a scoped software task from intake to reviewed result, and it does not replace GitHub Issues, Linear, or Jira for backlog planning.",
+    description: "PREQSTATION is a self-hosted execution queue for developers using AI coding engines. It takes a scoped software task from intake to reviewed result. Claude Code can take direct dispatch, while Codex and Gemini stay on the worker path. It does not replace GitHub Issues, Linear, or Jira for backlog planning.",
     preqTagline: "Queue the task. Agents take it.",
     prepTagline: "Review the result. Then ship.",
     snapshotTitle: "Execution proof",
@@ -172,7 +172,7 @@ export default {
         number: "02",
         icon: "\ud83d\udd25",
         title: "Dispatch the right engine",
-        desc: "Pick Claude, Codex, or Gemini for the task, let the agent claim it, and keep queued or working as run-state overlays instead of fake workflow columns.",
+        desc: "Send Claude Code through direct dispatch when it fits, keep Codex or Gemini on the worker path, and track queued or working as run-state overlays instead of fake workflow columns.",
       },
       {
         number: "03",
@@ -207,25 +207,25 @@ export default {
   },
   multiEngine: {
     title: "Choose the right AI for the task",
-    subtitle: "Pick the best tool, no vendor lock-in",
+    subtitle: "Use Claude for direct dispatch, or keep Codex and Gemini on the worker path",
     engines: [
       {
         accent: "bg-charcoal", logo: "C", logoBg: "bg-charcoal",
         name: "Claude Code", company: "Anthropic",
-        desc: "Strong at complex refactoring, architecture changes, and general tasks",
-        bestFor: ["General tasks", "Complex refactoring", "Architecture changes"],
+        desc: "Best when you want a strong general-purpose engine and an optional direct local dispatch path.",
+        bestFor: ["Direct dispatch", "General tasks", "Complex refactoring"],
       },
       {
         accent: "bg-mint", logo: "Cx", logoBg: "bg-mint",
         name: "Codex CLI", company: "OpenAI",
-        desc: "Strong at code review, security analysis, and architecture review",
-        bestFor: ["Code review", "Security analysis", "Architecture review"],
+        desc: "Stays on the PREQ worker path and is great for implementation, review, and repeatable task execution.",
+        bestFor: ["Worker path", "Implementation", "Code review"],
       },
       {
         accent: "bg-review-blue", logo: "G", logoBg: "bg-review-blue",
         name: "Gemini CLI", company: "Google",
-        desc: "Strong at UI/UX design, documentation, and large-context processing",
-        bestFor: ["UI/UX design", "Documentation", "Large-context tasks"],
+        desc: "Also stays on the worker path and is useful for UI, docs, and larger-context tasks.",
+        bestFor: ["Worker path", "UI/UX design", "Documentation"],
       },
     ],
   },
@@ -283,7 +283,7 @@ export default {
       },
       {
         question: "Which AI does it use?",
-        answer: "Choose from Claude Code, Codex CLI, or Gemini CLI. Assign different AIs per project and switch anytime.",
+        answer: "Choose from Claude Code, Codex CLI, or Gemini CLI. Claude Code can also use direct dispatch, while Codex and Gemini stay on the worker path. You can still assign a different engine per project or task.",
       },
       {
         question: "Isn't open source less secure?",

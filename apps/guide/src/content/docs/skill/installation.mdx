@@ -1,11 +1,11 @@
 ---
 title: Installation
-description: Install preqstation-skill and connect Claude Code or Codex to the PREQSTATION MCP endpoint
+description: Install preqstation-skill, connect Claude/Codex/Gemini workers, and optionally enable Claude Code dispatch
 ---
 
 import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
-`preqstation-skill` is the core agent-side package for PREQSTATION. It owns the `preqstation` skill name, documents the lifecycle rules, and includes optional shell-helper and legacy stdio bridge support.
+`preqstation-skill` is the core agent-side package for PREQSTATION. It owns the `preqstation` skill name, documents the lifecycle rules, includes optional shell-helper and legacy stdio bridge support, and now also carries the local Claude plugin skeleton plus the experimental Claude dispatch channel files.
 
 ## Prerequisites
 
@@ -65,6 +65,17 @@ claude mcp get preqstation
 </TabItem>
 </Tabs>
 
+### Optional: local Claude plugin and dispatch channel
+
+If you want **direct Claude Code dispatch** from the PREQSTATION web app, you can also load the local plugin skeleton and start the experimental channel runtime:
+
+```bash
+claude --plugin-dir /ABSOLUTE/PATH/TO/preqstation-skill
+claude --mcp-config /ABSOLUTE/PATH/TO/preqstation-skill/.mcp.json --dangerously-load-development-channels server:preq-dispatch-channel
+```
+
+This path is **Claude-only**. Codex and Gemini should stay on the worker + remote MCP flow.
+
 ## Codex CLI
 
 Register the remote PREQSTATION MCP endpoint:
@@ -92,11 +103,20 @@ codex mcp get preqstation
 </TabItem>
 </Tabs>
 
+Codex does not need a Claude-style local plugin or channel runtime here. Keep Codex on the worker path through remote `/mcp`.
+
 ## When Authentication Starts
 
 - Codex often probes the server during `add`, so the browser login flow may start immediately.
 - Claude Code usually saves the server first and may show `Needs authentication` until first use.
 - In Claude Code, authentication commonly starts when you first use the server or run `claude mcp get preqstation`.
+
+## Dispatch Routing Summary
+
+- **Claude Code** can use the worker path and the experimental direct dispatch path.
+- **Codex** stays on the worker path only.
+- **Gemini CLI** stays on the worker path only.
+- **Telegram / OpenClaw** remains the legacy relay path.
 
 ## Gemini CLI
 

@@ -1,11 +1,11 @@
 ---
 title: 설치
-description: preqstation-skill을 설치하고 Claude Code 또는 Codex를 PREQSTATION MCP 엔드포인트에 연결합니다.
+description: preqstation-skill을 설치하고 Claude/Codex/Gemini worker를 연결한 뒤, 선택적으로 Claude Code dispatch를 활성화합니다.
 ---
 
 import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
-`preqstation-skill`은 PREQSTATION의 핵심 에이전트 측 패키지입니다. `preqstation` 스킬 이름을 소유하고, 작업 수명 주기 규칙을 문서화하며, 선택적으로 셸 헬퍼와 레거시 stdio 브리지도 제공합니다.
+`preqstation-skill`은 PREQSTATION의 핵심 에이전트 측 패키지입니다. `preqstation` 스킬 이름을 소유하고, 작업 수명 주기 규칙을 문서화하며, 선택적으로 셸 헬퍼와 레거시 stdio 브리지도 제공합니다. 이제 로컬 Claude plugin skeleton과 실험적 Claude dispatch channel 파일도 함께 담고 있습니다.
 
 ## 사전 준비
 
@@ -65,6 +65,17 @@ claude mcp get preqstation
 </TabItem>
 </Tabs>
 
+### 선택 사항: 로컬 Claude plugin과 dispatch channel
+
+PREQSTATION 웹 앱에서 **direct Claude Code dispatch**까지 쓰고 싶다면, 로컬 plugin skeleton과 실험적 channel runtime도 함께 실행할 수 있습니다.
+
+```bash
+claude --plugin-dir /ABSOLUTE/PATH/TO/preqstation-skill
+claude --mcp-config /ABSOLUTE/PATH/TO/preqstation-skill/.mcp.json --dangerously-load-development-channels server:preq-dispatch-channel
+```
+
+이 경로는 **Claude 전용**입니다. Codex와 Gemini는 worker + 원격 MCP 흐름을 유지하세요.
+
 ## Codex CLI
 
 원격 PREQSTATION MCP 엔드포인트를 등록합니다.
@@ -92,11 +103,20 @@ codex mcp get preqstation
 </TabItem>
 </Tabs>
 
+Codex는 여기서 Claude 스타일의 로컬 plugin이나 channel runtime이 필요하지 않습니다. 원격 `/mcp` 기반 worker 경로만 유지하면 됩니다.
+
 ## 인증이 시작되는 시점
 
 - Codex는 `add` 중에 서버를 미리 확인하는 경우가 많아서 브라우저 로그인 플로우가 즉시 시작될 수 있습니다.
 - Claude Code는 보통 서버 설정을 먼저 저장하고, 실제 사용 전까지 `Needs authentication`으로 보일 수 있습니다.
 - Claude Code에서는 처음 서버를 사용할 때나 `claude mcp get preqstation`을 실행할 때 인증이 시작되는 경우가 많습니다.
+
+## Dispatch 경로 요약
+
+- **Claude Code**는 worker 경로와 실험적 direct dispatch 경로를 모두 사용할 수 있습니다.
+- **Codex**는 worker 경로만 사용합니다.
+- **Gemini CLI**도 worker 경로만 사용합니다.
+- **Telegram / OpenClaw**는 레거시 relay 경로입니다.
 
 ## Gemini CLI
 

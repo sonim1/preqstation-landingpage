@@ -50,7 +50,7 @@ Run state는 워크플로우 상태와 별도로 추적됩니다.
 | `queued` | 요청은 됐지만 아직 에이전트가 claim 전 |
 | `working` | 에이전트가 `preq_start_task()`로 claim 완료 |
 
-OpenClaw나 Telegram dispatch가 먼저 `queued`를 설정할 수 있고, 이후 `preq_start_task()`가 이를 `working`으로 올립니다.
+Telegram/OpenClaw relay나 Claude Code dispatch가 먼저 `queued`를 설정할 수 있고, 이후 `preq_start_task()`가 이를 `working`으로 올립니다.
 
 ## 라이프사이클 브랜치
 

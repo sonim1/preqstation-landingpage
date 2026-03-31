@@ -50,7 +50,7 @@ Run state is tracked independently from workflow status:
 | `queued` | Requested or dispatched, but not yet claimed by an agent |
 | `working` | Claimed by an agent through `preq_start_task()` |
 
-OpenClaw or Telegram dispatch can mark a task as `queued` before an agent picks it up. `preq_start_task()` upgrades that to `working`.
+Telegram/OpenClaw relays or Claude Code dispatch can mark a task as `queued` before an agent picks it up. `preq_start_task()` upgrades that to `working`.
 
 ## Lifecycle Branches
 

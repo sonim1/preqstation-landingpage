@@ -81,9 +81,17 @@ export PREQSTATION_TOKEN=preq_your_new_token
 
 After that, continue with the setup for your agent client or MCP integration.
 
+## Choose Your Agent Path
+
+- **Claude Code worker only** — Register the remote `/mcp` endpoint and start using PREQ tools.
+- **Claude Code with direct dispatch** — Use the same remote `/mcp` setup, then load the local `preqstation-skill` plugin and experimental Claude dispatch channel.
+- **Codex or Gemini** — Stay on the worker path. They do not need the Claude plugin or Claude dispatch channel.
+- **Telegram / OpenClaw** — Keep using this only if you want the legacy relay path.
+
 ## Next Steps
 
 - [Web App Setup](/guide/web-app/setup) — Full local setup and first-login details
 - [Kanban Board Guide](/guide/web-app/kanban) — Learn task management
 - [Concepts](/guide/getting-started/concepts) — Understand the kitchen metaphor
 - [API Keys](/guide/web-app/api-keys) — Manage agent tokens
+- [Skill Installation](/guide/skill/installation) — Claude, Codex, Gemini, and dispatch setup paths

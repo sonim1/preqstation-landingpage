@@ -20,8 +20,8 @@ const schemaDescription = locale === "ko"
   : "AI Agent Execution Platform - Queue tasks, let agents plan and execute, then verify in Ready before Done.";
 
 const schemaFeatures = locale === "ko"
-  ? ["워크플로우와 run_state 분리", "멀티 AI 에이전트 (Claude, Codex, Gemini)", "Telegram 및 OpenClaw 릴레이", "Self-hosted 오픈소스"]
-  : ["Workflow and run-state separation", "Multi AI Agent (Claude, Codex, Gemini)", "Telegram and OpenClaw relays", "Self-hosted Open Source"];
+  ? ["워크플로우와 run_state 분리", "멀티 AI 에이전트 (Claude, Codex, Gemini)", "Claude direct dispatch 및 Telegram/OpenClaw 레거시 릴레이", "Self-hosted 오픈소스"]
+  : ["Workflow and run-state separation", "Multi AI Agent (Claude, Codex, Gemini)", "Claude direct dispatch plus Telegram/OpenClaw legacy relays", "Self-hosted Open Source"];
 ---
 
 <html lang={lang}>
