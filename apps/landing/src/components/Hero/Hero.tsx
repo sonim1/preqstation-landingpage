@@ -8,6 +8,14 @@ export default function Hero() {
   return (
     <section className="min-h-screen flex items-center bg-gradient-to-b from-charcoal/80 to-[#1e2528]/80">
       <div className="max-w-4xl mx-auto text-center px-6 py-24">
+        <img
+          src="/brand/logo.webp"
+          alt="PREQSTATION logo"
+          className="mx-auto mb-6 h-16 w-auto sm:h-20"
+          loading="eager"
+          decoding="async"
+        />
+
         {/* Subtitle badge */}
         <span className="inline-block bg-white/10 rounded-full px-4 py-1 text-sm font-body text-white/70 mb-6">
           {t.hero.badge}

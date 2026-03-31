@@ -1,5 +1,6 @@
 import { motion } from "motion/react";
 import { useT } from "../../i18n/context";
+import ConceptPosterPlaceholder from "../common/ConceptPosterPlaceholder";
 
 const cardVariants = {
   hidden: { opacity: 0, y: 24 },
@@ -29,6 +30,22 @@ export default function Problem() {
           <p className="text-white/60 text-center mt-4 text-lg">
             {t.problem.subtitle}
           </p>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="mt-12"
+        >
+          <ConceptPosterPlaceholder
+            eyebrow={t.problem.poster.eyebrow}
+            title={t.problem.poster.title}
+            prompt={t.problem.poster.prompt}
+            replaceNote={t.problem.poster.replaceNote}
+            accentClassName="from-coral/18 via-transparent to-warm-yellow/16"
+          />
         </motion.div>
 
         <motion.div

@@ -1,5 +1,6 @@
 import { motion } from "motion/react";
 import { useT } from "../../i18n/context";
+import ConceptPosterPlaceholder from "../common/ConceptPosterPlaceholder";
 
 export default function CTA() {
   const t = useT();
@@ -19,6 +20,16 @@ export default function CTA() {
           <p className="text-white/70 text-lg mt-6 max-w-2xl mx-auto">
             {t.cta.subtitle}
           </p>
+
+          <div className="mt-12 text-left">
+            <ConceptPosterPlaceholder
+              eyebrow={t.cta.poster.eyebrow}
+              title={t.cta.poster.title}
+              prompt={t.cta.poster.prompt}
+              replaceNote={t.cta.poster.replaceNote}
+              accentClassName="from-mint/16 via-transparent to-warm-yellow/16"
+            />
+          </div>
 
           <div className="flex gap-4 justify-center mt-12 flex-wrap">
             <a

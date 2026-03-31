@@ -46,6 +46,32 @@ export default function Nav({ locale }: { locale: string }) {
     };
   }, []);
 
+  useEffect(() => {
+    if (!isMenuOpen) return;
+
+    const scrollY = window.scrollY;
+    const previousBodyOverflow = document.body.style.overflow;
+    const previousBodyPosition = document.body.style.position;
+    const previousBodyTop = document.body.style.top;
+    const previousBodyWidth = document.body.style.width;
+    const previousHtmlOverflow = document.documentElement.style.overflow;
+
+    document.body.style.overflow = "hidden";
+    document.body.style.position = "fixed";
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = "100%";
+    document.documentElement.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = previousBodyOverflow;
+      document.body.style.position = previousBodyPosition;
+      document.body.style.top = previousBodyTop;
+      document.body.style.width = previousBodyWidth;
+      document.documentElement.style.overflow = previousHtmlOverflow;
+      window.scrollTo(0, scrollY);
+    };
+  }, [isMenuOpen]);
+
   const otherLocales = Object.keys(localeLabels).filter((l) => l !== locale);
 
   return (
@@ -165,51 +191,56 @@ export default function Nav({ locale }: { locale: string }) {
       </div>
 
       {isMenuOpen && (
-        <div
-          id="mobile-nav-panel"
-          className="border-t border-white/10 bg-charcoal/95 px-4 py-4 sm:hidden"
-        >
-          <div className="flex flex-col gap-3">
-            <a
-              href="https://github.com/sonim1/preqstation"
-              className="rounded-2xl border border-white/10 px-4 py-3 text-sm font-medium text-white/80 transition hover:bg-white/5 hover:text-white"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              {t.nav.github}
-            </a>
+        <>
+          <div className="fixed inset-x-0 bottom-0 top-14 z-40 bg-charcoal sm:hidden" />
+          <div
+            id="mobile-nav-panel"
+            className="fixed inset-x-0 top-14 z-50 px-4 py-4 sm:hidden"
+          >
+            <div className="rounded-[28px] border border-white/10 bg-charcoal p-4 shadow-[0_24px_80px_rgba(0,0,0,0.4)]">
+              <div className="flex flex-col gap-3">
+                <a
+                  href="https://github.com/sonim1/preqstation"
+                  className="rounded-2xl border border-white/10 px-4 py-3 text-sm font-medium text-white/80 transition hover:bg-white/5 hover:text-white"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {t.nav.github}
+                </a>
 
-            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-              <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-white/45">
-                {t.nav.localeLabel}
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {[locale, ...otherLocales].map((value) => (
-                  <a
-                    key={value}
-                    href={getLocalePath(value)}
-                    className={[
-                      "rounded-full px-3 py-1.5 text-sm font-medium transition",
-                      value === locale
-                        ? "bg-white text-charcoal"
-                        : "border border-white/10 text-white/75 hover:bg-white/5 hover:text-white",
-                    ].join(" ")}
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    {localeLabels[value]}
-                  </a>
-                ))}
+                <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+                  <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-white/45">
+                    {t.nav.localeLabel}
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {[locale, ...otherLocales].map((value) => (
+                      <a
+                        key={value}
+                        href={getLocalePath(value)}
+                        className={[
+                          "rounded-full px-3 py-1.5 text-sm font-medium transition",
+                          value === locale
+                            ? "bg-white text-charcoal"
+                            : "border border-white/10 text-white/75 hover:bg-white/5 hover:text-white",
+                        ].join(" ")}
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        {localeLabels[value]}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+
+                <a
+                  href="/guide/getting-started/overview"
+                  className="rounded-full bg-mint px-5 py-3 text-center text-sm font-semibold text-charcoal transition hover:opacity-90"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {t.nav.cta}
+                </a>
               </div>
             </div>
-
-            <a
-              href="/guide/getting-started/overview"
-              className="rounded-full bg-mint px-5 py-3 text-center text-sm font-semibold text-charcoal transition hover:opacity-90"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              {t.nav.cta}
-            </a>
           </div>
-        </div>
+        </>
       )}
     </nav>
   );

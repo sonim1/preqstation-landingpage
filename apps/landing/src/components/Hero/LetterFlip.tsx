@@ -70,11 +70,11 @@ export default function LetterFlip({ preqTagline, prepTagline }: Props) {
     <div className="flex flex-col items-center">
       {/* Preq/Prep Station heading */}
       <h2
-        aria-label="Preq Station"
+        aria-label="PREQSTATION"
         className="font-display text-4xl md:text-6xl font-bold text-white mb-4"
       >
         <span aria-hidden="true">
-          Pre
+          PRE
           <span
             className="inline-block"
             style={{ perspective: "600px", minWidth: "0.62em" }}
@@ -105,7 +105,7 @@ export default function LetterFlip({ preqTagline, prepTagline }: Props) {
               </span>
             </motion.span>
           </span>
-          {" Station"}
+          {"STATION"}
         </span>
       </h2>
 

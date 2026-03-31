@@ -37,7 +37,7 @@ export default function LegalPage({ title, lastUpdated, sections, backLabel, bac
       </main>
 
       <footer className="py-8 bg-charcoal text-white/50 text-center text-sm">
-        &copy; 2026 Preq Station. Open Source.
+        &copy; 2026 PREQSTATION. Open Source.
       </footer>
     </div>
   );

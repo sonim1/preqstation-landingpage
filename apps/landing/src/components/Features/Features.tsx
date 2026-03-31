@@ -1,5 +1,6 @@
 import { motion } from "motion/react";
 import { useT } from "../../i18n/context";
+import ConceptPosterPlaceholder from "../common/ConceptPosterPlaceholder";
 
 const containerVariants = {
   hidden: {},
@@ -29,6 +30,22 @@ export default function Features() {
           <p className="text-white/60 text-center mt-4 text-lg">
             {t.features.subtitle}
           </p>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="mt-12"
+        >
+          <ConceptPosterPlaceholder
+            eyebrow={t.features.poster.eyebrow}
+            title={t.features.poster.title}
+            prompt={t.features.poster.prompt}
+            replaceNote={t.features.poster.replaceNote}
+            accentClassName="from-review-blue/18 via-transparent to-mint/18"
+          />
         </motion.div>
 
         <motion.div

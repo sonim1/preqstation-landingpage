@@ -1,6 +1,6 @@
 export default {
   meta: {
-    title: "Preq Station — AI Agent Execution Platform",
+    title: "PREQSTATION — AI Agent Execution Platform",
     description: "Queue a task, let agents plan and execute it, then verify the result. An open-source, self-hosted AI agent execution platform.",
   },
   nav: {
@@ -53,7 +53,7 @@ export default {
       },
       {
         id: "hold",
-        status: "blocked",
+        status: "hold",
         detail: "Use hold only when review or implementation is blocked and the task needs a real branch out of the happy path.",
       },
     ],
@@ -85,6 +85,12 @@ export default {
   problem: {
     title: "The missing part is execution discipline",
     subtitle: "AI can write code. Shipping still breaks down between the idea and the verified result.",
+    poster: {
+      eyebrow: "Backlog chaos",
+      title: "Before PREQ: the handoff mess",
+      prompt: "A visual about backlog noise, chat pings, terminal tabs, and half-finished AI runs.",
+      replaceNote: "Final artwork placeholder.",
+    },
     painPoints: [
       { icon: "\ud83d\udccb", title: "Issue trackers stop at assignment", desc: "They hold backlog and discussion, but they do not execute the task." },
       { icon: "\ud83e\udd16", title: "Raw AI sessions lack workflow guardrails", desc: "No queue, no branch policy, no review state, no audit trail." },
@@ -100,6 +106,12 @@ export default {
   solution: {
     title: "Work like a kitchen.",
     highlight: "You are the chef.",
+    poster: {
+      eyebrow: "Kitchen model",
+      title: "Show the chef directing AI line cooks",
+      prompt: "A calm scene of one lead developer directing several AI workers through parallel execution.",
+      replaceNote: "Final artwork placeholder.",
+    },
     chefHeader: "\ud83e\uddd1\u200d\ud83c\udf73 Chef's Role",
     chefItems: [
       { title: "Define scope", desc: "Write the task and acceptance criteria" },
@@ -143,6 +155,12 @@ export default {
   features: {
     title: "Why engineers actually use it",
     subtitle: "PREQ turns a scoped task into a repeatable execution loop with clear ownership and proof.",
+    poster: {
+      eyebrow: "Execution proof",
+      title: "Show evidence-first execution",
+      prompt: "A command-center scene with queue cards, review notes, branch outputs, and visible verification proof.",
+      replaceNote: "Final artwork placeholder.",
+    },
     items: [
       {
         number: "01",
@@ -159,7 +177,7 @@ export default {
       {
         number: "03",
         icon: "\u23f8\ufe0f",
-        title: "Keep blocked work explicit",
+        title: "Branch blocked work into hold",
         desc: "Use hold as a real branch for blocked execution so review-ready work stays separate from tasks that still need input.",
       },
       {
@@ -182,7 +200,7 @@ export default {
     ],
     blocked: "Run-state overlay",
     blockedTooltip: "Use queued when dispatch is requested and working once an agent claims the task. They sit on top of status instead of creating fake workflow columns.",
-    holdLabel: "blocked branch",
+    holdLabel: "hold branch",
     holdDescription: "Tasks move here when implementation or verification is blocked. They rejoin the happy path only after the blocker is cleared.",
     notTrackerTitle: "Not an issue tracker",
     notTrackerDescription: "Use GitHub Issues, Linear, or Jira to discover and triage work. PREQ starts once the task is scoped enough to execute safely.",
@@ -276,6 +294,12 @@ export default {
   cta: {
     title: "Open your kitchen today",
     subtitle: "Start with the execution proof, then use the guide to wire PREQ into your own workflow.",
+    poster: {
+      eyebrow: "Launch moment",
+      title: "Close with a calm execution-ready scene",
+      prompt: "A clean prep station, a calm AI queue, and opening-day momentum.",
+      replaceNote: "Final artwork placeholder.",
+    },
     primary: "See execution proof",
     guide: "Read the Guide",
     secondary: "View on GitHub",
@@ -283,7 +307,7 @@ export default {
   footer: {
     tagline: "The Developer's Kitchen",
     madeWith: "Built with kitchen love \ud83c\udf73",
-    copyright: "\u00a9 2026 Preq Station. Open Source.",
+    copyright: "\u00a9 2026 PREQSTATION. Open Source.",
     privacy: "Privacy Policy",
     terms: "Terms of Service",
   },

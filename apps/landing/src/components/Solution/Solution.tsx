@@ -1,5 +1,6 @@
 import { motion } from "motion/react";
 import { useT } from "../../i18n/context";
+import ConceptPosterPlaceholder from "../common/ConceptPosterPlaceholder";
 
 export default function Solution() {
   const t = useT();
@@ -17,6 +18,21 @@ export default function Solution() {
             {t.solution.title}
             <span className="ml-3 inline-block text-mint">{t.solution.highlight}</span>
           </h2>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="mt-12"
+        >
+          <ConceptPosterPlaceholder
+            eyebrow={t.solution.poster.eyebrow}
+            title={t.solution.poster.title}
+            prompt={t.solution.poster.prompt}
+            replaceNote={t.solution.poster.replaceNote}
+          />
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mt-16">
