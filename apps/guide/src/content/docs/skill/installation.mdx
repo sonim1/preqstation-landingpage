@@ -1,11 +1,11 @@
 ---
 title: Installation
-description: Install preqstation-skill, connect Claude/Codex/Gemini workers, and optionally enable Claude Code dispatch
+description: Install preqstation-skill, connect Claude/Codex/Gemini workers, and understand the available dispatcher paths
 ---
 
 import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
-`preqstation-skill` is the core agent-side package for PREQSTATION. It owns the `preqstation` skill name, documents the lifecycle rules, includes optional shell-helper and legacy stdio bridge support, and now also carries the local Claude plugin skeleton plus the experimental Claude dispatch channel files.
+`preqstation-skill` is the core agent-side package for PREQSTATION. It owns the `preqstation` skill name, documents the lifecycle rules, includes optional shell-helper and legacy stdio bridge support, and also carries the local Claude plugin skeleton plus the dispatcher channel files used by the Claude Code dispatch path.
 
 ## Prerequisites
 
@@ -33,6 +33,18 @@ claude-code
 codex
 gemini-cli
 ```
+
+## Dispatcher Choice Model
+
+PREQSTATION separates **worker installation**, **dispatcher target**, and **engine selection**:
+
+- Workers use the remote `/mcp` server and call PREQ tools directly.
+- The web app queues one of two `dispatch_target` values when you use a dispatch action:
+  - `claude-code-channel` via **Send to Claude Code**
+  - `telegram` via **Send to Telegram** or copied Telegram/OpenClaw commands
+- The task `engine` stays separate from the dispatcher target and decides whether the dispatcher launches `claude-code`, `codex`, or `gemini-cli`.
+
+If you want the OpenClaw dispatcher path, set up Telegram plus `preqstation-openclaw`. This page focuses on the worker setup shared by all agents and the Claude Code dispatcher channel hosted in `preqstation-skill`.
 
 ## Recommended MCP Setup (HTTP + OAuth)
 
@@ -65,16 +77,16 @@ claude mcp get preqstation
 </TabItem>
 </Tabs>
 
-### Optional: local Claude plugin and dispatch channel
+### Optional: local Claude plugin and dispatcher channel
 
-If you want **direct Claude Code dispatch** from the PREQSTATION web app, you can also load the local plugin skeleton and start the experimental channel runtime:
+If you want the **Claude Code dispatcher** from the PREQSTATION web app, load the local plugin skeleton and start the local dispatcher channel runtime:
 
 ```bash
 claude --plugin-dir /ABSOLUTE/PATH/TO/preqstation-skill
 claude --mcp-config /ABSOLUTE/PATH/TO/preqstation-skill/.mcp.json --dangerously-load-development-channels server:preq-dispatch-channel
 ```
 
-This path is **Claude-only**. Codex and Gemini should stay on the worker + remote MCP flow.
+The dispatcher host itself runs inside Claude Code, but the queued task still keeps its own `engine`. A task sent through **Send to Claude Code** can still launch `codex` or `gemini-cli` as long as those CLIs are installed on the same machine.
 
 ## Codex CLI
 
@@ -103,7 +115,7 @@ codex mcp get preqstation
 </TabItem>
 </Tabs>
 
-Codex does not need a Claude-style local plugin or channel runtime here. Keep Codex on the worker path through remote `/mcp`.
+Codex does not need a Claude-style local plugin or channel runtime for normal worker usage. If you want queued dispatch from the web app through the Claude Code dispatcher, keep Codex installed locally and select `Codex` as the task engine in the UI.
 
 ## When Authentication Starts
 
@@ -113,14 +125,14 @@ Codex does not need a Claude-style local plugin or channel runtime here. Keep Co
 
 ## Dispatch Routing Summary
 
-- **Claude Code** can use the worker path and the experimental direct dispatch path.
-- **Codex** stays on the worker path only.
-- **Gemini CLI** stays on the worker path only.
-- **Telegram / OpenClaw** remains the legacy relay path.
+- **Send to Claude Code** queues `dispatch_target=claude-code-channel`.
+- **Send to Telegram** queues `dispatch_target=telegram`.
+- **Engine** remains a separate field and can still be `claude-code`, `codex`, or `gemini-cli` on either dispatcher path.
+- **Worker-only usage** still works without any queued dispatch if you only want PREQ MCP tools inside the agent.
 
 ## Gemini CLI
 
-Gemini CLI does not use the documented remote MCP registration flow here. Install the `preqstation` skill for `gemini-cli`, then use shell-helper mode if you need direct REST access:
+Gemini CLI does not use the documented remote MCP registration flow here. Install the `preqstation` skill for `gemini-cli`, then use shell-helper mode if you need direct REST access. If you want queued dispatch through the Claude Code dispatcher, make sure `gemini` is also installed on that dispatcher machine:
 
 ```bash
 export PREQSTATION_API_URL="https://your-preqstation-domain.vercel.app"

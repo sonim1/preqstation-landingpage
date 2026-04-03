@@ -21,13 +21,40 @@ export default function Nav({ locale }: { locale: string }) {
   const t = useT();
   const [isLocaleOpen, setIsLocaleOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMoreOpen, setIsMoreOpen] = useState(false);
   const navRef = useRef<HTMLElement>(null);
+  const primarySectionIds = new Set(["features", "workflow"]);
+  const primarySections = t.nav.sections.filter((section) => primarySectionIds.has(section.id));
+  const overflowSections = t.nav.sections.filter(
+    (section) => !primarySectionIds.has(section.id) && section.id !== "overview"
+  );
+
+  function handleSectionJump(id: string) {
+    setIsLocaleOpen(false);
+    setIsMenuOpen(false);
+    setIsMoreOpen(false);
+
+    if (typeof window === "undefined") return;
+
+    window.setTimeout(() => {
+      const target = document.getElementById(id);
+      if (!target) return;
+
+      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      target.scrollIntoView({
+        behavior: prefersReducedMotion ? "auto" : "smooth",
+        block: "start",
+      });
+      window.history.replaceState(null, "", `#${id}`);
+    }, 20);
+  }
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (navRef.current && !navRef.current.contains(e.target as Node)) {
         setIsLocaleOpen(false);
         setIsMenuOpen(false);
+        setIsMoreOpen(false);
       }
     }
 
@@ -35,6 +62,7 @@ export default function Nav({ locale }: { locale: string }) {
       if (e.key === "Escape") {
         setIsLocaleOpen(false);
         setIsMenuOpen(false);
+        setIsMoreOpen(false);
       }
     }
 
@@ -102,11 +130,61 @@ export default function Nav({ locale }: { locale: string }) {
         </a>
 
         <div className="hidden items-center gap-5 sm:flex">
+          {primarySections.map((section) => (
+            <button
+              key={section.id}
+              type="button"
+              onClick={() => handleSectionJump(section.id)}
+              className="text-sm font-medium text-white/70 transition hover:text-white"
+            >
+              {section.label}
+            </button>
+          ))}
+
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setIsMoreOpen((current) => !current)}
+              className="flex items-center gap-1.5 text-sm text-white/70 transition hover:text-white"
+              aria-expanded={isMoreOpen}
+              aria-label={t.nav.moreLabel}
+            >
+              <span className="font-medium">{t.nav.moreLabel}</span>
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={`opacity-50 transition-transform duration-200 ${isMoreOpen ? "rotate-180" : ""}`}>
+                <path d="M6 9l6 6 6-6"/>
+              </svg>
+            </button>
+
+            {isMoreOpen && (
+              <div className="absolute right-0 mt-2 min-w-[190px] overflow-hidden rounded-xl border border-white/10 bg-charcoal shadow-xl backdrop-blur-xl">
+                {overflowSections.map((section) => (
+                  <button
+                    key={section.id}
+                    type="button"
+                    onClick={() => handleSectionJump(section.id)}
+                    className="block w-full px-4 py-2.5 text-left text-sm text-white/70 transition hover:bg-white/5 hover:text-white"
+                  >
+                    {section.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
           <a
             href="https://github.com/sonim1/preqstation"
-            className="text-white/70 hover:text-white transition text-sm font-medium"
+            aria-label={t.nav.github}
+            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/10 text-white/70 transition hover:border-white/20 hover:bg-white/5 hover:text-white"
           >
-            {t.nav.github}
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.866-.013-1.699-2.782.605-3.369-1.343-3.369-1.343-.455-1.157-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.004.071 1.532 1.032 1.532 1.032.892 1.53 2.341 1.088 2.91.832.091-.647.35-1.088.636-1.338-2.221-.253-4.556-1.113-4.556-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.269 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.53 9.53 0 0 1 2.504.337c1.909-1.295 2.747-1.026 2.747-1.026.546 1.378.203 2.397.1 2.65.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.31.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.523 2 12 2Z" />
+            </svg>
           </a>
 
           <div className="relative">
@@ -201,10 +279,19 @@ export default function Nav({ locale }: { locale: string }) {
               <div className="flex flex-col gap-3">
                 <a
                   href="https://github.com/sonim1/preqstation"
-                  className="rounded-2xl border border-white/10 px-4 py-3 text-sm font-medium text-white/80 transition hover:bg-white/5 hover:text-white"
+                  aria-label={t.nav.github}
+                  className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 text-white/80 transition hover:bg-white/5 hover:text-white"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  {t.nav.github}
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.866-.013-1.699-2.782.605-3.369-1.343-3.369-1.343-.455-1.157-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.004.071 1.532 1.032 1.532 1.032.892 1.53 2.341 1.088 2.91.832.091-.647.35-1.088.636-1.338-2.221-.253-4.556-1.113-4.556-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.269 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.53 9.53 0 0 1 2.504.337c1.909-1.295 2.747-1.026 2.747-1.026.546 1.378.203 2.397.1 2.65.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.31.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.523 2 12 2Z" />
+                  </svg>
                 </a>
 
                 <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
@@ -237,6 +324,24 @@ export default function Nav({ locale }: { locale: string }) {
                 >
                   {t.nav.cta}
                 </a>
+
+                <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+                  <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-white/45">
+                    {t.nav.jumpLabel}
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {t.nav.sections.map((section) => (
+                      <button
+                        key={section.id}
+                        type="button"
+                        onClick={() => handleSectionJump(section.id)}
+                        className="rounded-full border border-white/10 px-3 py-1.5 text-sm font-medium text-white/75 transition hover:bg-white/5 hover:text-white"
+                      >
+                        {section.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
           </div>

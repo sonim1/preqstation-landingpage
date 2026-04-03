@@ -78,9 +78,9 @@ export default function Hero() {
           engineValue={t.hero.snapshotEngineValue}
           sessionValue={t.hero.snapshotSessionValue}
           branchValue={t.hero.snapshotBranchValue}
-          holdLabel={t.hero.snapshotHoldLabel}
-          holdDescription={t.hero.snapshotHoldDescription}
-          stages={t.hero.snapshotStages}
+          workflowTitle={t.pipeline.title}
+          workflowSubtitle={t.pipeline.subtitle}
+          workflowTargetBadge={t.pipeline.targetBadge}
           evidenceTitle={t.hero.snapshotEvidenceTitle}
           evidenceItems={t.hero.snapshotEvidenceItems}
         />

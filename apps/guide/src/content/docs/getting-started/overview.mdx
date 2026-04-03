@@ -8,19 +8,19 @@ import Mermaid from '../../../components/Mermaid.astro';
 
 PREQSTATION is an execution platform for AI-agent-driven development workflows. It bridges developers and coding agents through a task queue, a web app, and agent-facing APIs.
 
-## Core Systems and Optional Ingress
+## Core Systems and Dispatcher Paths
 
-PREQSTATION consists of three core services, with OpenClaw remaining as an optional legacy ingress:
+PREQSTATION separates the queued dispatch target from the task engine:
 
 <CardGrid>
 	<Card title="PREQSTATION Web App" icon="setting">
-		Central web app. Manages tasks, renders the Kanban UI, exposes the REST API, queues Claude Code dispatch, and can still relay Telegram/OpenClaw messages.
+		Central web app. Manages tasks, renders the Kanban UI, exposes the REST API, and lets the user choose between `Send to Claude Code` and `Send to Telegram`.
 	</Card>
 	<Card title="preqstation-openclaw" icon="rocket">
-		Legacy execution ingress. OpenClaw imports it to resolve projects, create worktrees, and launch coding agents from Telegram or direct runtime messages.
+		OpenClaw dispatcher path. OpenClaw imports it to resolve projects, create worktrees, and launch coding agents from Telegram or direct runtime messages.
 	</Card>
 	<Card title="preqstation-skill" icon="approve">
-		Agent client. MCP access and shell helpers for workers, plus the local Claude plugin skeleton and experimental Claude dispatch channel.
+		Agent client. MCP access and shell helpers for workers, plus the local Claude dispatcher channel that consumes `dispatch_target=claude-code-channel`.
 	</Card>
 </CardGrid>
 
@@ -49,7 +49,7 @@ flowchart LR
   AGENT --> MCP
   MCP --> API
 `}
-  caption="OpenClaw is optional and legacy. The core system is the web app plus the agent-facing API surface."
+  caption="Users choose which dispatcher picks the task up. The engine remains a separate field on the task."
 />
 
 ## Data Flow
@@ -59,23 +59,30 @@ flowchart LR
 ```text
 User creates task in the Kanban UI
   -> PREQSTATION stores it in PostgreSQL
-  -> optional relays notify Telegram / OpenClaw
-  -> or queue direct Claude Code dispatch
+  -> user optionally chooses a dispatch target
+  -> PREQ queues either Claude Code dispatcher or Telegram/OpenClaw relay
 ```
+
+### Dispatcher Target vs Engine
+
+- `dispatch_target=claude-code-channel` means the user chose **Send to Claude Code** in the web app.
+- `dispatch_target=telegram` means the user chose **Send to Telegram** or copied a Telegram/OpenClaw command.
+- `engine=claude-code | codex | gemini-cli` stays separate from the dispatcher target and decides which local CLI actually runs the task.
 
 ### Agent Trigger via OpenClaw or Claude Dispatch
 
 ```text
 Telegram / OpenClaw path:
-  developer sends a task request to OpenClaw
+  developer chooses Send to Telegram or hands the copied command to OpenClaw
     -> OpenClaw resolves project + task + engine
     -> creates an isolated git worktree
     -> launches the requested coding agent
 
-Claude Code path:
+Claude Code dispatcher path:
   developer queues "Send to Claude Code" in the web app
     -> PREQ stores run_state=queued with dispatch_target=claude-code-channel
-    -> local Claude dispatch channel emits the task into the dispatcher session
+    -> local Claude dispatcher session emits the task into the dispatcher channel
+    -> dispatcher launches the task engine recorded on the task
 ```
 
 ### Agent Execution and Status Reporting

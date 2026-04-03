@@ -24,3 +24,23 @@ html[lang="ko"] {
   --font-display: "Noto Sans KR", system-ui, sans-serif;
   --font-body: "Noto Sans KR", system-ui, sans-serif;
 }
+
+body {
+  background-image:
+    radial-gradient(circle at 50% 8%, rgba(0, 184, 148, 0.18), transparent 25%),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(180deg, #20282a 0%, #171d1f 38%, #121718 100%);
+  background-size: auto, 60px 60px, 60px 60px, auto;
+  background-position: top center, top left, top left, top left;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}

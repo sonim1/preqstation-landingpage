@@ -77,6 +77,7 @@ Response shape:
       "status": "todo",
       "priority": "high",
       "engine": "claude-code",
+      "dispatch_target": "claude-code-channel",
       "run_state": "working",
       "run_state_updated_at": "2026-03-12T14:10:00.000Z"
     }
@@ -133,6 +134,7 @@ Response shape:
     "repo": "https://github.com/acme/my-app",
     "branch": "task/proj-123/add-authentication",
     "engine": "claude-code",
+    "dispatch_target": null,
     "run_state": null,
     "deploy_strategy": {
       "strategy": "feature_branch",
@@ -193,6 +195,8 @@ Common mutable fields:
 - `engine`
 - `result`
 
+`dispatch_target` is returned in task payloads but is not a normal agent-written field. The web app currently manages it through dispatch actions, with values `claude-code-channel`, `telegram`, or `null`.
+
 ### PATCH /tasks/:id/status
 
 Manual status-only override:
@@ -249,6 +253,13 @@ These endpoints are used by the PREQSTATION web app.
 | `GET` | `/api-keys` | List API keys |
 | `POST` | `/api-keys` | Issue a new API key |
 | `DELETE` | `/api-keys/:id` | Revoke an API key |
+
+### Dispatch
+
+| Method | Endpoint | Purpose |
+|---|---|---|
+| `POST` | `/dispatch/claude-code` | Queue `dispatch_target=claude-code-channel` |
+| `POST` | `/telegram/send` | Send Telegram message and queue `dispatch_target=telegram` |
 
 ### Todos and Labels
 

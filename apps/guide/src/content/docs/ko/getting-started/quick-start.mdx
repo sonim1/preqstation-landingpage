@@ -81,12 +81,13 @@ export PREQSTATION_TOKEN=preq_your_new_token
 
 이제 `preqstation-skill` 또는 MCP 설정으로 넘어가면 됩니다.
 
-## 에이전트 경로 선택
+## Dispatcher 선택
 
-- **Claude Code worker 전용** — 원격 `/mcp`를 등록하고 PREQ 툴을 바로 사용합니다.
-- **Claude Code direct dispatch 포함** — 같은 원격 `/mcp`를 등록한 뒤, 로컬 `preqstation-skill` plugin과 실험적 Claude dispatch channel을 추가합니다.
-- **Codex 또는 Gemini** — worker 경로만 사용합니다. Claude plugin이나 Claude dispatch channel은 필요하지 않습니다.
-- **Telegram / OpenClaw** — 레거시 relay 경로가 필요할 때만 유지합니다.
+PREQSTATION에서는 worker와 dispatcher를 따로 봅니다. 먼저 사용하는 에이전트에 worker 스킬을 설치한 뒤, 웹 앱의 dispatch 액션을 누가 처리할지 고릅니다.
+
+- **Claude Code dispatcher** — 원격 `/mcp`를 등록한 뒤, 웹 앱의 `Send to Claude Code` 액션을 쓰고 싶다면 로컬 `preqstation-skill` plugin과 dispatcher channel을 추가합니다. 이 dispatcher도 태스크에 기록된 `claude-code`, `codex`, `gemini-cli` 엔진을 그대로 실행할 수 있습니다.
+- **OpenClaw dispatcher** — `Send to Telegram`이나 복사한 Telegram/OpenClaw 명령으로 태스크를 넘기고 싶다면 Telegram과 `preqstation-openclaw`를 설정합니다. 이 dispatcher도 선택된 엔진을 그대로 실행할 수 있습니다.
+- **Worker만 사용** — 웹 앱에서 queued dispatch를 쓰지 않는다면 Claude Code, Codex, Gemini를 PREQ MCP 기반 worker 경로로만 사용하면 됩니다.
 
 ## 다음 단계
 
@@ -94,4 +95,4 @@ export PREQSTATION_TOKEN=preq_your_new_token
 - [칸반 보드 가이드](/guide/ko/web-app/kanban) — 태스크 보드 사용법
 - [개념](/guide/ko/getting-started/concepts) — PREQSTATION의 핵심 모델 이해하기
 - [API Keys](/guide/ko/web-app/api-keys) — 토큰 관리 참고 페이지
-- [스킬 설치](/guide/ko/skill/installation) — Claude, Codex, Gemini, dispatch 설치 경로
+- [스킬 설치](/guide/ko/skill/installation) — Claude, Codex, Gemini, dispatcher 설치 경로
