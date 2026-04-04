@@ -15,6 +15,18 @@ const {
   locale = "en",
 } = Astro.props;
 
+const siteOrigin = "https://preqstation.com";
+const pathname = Astro.url.pathname;
+const canonicalUrl = new URL(pathname, siteOrigin).toString();
+const alternateLinks =
+  pathname === "/" || pathname === "/ko/"
+    ? [
+        { hreflang: "en", href: new URL("/", siteOrigin).toString() },
+        { hreflang: "ko", href: new URL("/ko/", siteOrigin).toString() },
+        { hreflang: "x-default", href: new URL("/", siteOrigin).toString() },
+      ]
+    : [];
+
 const schemaDescription = locale === "ko"
   ? "AI 에이전트 실행 플랫폼 - 태스크를 큐에 넣고, 에이전트가 계획과 구현을 수행한 뒤, Ready에서 검증하고 Done으로 완료합니다."
   : "AI Agent Execution Platform - Queue tasks, let agents plan and execute, then verify in Ready before Done.";
@@ -32,17 +44,19 @@ const schemaFeatures = locale === "ko"
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <meta name="generator" content={Astro.generator} />
+    <link rel="canonical" href={canonicalUrl} />
 
     <!-- Open Graph -->
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
     <meta property="og:locale" content={locale === "ko" ? "ko_KR" : "en_US"} />
 
     <!-- Alternate languages -->
-    <link rel="alternate" hreflang="en" href="/" />
-    <link rel="alternate" hreflang="ko" href="/ko/" />
-    <link rel="alternate" hreflang="x-default" href="/" />
+    {alternateLinks.map((link) => (
+      <link rel="alternate" hreflang={link.hreflang} href={link.href} />
+    ))}
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />

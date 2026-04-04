@@ -5,6 +5,7 @@ import starlight from '@astrojs/starlight';
 export default defineConfig({
   site: 'https://preqstation.com',
   base: '/guide',
+  trailingSlash: 'always',
   integrations: [
     sitemap(),
     starlight({
