@@ -1,13 +1,22 @@
 ---
-title: Setup
-description: Install and configure preqstation-openclaw for PREQ task execution
+title: Installation
+description: Install and configure preqstation-openclaw for the OpenClaw dispatcher path.
 ---
 
 import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
 `preqstation-openclaw` is a skill package for OpenClaw runtimes. It does not ship Telegram or webhook infrastructure by itself; the runtime imports this repo to resolve projects, create worktrees, and launch coding agents.
 
-Use this page when you want the **OpenClaw dispatcher** path. If you want the web app's **Claude Code dispatcher** path instead, use the `preqstation-skill` plugin + dispatch channel setup.
+Use this page when you want the **OpenClaw dispatcher** path.
+
+Use OpenClaw when you want:
+
+- Telegram-triggered dispatch
+- copied Telegram/OpenClaw commands
+- OpenClaw project-key and path resolution
+- worktree-first execution managed by the OpenClaw runtime
+
+If you want the web app's **Claude Code dispatcher** path without OpenClaw or Telegram, use [Claude Code Dispatch Installation](/guide/claude-dispatch/installation) instead.
 
 ## ClawHub Import
 
@@ -101,6 +110,12 @@ OpenClaw resolves engine identity with PREQ engine keys while launching local CL
 | `gemini-cli` | `gemini` |
 
 Default engine key: `claude-code`
+
+This means the OpenClaw path can still launch:
+
+- Claude Code
+- Codex
+- Gemini CLI
 
 Natural-language examples:
 

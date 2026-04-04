@@ -1,0 +1,94 @@
+---
+title: Installation
+description: Set up the Claude Code dispatcher path without OpenClaw or Telegram.
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+Use this page when you want the web app's **Send to Claude Code** action to queue work directly into a local Claude-hosted dispatcher runtime.
+
+This path does **not** require OpenClaw or Telegram.
+
+## What This Dispatcher Does
+
+- consumes `dispatch_target=claude-code-channel`
+- runs from the local `preqstation-skill` plugin + dispatcher channel
+- still honors the task `engine`, so the same dispatcher machine can launch `claude-code`, `codex`, or `gemini-cli`
+
+## Prerequisites
+
+- Follow [Worker Installation](/guide/skill/installation) first
+- Install Claude Code locally
+- Install any engine CLIs you want this dispatcher machine to launch:
+  - `claude`
+  - `codex`
+  - `gemini`
+
+## Register the Remote MCP Server
+
+Claude Code should still connect to the PREQSTATION `/mcp` endpoint:
+
+<Tabs>
+<TabItem label="Install">
+```bash
+claude mcp add --transport http preqstation https://<your-domain>/mcp
+```
+</TabItem>
+<TabItem label="Update">
+If already registered, remove and re-add:
+
+```bash
+claude mcp remove preqstation
+claude mcp add --transport http preqstation https://<your-domain>/mcp
+```
+</TabItem>
+<TabItem label="Verify">
+```bash
+claude mcp list
+claude mcp get preqstation
+```
+</TabItem>
+</Tabs>
+
+## Start the Local Dispatcher Channel
+
+Load the local plugin skeleton and start the dispatcher channel runtime from your `preqstation-skill` checkout:
+
+```bash
+claude --plugin-dir /ABSOLUTE/PATH/TO/preqstation-skill
+claude --mcp-config /ABSOLUTE/PATH/TO/preqstation-skill/.mcp.json --dangerously-load-development-channels server:preq-dispatch-channel
+```
+
+When the web app queues **Send to Claude Code**, PREQSTATION stores `dispatch_target=claude-code-channel`, and this local runtime picks the task up.
+
+## Engine Routing
+
+The dispatcher target and engine stay separate:
+
+- **Dispatcher target** decides who picks the task up
+- **Engine** decides which CLI actually runs it
+
+That means a task queued through **Send to Claude Code** can still launch:
+
+- `claude-code`
+- `codex`
+- `gemini-cli`
+
+as long as those CLIs are installed on the same machine as the dispatcher.
+
+## When to Use This Path
+
+Use the Claude Code dispatcher path when:
+
+- you want queued dispatch from the web app
+- you do not want Telegram in the middle
+- you do not need OpenClaw project-memory routing
+- you want Claude Code to host the local dispatch runtime directly
+
+## When Not to Use This Path
+
+If you want Telegram-triggered dispatch, copied OpenClaw commands, or OpenClaw-managed project path resolution, use [OpenClaw Installation](/guide/openclaw/setup) instead.
+
+<Aside>
+Replace `/ABSOLUTE/PATH/TO/preqstation-skill` with the real installation path. Relative paths will not work.
+</Aside>

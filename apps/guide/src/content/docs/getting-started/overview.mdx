@@ -20,7 +20,10 @@ PREQSTATION separates the queued dispatch target from the task engine:
 		OpenClaw dispatcher path. OpenClaw imports it to resolve projects, create worktrees, and launch coding agents from Telegram or direct runtime messages.
 	</Card>
 	<Card title="preqstation-skill" icon="approve">
-		Agent client. MCP access and shell helpers for workers, plus the local Claude dispatcher channel that consumes `dispatch_target=claude-code-channel`.
+		Agent client. MCP access and shell helpers for workers.
+	</Card>
+	<Card title="Claude Code Dispatch" icon="approve">
+		Local Claude-hosted dispatcher channel. Consumes `dispatch_target=claude-code-channel` without requiring OpenClaw or Telegram.
 	</Card>
 </CardGrid>
 
@@ -84,6 +87,12 @@ Claude Code dispatcher path:
     -> local Claude dispatcher session emits the task into the dispatcher channel
     -> dispatcher launches the task engine recorded on the task
 ```
+
+## Setup Paths
+
+- [Worker Installation](/guide/skill/installation) — install `preqstation-skill` for Claude, Codex, or Gemini workers
+- [Claude Code Dispatch Installation](/guide/claude-dispatch/installation) — queued dispatch without OpenClaw
+- [OpenClaw Installation](/guide/openclaw/setup) — Telegram/OpenClaw dispatcher path
 
 ### Agent Execution and Status Reporting
 

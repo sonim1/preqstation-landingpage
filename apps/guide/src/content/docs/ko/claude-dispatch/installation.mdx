@@ -1,0 +1,92 @@
+---
+title: 설치
+description: OpenClaw이나 Telegram 없이 Claude Code dispatcher 경로를 설정합니다.
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+이 페이지는 웹 앱의 **Send to Claude Code** 액션이 로컬 Claude-hosted dispatcher runtime으로 직접 큐잉되도록 설정할 때 사용합니다.
+
+이 경로는 **OpenClaw나 Telegram이 필요하지 않습니다.**
+
+## 이 Dispatcher가 하는 일
+
+- `dispatch_target=claude-code-channel`을 소비
+- 로컬 `preqstation-skill` plugin + dispatcher channel에서 동작
+- task의 `engine` 값을 그대로 따르므로, 같은 머신에서 `claude-code`, `codex`, `gemini-cli`를 실행 가능
+
+## 사전 준비
+
+- 먼저 [워커 설치](/guide/ko/skill/installation)를 끝내세요
+- Claude Code를 로컬에 설치하세요
+- 이 dispatcher 머신에서 실행할 엔진 CLI도 함께 설치하세요:
+  - `claude`
+  - `codex`
+  - `gemini`
+
+## 원격 MCP 서버 등록
+
+Claude Code는 PREQSTATION의 `/mcp` 엔드포인트에 계속 연결되어야 합니다.
+
+<Tabs>
+<TabItem label="설치">
+```bash
+claude mcp add --transport http preqstation https://<your-domain>/mcp
+```
+</TabItem>
+<TabItem label="업데이트">
+이미 등록되어 있다면 제거 후 다시 추가하세요.
+
+```bash
+claude mcp remove preqstation
+claude mcp add --transport http preqstation https://<your-domain>/mcp
+```
+</TabItem>
+<TabItem label="확인">
+```bash
+claude mcp list
+claude mcp get preqstation
+```
+</TabItem>
+</Tabs>
+
+## 로컬 Dispatcher Channel 시작
+
+`preqstation-skill` 체크아웃에서 로컬 plugin skeleton과 dispatcher channel runtime을 실행합니다.
+
+```bash
+claude --plugin-dir /ABSOLUTE/PATH/TO/preqstation-skill
+claude --mcp-config /ABSOLUTE/PATH/TO/preqstation-skill/.mcp.json --dangerously-load-development-channels server:preq-dispatch-channel
+```
+
+웹 앱에서 **Send to Claude Code**를 누르면 PREQSTATION이 `dispatch_target=claude-code-channel`을 저장하고, 이 로컬 runtime이 태스크를 가져갑니다.
+
+## Engine 라우팅
+
+dispatcher target과 engine은 분리되어 있습니다.
+
+- **dispatcher target**은 누가 태스크를 가져갈지 정합니다.
+- **engine**은 실제로 어떤 CLI를 실행할지 정합니다.
+
+즉 **Send to Claude Code**로 큐에 넣은 태스크도, dispatcher 머신에 CLI만 설치되어 있다면 아래 엔진을 그대로 실행할 수 있습니다.
+
+- `claude-code`
+- `codex`
+- `gemini-cli`
+
+## 이 경로를 쓰는 경우
+
+아래 조건이면 Claude Code dispatcher 경로가 맞습니다.
+
+- 웹 앱에서 queued dispatch를 쓰고 싶다
+- Telegram을 사이에 두고 싶지 않다
+- OpenClaw 프로젝트 메모리 라우팅이 필요 없다
+- Claude Code가 로컬 dispatch runtime을 직접 호스팅하면 된다
+
+## 이 경로가 아닌 경우
+
+Telegram 기반 dispatch, OpenClaw 명령 복사, OpenClaw의 프로젝트 경로 해석이 필요하다면 [OpenClaw 설치](/guide/ko/openclaw/setup)를 사용하세요.
+
+<Aside>
+`/ABSOLUTE/PATH/TO/preqstation-skill`은 실제 설치 경로로 바꾸세요. 상대 경로는 동작하지 않습니다.
+</Aside>

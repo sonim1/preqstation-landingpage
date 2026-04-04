@@ -81,13 +81,15 @@ export PREQSTATION_TOKEN=preq_your_new_token
 
 After that, continue with the setup for your agent client or MCP integration.
 
-## Choose Your Dispatcher
+## Choose Your Path
 
-Workers and dispatchers are separate in PREQSTATION. First install the worker skill on the agents you use. Then choose which dispatcher should react to the web app's dispatch actions.
+Workers and dispatchers are separate in PREQSTATION.
 
-- **Claude Code dispatcher** — Register the remote `/mcp` endpoint, then add the local `preqstation-skill` plugin and dispatcher channel if you want the web app's `Send to Claude Code` action. This dispatcher can still launch the selected task engine: `claude-code`, `codex`, or `gemini-cli`.
-- **OpenClaw dispatcher** — Configure Telegram and `preqstation-openclaw` if you want `Send to Telegram` or copied Telegram/OpenClaw commands to hand the task off through OpenClaw. This dispatcher can also launch the selected engine.
-- **Worker only** — If you do not need queued dispatch from the web app, keep Claude Code, Codex, or Gemini on the direct worker path through PREQ MCP.
+1. Start with [Worker Installation](/guide/skill/installation)
+2. Then choose one optional dispatcher path:
+   - [Claude Code Dispatch Installation](/guide/claude-dispatch/installation) if you want `Send to Claude Code` without OpenClaw
+   - [OpenClaw Installation](/guide/openclaw/setup) if you want `Send to Telegram` or copied Telegram/OpenClaw commands
+3. If you do not need queued dispatch from the web app, stop after worker setup
 
 ## Next Steps
 
@@ -95,4 +97,6 @@ Workers and dispatchers are separate in PREQSTATION. First install the worker sk
 - [Kanban Board Guide](/guide/web-app/kanban) — Learn task management
 - [Concepts](/guide/getting-started/concepts) — Understand the kitchen metaphor
 - [API Keys](/guide/web-app/api-keys) — Manage agent tokens
-- [Skill Installation](/guide/skill/installation) — Claude, Codex, Gemini, and dispatcher setup paths
+- [Worker Installation](/guide/skill/installation) — Claude, Codex, and Gemini worker setup
+- [Claude Code Dispatch Installation](/guide/claude-dispatch/installation) — queued dispatch without OpenClaw
+- [OpenClaw Installation](/guide/openclaw/setup) — Telegram/OpenClaw dispatcher setup

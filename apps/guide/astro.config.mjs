@@ -119,9 +119,9 @@ export default defineConfig({
           },
           items: [
             {
-              label: 'Installation',
+              label: 'Worker Installation',
               translations: {
-                ko: '설치',
+                ko: '워커 설치',
               },
               slug: 'skill/installation',
             },
@@ -149,15 +149,30 @@ export default defineConfig({
           ],
         },
         {
+          label: 'Claude Code Dispatch',
+          translations: {
+            ko: 'Claude Code Dispatch',
+          },
+          items: [
+            {
+              label: 'Installation',
+              translations: {
+                ko: '설치',
+              },
+              slug: 'claude-dispatch/installation',
+            },
+          ],
+        },
+        {
           label: 'OpenClaw',
           translations: {
             ko: 'OpenClaw',
           },
           items: [
             {
-              label: 'OpenClaw Setup',
+              label: 'Installation',
               translations: {
-                ko: 'OpenClaw 설정',
+                ko: '설치',
               },
               slug: 'openclaw/setup',
             },
