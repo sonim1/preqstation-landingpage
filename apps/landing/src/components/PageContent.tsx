@@ -1,5 +1,5 @@
 import { I18nProvider } from "../i18n/context";
-import type { Translations } from "../i18n";
+import { getGuideDocPath, type Locale, type Translations } from "../i18n";
 import ParticleBackground from "./ParticleBackground/ParticleBackground";
 import Nav from "./common/Nav";
 import Hero from "./Hero/Hero";
@@ -17,17 +17,19 @@ import SectionReveal from "./common/SectionReveal";
 
 interface Props {
   translations: Translations;
-  locale: string;
+  locale: Locale;
 }
 
 export default function PageContent({ translations, locale }: Props) {
+  const guideHref = getGuideDocPath(locale, "getting-started/philosophy");
+
   return (
     <I18nProvider translations={translations}>
       <ParticleBackground />
-      <Nav locale={locale} />
+      <Nav locale={locale} guideHref={guideHref} />
       <main className="relative z-10">
         <div id="overview" className="scroll-mt-32 md:scroll-mt-40">
-          <Hero />
+          <Hero guideHref={guideHref} />
         </div>
         <SectionReveal id="problem" className="scroll-mt-32 md:scroll-mt-40">
           <Problem />
@@ -54,7 +56,7 @@ export default function PageContent({ translations, locale }: Props) {
           <FAQ />
         </SectionReveal>
         <SectionReveal id="start" className="scroll-mt-32 md:scroll-mt-40">
-          <CTA />
+          <CTA guideHref={guideHref} />
         </SectionReveal>
       </main>
       <Footer />

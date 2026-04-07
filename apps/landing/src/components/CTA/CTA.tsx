@@ -2,7 +2,7 @@ import { motion } from "motion/react";
 import { useT } from "../../i18n/context";
 import ConceptPosterPlaceholder from "../common/ConceptPosterPlaceholder";
 
-export default function CTA() {
+export default function CTA({ guideHref }: { guideHref: string }) {
   const t = useT();
 
   return (
@@ -39,7 +39,7 @@ export default function CTA() {
               {t.cta.primary}
             </a>
             <a
-              href="/guide/getting-started/overview"
+              href={guideHref}
               className="border-2 border-white text-white px-10 py-5 rounded-full text-lg font-display font-semibold hover:bg-white hover:text-charcoal transition"
             >
               {t.cta.guide}

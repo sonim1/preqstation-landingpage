@@ -3,7 +3,7 @@ import { useT } from "../../i18n/context";
 import LetterFlip from "./LetterFlip";
 import WorkflowSnapshot from "./WorkflowSnapshot";
 
-export default function Hero() {
+export default function Hero({ guideHref }: { guideHref: string }) {
   const t = useT();
   return (
     <section className="min-h-screen flex items-center bg-gradient-to-b from-charcoal/80 to-[#1e2528]/80">
@@ -46,7 +46,7 @@ export default function Hero() {
             {t.hero.cta}
           </a>
           <a
-            href="/guide/getting-started/overview"
+            href={guideHref}
             className="border-2 border-white text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-white hover:text-charcoal transition font-body"
           >
             {t.hero.guideCta}

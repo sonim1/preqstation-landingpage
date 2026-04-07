@@ -1,13 +1,7 @@
 import { motion } from "motion/react";
 import { useT } from "../../i18n/context";
-import ConceptPosterPlaceholder from "../common/ConceptPosterPlaceholder";
 
-const containerVariants = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.15 } },
-};
-
-const cardVariants = {
+const storyVariants = {
   hidden: { opacity: 0, y: 32 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.55 } },
 };
@@ -33,61 +27,58 @@ export default function Features() {
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-          className="mt-12"
+          className="mt-16 space-y-10"
         >
-          <ConceptPosterPlaceholder
-            eyebrow={t.features.poster.eyebrow}
-            title={t.features.poster.title}
-            prompt={t.features.poster.prompt}
-            replaceNote={t.features.poster.replaceNote}
-            accentClassName="from-review-blue/18 via-transparent to-mint/18"
-          />
-        </motion.div>
+          {t.features.items.map((item, index) => {
+            const imageOrder = index % 2 === 0 ? "lg:order-1" : "lg:order-2";
+            const copyOrder = index % 2 === 0 ? "lg:order-2" : "lg:order-1";
 
-        <motion.div
-          className="grid grid-cols-1 gap-8 mt-16 md:grid-cols-2 xl:grid-cols-4"
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-        >
-          {t.features.items.map((feature) => (
-            <motion.div
-              key={feature.number}
-              variants={cardVariants}
-              className="bg-white/5 backdrop-blur-xl rounded-b-xl shadow-lg overflow-hidden"
-            >
-              {/* Torn ticket top edge */}
-              <div
-                className="h-4 bg-warm-yellow w-full"
-                style={{
-                  maskImage:
-                    "repeating-linear-gradient(90deg, transparent 0px, transparent 6px, black 6px, black 12px), linear-gradient(to bottom, transparent 0px, transparent 4px, black 4px)",
-                  WebkitMaskImage:
-                    "repeating-linear-gradient(90deg, transparent 0px, transparent 6px, black 6px, black 12px), linear-gradient(to bottom, transparent 0px, transparent 4px, black 4px)",
-                  maskComposite: "intersect",
-                  WebkitMaskComposite: "source-in",
-                }}
-              />
+            return (
+              <motion.article
+                key={item.id}
+                variants={storyVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-80px" }}
+                className="grid gap-8 overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.04] p-5 shadow-[0_24px_80px_rgba(0,0,0,0.28)] lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:items-center lg:p-7"
+              >
+                <div className={imageOrder}>
+                  <div className="overflow-hidden rounded-[1.6rem] border border-white/10 bg-charcoal/70">
+                    <img
+                      src={`/features/${item.id}.webp`}
+                      alt={item.imageAlt}
+                      loading="lazy"
+                      decoding="async"
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                </div>
 
-              <div className="p-8">
-                <span className="font-mono text-6xl font-bold text-white/20 leading-none block">
-                  {feature.number}
-                </span>
-                <div className="text-3xl mt-2">{feature.icon}</div>
-                <h3 className="font-display text-xl font-bold text-white mt-4">
-                  {feature.title}
-                </h3>
-                <p className="text-white/60 mt-2 text-sm leading-relaxed">
-                  {feature.desc}
-                </p>
-              </div>
-            </motion.div>
-          ))}
+                <div className={copyOrder}>
+                  <p className="font-mono text-xs uppercase tracking-[0.28em] text-mint/80">
+                    {item.eyebrow}
+                  </p>
+                  <h3 className="mt-4 font-display text-2xl font-bold text-white md:text-3xl">
+                    {item.title}
+                  </h3>
+                  <p className="mt-4 text-base leading-relaxed text-white/68 md:text-lg">
+                    {item.summary}
+                  </p>
+                  <ul className="mt-6 space-y-3">
+                    {item.bullets.map((bullet) => (
+                      <li
+                        key={bullet}
+                        className="flex items-start gap-3 text-sm leading-relaxed text-white/72 md:text-base"
+                      >
+                        <span className="mt-1.5 h-2 w-2 flex-shrink-0 rounded-full bg-mint" />
+                        <span>{bullet}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </motion.article>
+            );
+          })}
         </motion.div>
       </div>
     </section>

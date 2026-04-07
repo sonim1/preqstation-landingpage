@@ -48,6 +48,13 @@ export default defineConfig({
           },
           items: [
             {
+              label: 'Philosophy',
+              translations: {
+                ko: '철학',
+              },
+              slug: 'getting-started/philosophy',
+            },
+            {
               label: 'Overview',
               translations: {
                 ko: '개요',

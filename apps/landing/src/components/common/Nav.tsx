@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { type Locale } from "../../i18n";
 import { useT } from "../../i18n/context";
 
 const localeLabels: Record<string, string> = {
@@ -13,11 +14,11 @@ const localeFlags: Record<string, string> = {
   ko: "KO",
 };
 
-function getLocalePath(locale: string) {
+function getLocalePath(locale: Locale) {
   return locale === "en" ? "/" : `/${locale}/`;
 }
 
-export default function Nav({ locale }: { locale: string }) {
+export default function Nav({ locale, guideHref }: { locale: Locale; guideHref: string }) {
   const t = useT();
   const [isLocaleOpen, setIsLocaleOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -100,7 +101,7 @@ export default function Nav({ locale }: { locale: string }) {
     };
   }, [isMenuOpen]);
 
-  const otherLocales = Object.keys(localeLabels).filter((l) => l !== locale);
+  const otherLocales = (Object.keys(localeLabels) as Locale[]).filter((l) => l !== locale);
 
   return (
     <nav
@@ -227,7 +228,7 @@ export default function Nav({ locale }: { locale: string }) {
           </div>
 
           <a
-            href="/guide/getting-started/overview"
+            href={guideHref}
             className="bg-mint text-charcoal rounded-full px-6 py-2 text-sm font-semibold hover:opacity-90 transition"
           >
             {t.nav.cta}
@@ -318,7 +319,7 @@ export default function Nav({ locale }: { locale: string }) {
                 </div>
 
                 <a
-                  href="/guide/getting-started/overview"
+                  href={guideHref}
                   className="rounded-full bg-mint px-5 py-3 text-center text-sm font-semibold text-charcoal transition hover:opacity-90"
                   onClick={() => setIsMenuOpen(false)}
                 >

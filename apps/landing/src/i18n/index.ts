@@ -23,3 +23,7 @@ export function getLocalizedPath(path: string, locale: Locale): string {
   if (locale === defaultLocale) return path;
   return `/${locale}${path}`;
 }
+
+export function getGuideDocPath(locale: Locale, slug: string): string {
+  return locale === "ko" ? `/guide/ko/${slug}` : `/guide/${slug}`;
+}
