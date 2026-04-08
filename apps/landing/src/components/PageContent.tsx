@@ -7,6 +7,7 @@ import Problem from "./Problem/Problem";
 import Solution from "./Solution/Solution";
 import WhyPreq from "./WhyPreq/WhyPreq";
 import Features from "./Features/Features";
+import Pipeline from "./Pipeline/Pipeline";
 import MultiEngine from "./MultiEngine/MultiEngine";
 import Pricing from "./Pricing/Pricing";
 import WhoIsItFor from "./WhoIsItFor/WhoIsItFor";
@@ -40,11 +41,14 @@ export default function PageContent({ translations, locale }: Props) {
         <SectionReveal id="who" className="scroll-mt-32 md:scroll-mt-40">
           <WhoIsItFor />
         </SectionReveal>
+        <SectionReveal id="features" className="scroll-mt-32 md:scroll-mt-40">
+          <Features />
+        </SectionReveal>
         <SectionReveal id="why-preq" className="scroll-mt-32 md:scroll-mt-40">
           <WhyPreq />
         </SectionReveal>
-        <SectionReveal id="features" className="scroll-mt-32 md:scroll-mt-40">
-          <Features />
+        <SectionReveal id="workflow" className="scroll-mt-32 md:scroll-mt-40">
+          <Pipeline />
         </SectionReveal>
         <SectionReveal id="engines" className="scroll-mt-32 md:scroll-mt-40">
           <MultiEngine />

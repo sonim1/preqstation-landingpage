@@ -1,7 +1,6 @@
 import { motion } from "motion/react";
 import { useT } from "../../i18n/context";
 import LetterFlip from "./LetterFlip";
-import WorkflowSnapshot from "./WorkflowSnapshot";
 
 export default function Hero({ guideHref }: { guideHref: string }) {
   const t = useT();
@@ -40,7 +39,7 @@ export default function Hero({ guideHref }: { guideHref: string }) {
         {/* CTA buttons */}
         <div className="flex gap-4 justify-center mt-10 flex-wrap">
           <a
-            href="#execution-proof"
+            href="#workflow"
             className="bg-mint text-charcoal px-8 py-4 rounded-full text-lg font-semibold hover:scale-105 transition font-body"
           >
             {t.hero.cta}
@@ -63,27 +62,6 @@ export default function Hero({ guideHref }: { guideHref: string }) {
         <p className="text-sm text-white/50 mt-8 font-body">
           {t.hero.socialProof}
         </p>
-
-        <WorkflowSnapshot
-          steps={t.pipeline.steps}
-          title={t.hero.snapshotTitle}
-          description={t.hero.snapshotDescription}
-          taskLabel={t.hero.snapshotTaskLabel}
-          engineLabel={t.hero.snapshotEngineLabel}
-          sessionLabel={t.hero.snapshotSessionLabel}
-          branchLabel={t.hero.snapshotBranchLabel}
-          taskNumber={t.hero.snapshotTaskNumber}
-          taskTitle={t.hero.snapshotTaskTitle}
-          taskSummary={t.hero.snapshotTaskSummary}
-          engineValue={t.hero.snapshotEngineValue}
-          sessionValue={t.hero.snapshotSessionValue}
-          branchValue={t.hero.snapshotBranchValue}
-          workflowTitle={t.pipeline.title}
-          workflowSubtitle={t.pipeline.subtitle}
-          workflowTargetBadge={t.pipeline.targetBadge}
-          evidenceTitle={t.hero.snapshotEvidenceTitle}
-          evidenceItems={t.hero.snapshotEvidenceItems}
-        />
 
         {/* Ticket cards */}
         <div className="flex gap-6 justify-center mt-16 flex-wrap">

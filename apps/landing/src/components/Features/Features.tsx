@@ -8,6 +8,7 @@ const storyVariants = {
 
 export default function Features() {
   const t = useT();
+
   return (
     <section className="py-24 bg-[#1e2528]/90">
       <div className="max-w-6xl mx-auto px-6">
@@ -26,9 +27,7 @@ export default function Features() {
           </p>
         </motion.div>
 
-        <motion.div
-          className="mt-16 space-y-10"
-        >
+        <motion.div className="mt-16 space-y-10">
           {t.features.items.map((item, index) => {
             const imageOrder = index % 2 === 0 ? "lg:order-1" : "lg:order-2";
             const copyOrder = index % 2 === 0 ? "lg:order-2" : "lg:order-1";

@@ -33,7 +33,7 @@ export default function CTA({ guideHref }: { guideHref: string }) {
 
           <div className="flex gap-4 justify-center mt-12 flex-wrap">
             <a
-              href="#execution-proof"
+              href="#workflow"
               className="bg-mint text-charcoal px-10 py-5 rounded-full text-lg font-display font-bold hover:scale-105 transition"
             >
               {t.cta.primary}
