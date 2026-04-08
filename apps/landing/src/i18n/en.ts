@@ -238,19 +238,19 @@ export default {
     subtitle: "Use Claude for direct dispatch, or keep Codex and Gemini on the worker path",
     engines: [
       {
-        accent: "bg-charcoal", logo: "C", logoBg: "bg-charcoal",
+        accent: "bg-[#C15F3C]", logo: "C", logoBg: "bg-[#C15F3C]",
         name: "Claude Code", company: "Anthropic",
         desc: "Best when you want a strong general-purpose engine and an optional direct local dispatch path.",
         bestFor: ["Direct dispatch", "General tasks", "Complex refactoring"],
       },
       {
-        accent: "bg-mint", logo: "Cx", logoBg: "bg-mint",
+        accent: "bg-[#00A67E]", logo: "Cx", logoBg: "bg-[#00A67E]",
         name: "Codex CLI", company: "OpenAI",
         desc: "Stays on the PREQ worker path and is great for implementation, review, and repeatable task execution.",
         bestFor: ["Worker path", "Implementation", "Code review"],
       },
       {
-        accent: "bg-review-blue", logo: "G", logoBg: "bg-review-blue",
+        accent: "bg-[#078EFA]", logo: "G", logoBg: "bg-[#078EFA]",
         name: "Gemini CLI", company: "Google",
         desc: "Also stays on the worker path and is useful for UI, docs, and larger-context tasks.",
         bestFor: ["Worker path", "UI/UX design", "Documentation"],
@@ -299,23 +299,23 @@ export default {
     items: [
       {
         question: "Can I trust AI results?",
-        answer: "You always review. Merge, deploy, or reopen on your terms. work_logs track every execution \u2014 which AI wrote what code, when, and why \u2014 with 100% traceability.",
+        answer: "You still review before merge or deploy. work_logs show what ran and what changed.",
       },
       {
         question: "Where is data stored?",
-        answer: "On your server. Self-hosted for complete data sovereignty. Secured with Row Level Security and AES-GCM encryption.",
+        answer: "On your server if you self-host it. The data stays in your environment.",
       },
       {
         question: "Why are there no due dates?",
-        answer: "PREQSTATION is not built around traditional task-manager deadlines. If work should start, you can tell an AI agent to start it now. The system is designed to track what is queued, working, held, or ready next, so execution state matters more than calendar promises.",
+        answer: "It tracks execution state, not calendar dates. Queue work when it is ready.",
       },
       {
         question: "Which AI does it use?",
-        answer: "Choose from Claude Code, Codex CLI, or Gemini CLI. Claude Code can also use direct dispatch, while Codex and Gemini stay on the worker path. You can still assign a different engine per project or task.",
+        answer: "Choose Claude Code, Codex CLI, or Gemini CLI. Claude can direct-dispatch; Codex and Gemini stay on the worker path.",
       },
       {
         question: "Isn't open source less secure?",
-        answer: "Quite the opposite. Open code means community verification. Protected by Row Level Security, AES-GCM encryption, and isolated worktree execution.",
+        answer: "Open code is inspectable. PREQ still uses Row Level Security, encryption, and isolated worktrees.",
       },
     ],
   },

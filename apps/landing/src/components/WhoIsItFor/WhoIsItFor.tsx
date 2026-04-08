@@ -282,7 +282,7 @@ export default function WhoIsItFor() {
   return (
     <section
       ref={ref}
-      className="py-24 bg-charcoal/85 overflow-hidden"
+      className="py-24 bg-charcoal/85"
       aria-label={t.whoIsItFor.title}
     >
       <div className="max-w-6xl mx-auto">
@@ -305,14 +305,6 @@ export default function WhoIsItFor() {
           label={t.whoIsItFor.forYou.title}
           inView={inView}
           rowIndex={0}
-        />
-
-        {/* Divider */}
-        <motion.div
-          initial={{ opacity: 0, scaleX: 0 }}
-          animate={inView ? { opacity: 1, scaleX: 1 } : { opacity: 0, scaleX: 0 }}
-          transition={{ duration: 0.5, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-          className="h-px bg-white/10 mx-6 md:mx-0 mb-12 origin-left"
         />
 
         {/* Fit guidance row */}
