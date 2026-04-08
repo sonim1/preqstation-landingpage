@@ -24,11 +24,9 @@ export default function Nav({ locale, guideHref }: { locale: Locale; guideHref: 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMoreOpen, setIsMoreOpen] = useState(false);
   const navRef = useRef<HTMLElement>(null);
-  const primarySectionIds = new Set(["features", "workflow"]);
-  const primarySections = t.nav.sections.filter((section) => primarySectionIds.has(section.id));
-  const overflowSections = t.nav.sections.filter(
-    (section) => !primarySectionIds.has(section.id) && section.id !== "overview"
-  );
+  const desktopSections = t.nav.sections.filter((section) => section.id !== "overview");
+  const primarySections = desktopSections.slice(0, 3);
+  const overflowSections = desktopSections.slice(3);
 
   function handleSectionJump(id: string) {
     setIsLocaleOpen(false);
