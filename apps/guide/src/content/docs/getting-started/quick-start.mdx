@@ -35,13 +35,11 @@ Then edit `.env.local`:
 ```bash
 # Required
 AUTH_SECRET=<generate with: openssl rand -base64 48>
-OWNER_EMAIL=your-email@example.com
-OWNER_PASSWORD=<your-password>
 DATABASE_URL=postgresql://...  # Your PostgreSQL connection string
 
 # Optional
-PORT=3000
-ALLOWED_ORIGINS=http://localhost:3000
+ALLOWED_ORIGINS=https://your-app.vercel.app,https://your-app-git-main-user.vercel.app
+CRON_SECRET=<optional cleanup route secret>
 ```
 
 Any standard PostgreSQL provider that exposes a compatible connection string works with PREQSTATION.
@@ -64,7 +62,7 @@ npm run db:migrate
 npm run dev
 ```
 
-The app runs at `http://localhost:3000`. If you open `/` while signed out, PREQSTATION redirects you to `/login`. Sign in with the email and password you set in `.env.local`.
+The app runs at `http://localhost:3000` by default. Set `PORT=` in `.env.local` before starting if you want a different local port. If you open `/` while signed out, PREQSTATION redirects you to `/login`. Fresh databases show the owner setup form so you can create the first account in the browser. Existing instances use the owner email and password stored in the `users` table.
 
 ## Issue Your First API Key
 

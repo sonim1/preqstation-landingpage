@@ -9,27 +9,27 @@ This reference documents all environment variables used by the PREQSTATION web a
 
 ## PREQSTATION web app
 
-Server-side variables for the main PREQSTATION web service.
+Server-side variables for the main PREQSTATION web service. Owner credentials are no longer read from environment variables. Fresh instances create the first owner account at `/login`, and existing deployments store owner credentials in the `users` table.
 
 | Variable | Required | Default | Purpose |
 |----------|----------|---------|---------|
 | `AUTH_SECRET` | Yes | — | HMAC session secret (minimum 16 characters) |
-| `OWNER_EMAIL` | Yes | — | Single account email address |
-| `OWNER_PASSWORD` | Yes | — | Owner password (minimum 8 characters) |
 | `DATABASE_URL` | Yes | — | PostgreSQL connection string |
-| `ALLOWED_ORIGINS` | No | — | CORS verification (comma-separated URLs) |
+| `ALLOWED_ORIGINS` | No | — | Extra trusted origins for server actions and same-origin checks |
+| `UNSPLASH_ACCESS_KEY` | No | — | Enables Unsplash search in the project background picker |
 | `CRON_SECRET` | No | — | Secret used to authenticate scheduled requests (for example, Vercel Cron) |
+| `EVENT_OUTBOX_RETENTION_DAYS` | No | `30` | Overrides how long cleanup keeps `events_outbox` rows |
 
 ### Setup Example
 
 ```bash
 # .env.local
 AUTH_SECRET="your-secret-min-16-chars"
-OWNER_EMAIL="you@example.com"
-OWNER_PASSWORD="securepassword123"
 DATABASE_URL="postgresql://user:pass@host/dbname"
-ALLOWED_ORIGINS="https://yourdomain.com,https://www.yourdomain.com"
-CRON_SECRET="your-cron-secret"
+ALLOWED_ORIGINS="https://your-app.vercel.app,https://your-app-git-main-user.vercel.app"
+UNSPLASH_ACCESS_KEY="your-unsplash-access-key"
+CRON_SECRET="cron-secret-for-vercel"
+EVENT_OUTBOX_RETENTION_DAYS="30"
 ```
 
 ### Database Setup
@@ -39,6 +39,10 @@ Get a PostgreSQL connection string from your provider:
 1. Create a database with your preferred provider, such as Supabase, Neon, Railway, or self-hosted PostgreSQL
 2. Copy connection string: `postgresql://[user]:[password]@[host]/[dbname]`
 3. Set as `DATABASE_URL`
+
+### Local Development Port
+
+`npm run dev` defaults to `http://localhost:3000`. If you need a different local port, set `PORT=` in `.env.local` before starting the dev server. `PORT` is a local development override, not part of the runtime env schema or `.env.example`.
 
 ## preqstation-skill
 
@@ -156,9 +160,10 @@ FROM node:22-alpine
 
 # PREQSTATION web app
 ENV AUTH_SECRET=your-secret
-ENV OWNER_EMAIL=you@example.com
-ENV OWNER_PASSWORD=secure
 ENV DATABASE_URL=postgresql://...
+ENV ALLOWED_ORIGINS=https://your-app.vercel.app
+ENV CRON_SECRET=replace-me
+ENV EVENT_OUTBOX_RETENTION_DAYS=30
 
 # preqstation-skill
 ENV PREQSTATION_API_URL=https://preqstation.example.com
@@ -178,7 +183,8 @@ RUN npx skills add sonim1/preqstation-skill -g -a codex
 
 | Layer | Variables | Scope |
 |-------|-----------|-------|
-| **Web Service** | `AUTH_SECRET`, `OWNER_EMAIL`, `OWNER_PASSWORD`, `DATABASE_URL`, `ALLOWED_ORIGINS`, `CRON_SECRET` | Server-side only, set during deployment |
+| **Web Service** | `AUTH_SECRET`, `DATABASE_URL`, `ALLOWED_ORIGINS`, `UNSPLASH_ACCESS_KEY`, `CRON_SECRET`, `EVENT_OUTBOX_RETENTION_DAYS` | Server-side only, set during deployment |
+| **Local Development** | `PORT` | Read by `npm run dev` to override the local web-app port |
 | **Shell Helper / Legacy Bridge** | `PREQSTATION_API_URL`, `PREQSTATION_TOKEN`, `PREQSTATION_ENGINE` | Available to the token-based shell helper flow and legacy local MCP bridge |
 | **Execution** | `OPENCLAW_WORKTREE_ROOT` | Affects where worktrees are created during task execution |
 

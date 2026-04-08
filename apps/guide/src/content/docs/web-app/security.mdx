@@ -135,13 +135,15 @@ Follow these practices to keep PREQSTATION secure:
 - Bearer tokens should be sent over HTTPS only
 - Disable HTTP fallback
 
-### 5. **Restrict ALLOWED_ORIGINS**
+### 5. **Keep Origin Checks Tight**
 
-Configure `ALLOWED_ORIGINS` to prevent CSRF:
+PREQSTATION rejects cross-origin requests by default using same-origin verification on `/login` POSTs and protected `/api/` routes. Set `ALLOWED_ORIGINS` only when you need to trust additional first-party origins such as Vercel preview URLs or another app domain:
 
 ```bash
-ALLOWED_ORIGINS=https://your-domain.com,https://app.your-domain.com
+ALLOWED_ORIGINS=https://your-app.vercel.app,https://your-app-git-main-user.vercel.app
 ```
+
+If you only serve the app from one origin, you can leave `ALLOWED_ORIGINS` unset.
 
 ### 6. **Protect Bot Token**
 

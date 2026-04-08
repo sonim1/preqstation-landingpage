@@ -35,13 +35,11 @@ cp .env.example .env.local
 ```bash
 # Required
 AUTH_SECRET=<openssl rand -base64 48 로 생성>
-OWNER_EMAIL=your-email@example.com
-OWNER_PASSWORD=<your-password>
 DATABASE_URL=postgresql://...  # PostgreSQL 연결 문자열
 
 # Optional
-PORT=3000
-ALLOWED_ORIGINS=http://localhost:3000
+ALLOWED_ORIGINS=https://your-app.vercel.app,https://your-app-git-main-user.vercel.app
+CRON_SECRET=<cleanup route용 선택 비밀값>
 ```
 
 표준 PostgreSQL 연결 문자열을 제공하는 관리형 서비스나 직접 운영하는 PostgreSQL이면 PREQSTATION과 함께 사용할 수 있습니다.
@@ -64,7 +62,7 @@ npm run db:migrate
 npm run dev
 ```
 
-앱은 `http://localhost:3000`에서 실행됩니다. 로그인하지 않은 상태에서 `/`를 열면 `/login`으로 리다이렉트됩니다. `.env.local`에 넣은 이메일과 비밀번호로 로그인하세요.
+앱은 기본적으로 `http://localhost:3000`에서 실행됩니다. 다른 로컬 포트를 쓰려면 시작 전에 `.env.local`에 `PORT=`를 추가하세요. 로그인하지 않은 상태에서 `/`를 열면 `/login`으로 리다이렉트됩니다. 새 데이터베이스라면 브라우저에서 첫 owner 계정을 만드는 설정 폼이 표시됩니다. 기존 인스턴스라면 `users` 테이블에 저장된 owner 이메일과 비밀번호로 로그인하세요.
 
 ## 첫 API 키 발급
 
