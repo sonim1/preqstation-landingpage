@@ -30,6 +30,10 @@ Create a `.env.local` file in the project root. Copy from `.env.example` and fil
 `drizzle-kit` reads `DATABASE_URL` from `.env.local`, so use `.env.local` for local setup before running database commands.
 </Aside>
 
+<Aside type="note">
+Any standard PostgreSQL provider that exposes a compatible connection string works with PREQSTATION, including managed services and self-hosted deployments.
+</Aside>
+
 ## Installation Steps
 
 ### 1. Clone and Install
@@ -48,7 +52,7 @@ If you do not have access yet, ask the maintainer to invite your GitHub account 
 
 ```bash
 cp .env.example .env.local
-# Edit .env.local with your database URL and credentials
+# Edit .env.local with your PostgreSQL connection string and owner credentials
 ```
 
 ### 3. Database Migration
@@ -58,6 +62,10 @@ npm run db:migrate
 ```
 
 This applies the checked-in Drizzle migrations to your database.
+
+<Aside type="tip">
+If you later move to a new PostgreSQL provider, follow the [database migration guide](/guide/web-app/database-migration).
+</Aside>
 
 ### 4. Start Development Server
 

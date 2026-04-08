@@ -6,7 +6,7 @@ description: Get PREQSTATION running in 5 minutes.
 ## Prerequisites
 
 - **Node.js 22** — [Download](https://nodejs.org)
-- **PostgreSQL** — Neon provides a free tier at [neon.tech](https://neon.tech)
+- **PostgreSQL** — Any managed or self-hosted PostgreSQL works, for example Supabase, Neon, Railway, or your own Postgres instance
 - **GitHub access** — The public canonical repository is `sonim1/preqstation`, but local web app setup still requires access to the current private development repository
 
 ## Installation
@@ -37,12 +37,14 @@ Then edit `.env.local`:
 AUTH_SECRET=<generate with: openssl rand -base64 48>
 OWNER_EMAIL=your-email@example.com
 OWNER_PASSWORD=<your-password>
-DATABASE_URL=postgresql://...  # Your Neon connection string
+DATABASE_URL=postgresql://...  # Your PostgreSQL connection string
 
 # Optional
 PORT=3000
 ALLOWED_ORIGINS=http://localhost:3000
 ```
+
+Any standard PostgreSQL provider that exposes a compatible connection string works with PREQSTATION.
 
 ### 3. Install Dependencies
 

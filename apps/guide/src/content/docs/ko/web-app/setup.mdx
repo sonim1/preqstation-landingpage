@@ -30,6 +30,10 @@ import { Aside } from '@astrojs/starlight/components';
 `drizzle-kit`은 `.env.local`의 `DATABASE_URL`을 읽습니다. 로컬 DB 명령을 실행하기 전에 `.env.local`을 준비하세요.
 </Aside>
 
+<Aside type="note">
+표준 PostgreSQL 연결 문자열을 제공하는 관리형 서비스나 직접 운영하는 PostgreSQL이면 PREQSTATION과 함께 사용할 수 있습니다.
+</Aside>
+
 ## 설치 단계
 
 ### 1. 저장소 클론 및 설치
@@ -48,7 +52,7 @@ npm install
 
 ```bash
 cp .env.example .env.local
-# 데이터베이스 URL과 계정을 포함해 .env.local 값을 수정합니다
+# PostgreSQL 연결 문자열과 owner 계정을 포함해 .env.local 값을 수정합니다
 ```
 
 ### 3. 데이터베이스 마이그레이션
@@ -58,6 +62,10 @@ npm run db:migrate
 ```
 
 이 명령은 저장소에 포함된 Drizzle 마이그레이션을 현재 데이터베이스에 적용합니다.
+
+<Aside type="tip">
+나중에 다른 PostgreSQL 서비스로 옮겨야 한다면 [데이터베이스 마이그레이션 가이드](/guide/ko/web-app/database-migration)를 참고하세요.
+</Aside>
 
 ### 4. 개발 서버 시작
 

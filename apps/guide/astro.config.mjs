@@ -91,6 +91,13 @@ export default defineConfig({
               slug: 'web-app/setup',
             },
             {
+              label: 'Database Migration',
+              translations: {
+                ko: '데이터베이스 마이그레이션',
+              },
+              slug: 'web-app/database-migration',
+            },
+            {
               label: 'Kanban Board',
               translations: {
                 ko: '칸반 보드',

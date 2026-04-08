@@ -1,0 +1,70 @@
+---
+title: Database Migration
+description: Move PREQSTATION between PostgreSQL providers with dump-and-restore.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Any PostgreSQL provider that works with `DATABASE_URL` can host PREQSTATION. Use this guide when you need to move an existing installation from one PostgreSQL provider to another.
+
+<Aside type="caution">
+Plan for a maintenance window. This guide uses standard PostgreSQL dump-and-restore steps and does not promise zero-downtime cutovers or managed cross-provider replication.
+</Aside>
+
+## When to migrate
+
+- You are switching providers
+- You are moving the database closer to your deployment region
+- You need different pricing, storage, or performance characteristics
+
+## Supported database providers
+
+- Any PostgreSQL provider reachable by `DATABASE_URL`
+- Common examples: Supabase, Neon, Railway, or self-hosted PostgreSQL
+
+## Migration workflow
+
+1. Back up the current database with `pg_dump`
+2. Create the target PostgreSQL database and confirm you can connect to it
+3. Restore the backup with `pg_restore` or `psql`
+4. Update `DATABASE_URL` in your PREQSTATION environment
+5. Run `npm run db:migrate`
+6. Log in to PREQSTATION and verify task access and API-key flows
+
+## Example commands
+
+Use a custom-format dump if you want to restore with `pg_restore`:
+
+```bash
+pg_dump \
+  --format=custom \
+  --no-owner \
+  --no-privileges \
+  --dbname="$SOURCE_DATABASE_URL" \
+  --file=preqstation.dump
+
+pg_restore \
+  --no-owner \
+  --no-privileges \
+  --dbname="$TARGET_DATABASE_URL" \
+  preqstation.dump
+```
+
+If you prefer a plain SQL dump, use `psql` to restore it:
+
+```bash
+pg_dump \
+  --format=plain \
+  --no-owner \
+  --no-privileges \
+  --dbname="$SOURCE_DATABASE_URL" \
+  --file=preqstation.sql
+
+psql "$TARGET_DATABASE_URL" < preqstation.sql
+```
+
+## After the move
+
+- Update `DATABASE_URL` anywhere PREQSTATION runs
+- Restart the app or redeploy so it picks up the new environment
+- Sign in and verify existing tasks, API keys, and owner-only flows behave as expected

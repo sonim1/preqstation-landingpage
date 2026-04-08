@@ -16,9 +16,9 @@ Server-side variables for the main PREQSTATION web service.
 | `AUTH_SECRET` | Yes | — | HMAC session secret (minimum 16 characters) |
 | `OWNER_EMAIL` | Yes | — | Single account email address |
 | `OWNER_PASSWORD` | Yes | — | Owner password (minimum 8 characters) |
-| `DATABASE_URL` | Yes | — | Neon PostgreSQL connection string |
+| `DATABASE_URL` | Yes | — | PostgreSQL connection string |
 | `ALLOWED_ORIGINS` | No | — | CORS verification (comma-separated URLs) |
-| `CRON_SECRET` | No | — | Vercel cron job authentication secret |
+| `CRON_SECRET` | No | — | Secret used to authenticate scheduled requests (for example, Vercel Cron) |
 
 ### Setup Example
 
@@ -29,14 +29,14 @@ OWNER_EMAIL="you@example.com"
 OWNER_PASSWORD="securepassword123"
 DATABASE_URL="postgresql://user:pass@host/dbname"
 ALLOWED_ORIGINS="https://yourdomain.com,https://www.yourdomain.com"
-CRON_SECRET="cron-secret-for-vercel"
+CRON_SECRET="your-cron-secret"
 ```
 
 ### Database Setup
 
-Get your Neon PostgreSQL connection string:
+Get a PostgreSQL connection string from your provider:
 
-1. Create project on [Neon Console](https://console.neon.tech)
+1. Create a database with your preferred provider, such as Supabase, Neon, Railway, or self-hosted PostgreSQL
 2. Copy connection string: `postgresql://[user]:[password]@[host]/[dbname]`
 3. Set as `DATABASE_URL`
 
@@ -46,7 +46,7 @@ Agent-side variables for shell-helper mode and the legacy local stdio bridge. Th
 
 | Variable | Required | Default | Purpose |
 |----------|----------|---------|---------|
-| `PREQSTATION_API_URL` | Yes | — | PREQSTATION web app API base URL (e.g., `https://mypreqstation.vercel.app`) |
+| `PREQSTATION_API_URL` | Yes | — | PREQSTATION web app API base URL (e.g., `https://preqstation.example.com`) |
 | `PREQSTATION_TOKEN` | Yes | — | Bearer token (format: `preq_` prefix, from `/api-keys` page) |
 | `PREQSTATION_ENGINE` | No | `codex` | Fallback engine when client auto-detection unavailable |
 
@@ -54,7 +54,7 @@ Agent-side variables for shell-helper mode and the legacy local stdio bridge. Th
 
 ```bash
 # ~/.zshrc or ~/.bashrc
-export PREQSTATION_API_URL="https://your-preqstation-domain.vercel.app"
+export PREQSTATION_API_URL="https://preqstation.example.com"
 export PREQSTATION_TOKEN="preq_xxxxxxxxxxxxxxxxx"
 export PREQSTATION_ENGINE="claude-code"  # optional
 ```
@@ -118,12 +118,12 @@ npx skills add sonim1/preqstation-skill -g -a claude-code
 npx skills add sonim1/preqstation-skill -g -a codex
 
 # 2. Register the remote MCP endpoint
-claude mcp add --transport http preqstation https://your-hosted-domain.vercel.app/mcp
+claude mcp add --transport http preqstation https://preqstation.example.com/mcp
 # or:
-codex mcp add preqstation --url https://your-hosted-domain.vercel.app/mcp
+codex mcp add preqstation --url https://preqstation.example.com/mcp
 
 # 3. If you need shell-helper mode, set token-based vars
-export PREQSTATION_API_URL="https://your-hosted-domain.vercel.app"
+export PREQSTATION_API_URL="https://preqstation.example.com"
 export PREQSTATION_TOKEN="preq_xxxxx"  # from /api-keys page
 export PREQSTATION_ENGINE="claude-code"
 
@@ -140,7 +140,7 @@ codex mcp get preqstation
 ```bash
 # GitHub Actions example
 env:
-  PREQSTATION_API_URL: https://your-preqstation-domain.vercel.app
+  PREQSTATION_API_URL: https://preqstation.example.com
   PREQSTATION_TOKEN: ${{ secrets.PREQSTATION_TOKEN }}
   PREQSTATION_ENGINE: claude-code
   OPENCLAW_WORKTREE_ROOT: /workspace/openclaw-worktrees
@@ -161,7 +161,7 @@ ENV OWNER_PASSWORD=secure
 ENV DATABASE_URL=postgresql://...
 
 # preqstation-skill
-ENV PREQSTATION_API_URL=https://your-domain.vercel.app
+ENV PREQSTATION_API_URL=https://preqstation.example.com
 ENV PREQSTATION_TOKEN=preq_xxxxx
 ENV PREQSTATION_ENGINE=claude-code
 
@@ -185,7 +185,7 @@ RUN npx skills add sonim1/preqstation-skill -g -a codex
 ## Secrets Best Practices
 
 1. **Never commit secrets** — Use `.env.local` (git-ignored)
-2. **Use secret managers** — GitHub Secrets, Vercel Env, HashiCorp Vault
+2. **Use secret managers** — GitHub Secrets, deployment platform env vars, HashiCorp Vault
 3. **Rotate tokens regularly** — Revoke old tokens from `/api-keys` page
 4. **Scope tokens narrowly** — Use separate tokens per environment
 5. **Monitor token usage** — Check audit logs for suspicious activity

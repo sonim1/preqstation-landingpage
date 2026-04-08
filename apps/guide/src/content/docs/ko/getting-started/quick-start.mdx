@@ -6,7 +6,7 @@ description: PREQSTATION을 몇 분 안에 로컬에서 실행하고 첫 API 키
 ## 사전 준비
 
 - **Node.js 22** — [다운로드](https://nodejs.org)
-- **PostgreSQL** — 클라우드 호스팅은 [neon.tech](https://neon.tech) 무료 플랜으로 시작할 수 있습니다
+- **PostgreSQL** — Supabase, Neon, Railway 같은 관리형 서비스나 직접 운영하는 PostgreSQL 모두 사용할 수 있습니다
 - **GitHub 접근 권한** — 공개 기준 저장소는 `sonim1/preqstation`이지만, 로컬 웹 앱 설정에는 아직 현재 비공개 개발 저장소 접근 권한이 필요합니다
 
 ## 설치
@@ -37,12 +37,14 @@ cp .env.example .env.local
 AUTH_SECRET=<openssl rand -base64 48 로 생성>
 OWNER_EMAIL=your-email@example.com
 OWNER_PASSWORD=<your-password>
-DATABASE_URL=postgresql://...
+DATABASE_URL=postgresql://...  # PostgreSQL 연결 문자열
 
 # Optional
 PORT=3000
 ALLOWED_ORIGINS=http://localhost:3000
 ```
+
+표준 PostgreSQL 연결 문자열을 제공하는 관리형 서비스나 직접 운영하는 PostgreSQL이면 PREQSTATION과 함께 사용할 수 있습니다.
 
 ### 3. 의존성 설치
 
