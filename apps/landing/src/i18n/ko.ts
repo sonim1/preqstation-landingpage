@@ -91,7 +91,7 @@ const ko: typeof en = {
     ],
     cta: "\uc2e4\ud589 \uc99d\uac70 \ubcf4\uae30",
     guideCta: "\ucca0\ud559 \ubcf4\uae30",
-    github: "View on GitHub",
+    github: "GitHub에서 보기",
     socialProof: "\uc624\ud508\uc18c\uc2a4 \u00b7 Self-hosted \u00b7 \uba40\ud2f0 \uc5d4\uc9c4 \uc2e4\ud589 \ud050",
     tickets: [
       { number: "#3953", task: "Rate Limit API", status: "\uc791\uc5c5 \uc911", statusEmoji: "\ud83d\udee0\ufe0f", dotColor: "bg-warm-yellow" },
@@ -220,7 +220,7 @@ const ko: typeof en = {
   pipeline: {
     title: "\uc2e4\ud589 \uc6cc\ud06c\ud50c\ub85c\uc6b0",
     subtitle: "\ud589\ubcf5 \uacbd\ub85c\ub294 inbox \u2192 todo \u2192 ready \u2192 done\uc785\ub2c8\ub2e4. \ub9c9\ud78c \uc791\uc5c5\uc740 hold\ub85c \ubd84\uae30\ub429\ub2c8\ub2e4.",
-    targetBadge: "TARGET: DIRECT EXECUTIONS",
+    targetBadge: "\ub300\uc0c1: \uc9c1\uc811 \uc2e4\ud589",
     steps: [
       { id: "inbox", label: "Inbox", icon: "\ud83d\udce5", title: "Scope Defined", desc: "\uc791\uc5c5 \ubc94\uc704 \ud655\uc815 \ubc0f \uc811\uc218 \uc644\ub8cc" },
       { id: "todo", label: "Todo", icon: "\ud83d\uddc2\ufe0f", title: "Claimed", desc: "\uc5d0\uc774\uc804\ud2b8\uac00 \uc6cc\ud06c\ud2b8\ub9ac\ub97c \uc5f4\uace0 \uc791\uc5c5 \uc2dc\uc791" },
@@ -242,7 +242,7 @@ const ko: typeof en = {
       {
         accent: "bg-charcoal", logo: "C", logoBg: "bg-charcoal",
         name: "Claude Code", company: "Anthropic",
-        desc: "\uac15\ud55c \ubc94\uc6a9 \uc5d4\uc9c4\uc774 \ud544\uc694\ud558\uace0, \uc120\ud0dd\uc801\uc73c\ub85c direct local dispatch\ub3c4 \uc4f0\uace0 \uc2f6\uc744 \ub54c \uc798 \ub9de\uc2b5\ub2c8\ub2e4.",
+        desc: "\uac15\ud55c \ubc94\uc6a9 \uc5d4\uc9c4\uc774 \ud544\uc694\ud558\uace0, \uc120\ud0dd\uc801\uc73c\ub85c \ub85c\uceec direct dispatch\ub3c4 \uc4f0\uace0 \uc2f6\uc744 \ub54c \uc798 \ub9de\uc2b5\ub2c8\ub2e4.",
         bestFor: ["Direct dispatch", "\ubc94\uc6a9 \ud0dc\uc2a4\ud06c", "\ubcf5\uc7a1\ud55c \ub9ac\ud329\ud130\ub9c1"],
       },
       {
@@ -294,7 +294,7 @@ const ko: typeof en = {
       "\ub370\uc774\ud130\ub294 \ub2f9\uc2e0\uc758 \uac83",
       "\ubca4\ub354 \ub77d\uc778 \uc5c6\uc74c",
     ],
-    cta: "View on GitHub",
+    cta: "GitHub에서 보기",
   },
   faq: {
     title: "\uc790\uc8fc \ubb3b\ub294 \uc9c8\ubb38",
@@ -332,7 +332,7 @@ const ko: typeof en = {
     },
     primary: "\uc2e4\ud589 \uc99d\uac70 \ubcf4\uae30",
     guide: "\ucca0\ud559 \ubcf4\uae30",
-    secondary: "View on GitHub",
+    secondary: "GitHub에서 보기",
   },
   footer: {
     tagline: "\uac1c\ubc1c\uc790\uc758 \uc8fc\ubc29",
