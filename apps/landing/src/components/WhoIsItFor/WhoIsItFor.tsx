@@ -183,7 +183,7 @@ function ScrollRow({
 
         <div
           ref={scrollRef}
-          className="flex gap-4 overflow-x-auto pb-3 px-6 md:px-0"
+          className="flex gap-4 overflow-x-auto px-6 pt-2 pb-4 md:px-0"
           style={{
             scrollSnapType: "x mandatory",
             WebkitOverflowScrolling: "touch",
