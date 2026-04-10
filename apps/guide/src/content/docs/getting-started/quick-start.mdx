@@ -3,13 +3,44 @@ title: Quick Start
 description: Get PREQSTATION running in 5 minutes.
 ---
 
-## Prerequisites
+## Recommended Setup Path
+
+For most users, PREQSTATION setup now starts in the hosted web app and uses the remote MCP endpoint at `/mcp`.
+
+1. Sign in to your PREQSTATION deployment.
+2. Open `/connections` and complete the provider setup you need for your worker or dispatcher path.
+3. Register the remote MCP endpoint:
+
+```bash
+# Claude Code
+claude mcp add --transport http preqstation https://<your-domain>/mcp
+
+# Codex
+codex mcp add preqstation --url https://<your-domain>/mcp
+```
+
+4. Complete the browser OAuth flow when prompted. Codex often starts this during `add`, while Claude Code commonly starts it on the first real request or `claude mcp get preqstation`.
+5. Continue with the worker and optional dispatcher setup docs below.
+
+## Choose Your Path
+
+Workers and dispatchers are separate in PREQSTATION.
+
+1. Start with [Worker Installation](/guide/skill/installation)
+2. Then choose one optional dispatcher path:
+   - [Claude Code Dispatch Installation](/guide/claude-dispatch/installation) if you want `Send to Claude Code` without OpenClaw
+   - [OpenClaw Installation](/guide/openclaw/setup) if you want `Send to Telegram` or copied Telegram/OpenClaw commands
+3. If you do not need queued dispatch from the web app, stop after worker setup
+
+## Compatibility: Local Web App Development
+
+Use this branch only if you are self-hosting the web app, validating migration-era setup, or need a local development environment.
+
+### Local Development Prerequisites
 
 - **Node.js 22** — [Download](https://nodejs.org)
 - **PostgreSQL** — Any managed or self-hosted PostgreSQL works, for example Supabase, Neon, Railway, or your own Postgres instance
 - **GitHub access** — The public canonical repository is `sonim1/preqstation`, but local web app setup still requires access to the current private development repository
-
-## Installation
 
 ### 1. Clone the Repository
 
@@ -64,7 +95,9 @@ npm run dev
 
 The app runs at `http://localhost:3000` by default. Set `PORT=` in `.env.local` before starting if you want a different local port. If you open `/` while signed out, PREQSTATION redirects you to `/login`. Fresh databases show the owner setup form so you can create the first account in the browser. Existing instances use the owner email and password stored in the `users` table.
 
-## Issue Your First API Key
+## Compatibility: API Tokens and the Legacy Local Bridge
+
+You only need `/api-keys` and `PREQSTATION_TOKEN` when you are using shell-helper mode or the legacy local MCP bridge. The recommended remote `/mcp` + OAuth setup above does not require issuing a token first.
 
 1. Log in, then open `http://localhost:3000/api-keys`. You can also reach the same page from the workspace sidebar by clicking **API Keys**.
 2. In the **Create API Key** form, keep the default expiration or choose one from **Expires In**.
@@ -72,32 +105,22 @@ The app runs at `http://localhost:3000` by default. Set `PORT=` in `.env.local` 
 4. Copy the token from the green **New API key (shown once)** panel immediately. The value starts with `preq_` and the remaining characters use URL-safe letters, numbers, `_`, and `-`, for example `preq_abc123...`.
 5. Save it into your local agent environment before you close the page, because PREQSTATION only shows the full token once.
 
-Use the token with the app URL in your agent runtime:
+Use the token with the app URL in your agent runtime only for those compatibility paths:
 
 ```bash
 export PREQSTATION_API_URL=http://localhost:3000
 export PREQSTATION_TOKEN=preq_your_new_token
 ```
 
-After that, continue with the setup for your agent client or MCP integration.
-
-## Choose Your Path
-
-Workers and dispatchers are separate in PREQSTATION.
-
-1. Start with [Worker Installation](/guide/skill/installation)
-2. Then choose one optional dispatcher path:
-   - [Claude Code Dispatch Installation](/guide/claude-dispatch/installation) if you want `Send to Claude Code` without OpenClaw
-   - [OpenClaw Installation](/guide/openclaw/setup) if you want `Send to Telegram` or copied Telegram/OpenClaw commands
-3. If you do not need queued dispatch from the web app, stop after worker setup
+For the full token-based compatibility details, see [API Keys](/guide/web-app/api-keys) and [Environment Variables](/guide/reference/environment-variables).
 
 ## Next Steps
 
 - [Product Philosophy](/guide/getting-started/philosophy) — Why PREQSTATION exists and when to use it
-- [Web App Setup](/guide/web-app/setup) — Full local setup and first-login details
+- [Web App Setup](/guide/web-app/setup) — Hosted-first setup plus self-hosted local development details
 - [Kanban Board Guide](/guide/web-app/kanban) — Learn task management
 - [Concepts](/guide/getting-started/concepts) — Understand the kitchen metaphor
-- [API Keys](/guide/web-app/api-keys) — Manage agent tokens
+- [API Keys](/guide/web-app/api-keys) — Shell-helper and legacy bridge token management
 - [Worker Installation](/guide/skill/installation) — Claude, Codex, and Gemini worker setup
 - [Claude Code Dispatch Installation](/guide/claude-dispatch/installation) — queued dispatch without OpenClaw
 - [OpenClaw Installation](/guide/openclaw/setup) — Telegram/OpenClaw dispatcher setup

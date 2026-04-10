@@ -5,17 +5,38 @@ description: Install and configure the PREQSTATION web application.
 
 import { Aside } from '@astrojs/starlight/components';
 
-## Prerequisites
+## Recommended for Most Users
 
-Before you begin, ensure you have:
+Most users do not need to clone the web app repository. If you already have access to a PREQSTATION deployment, use the hosted setup path first:
+
+1. Sign in to the web app.
+2. Open `/connections` and complete the provider setup you need.
+3. Register the remote MCP endpoint:
+
+```bash
+# Claude Code
+claude mcp add --transport http preqstation https://<your-domain>/mcp
+
+# Codex
+codex mcp add preqstation --url https://<your-domain>/mcp
+```
+
+4. Complete the browser OAuth flow when prompted.
+5. Continue with [Worker Installation](/guide/skill/installation), [Claude Code Dispatch Installation](/guide/claude-dispatch/installation), or [OpenClaw Installation](/guide/openclaw/setup), depending on the runtime you need.
+
+API tokens are only needed later if you must use shell-helper mode or the legacy local MCP bridge. For that compatibility path, see [API Keys](/guide/web-app/api-keys) and [Environment Variables](/guide/reference/environment-variables).
+
+## Self-Hosted Local Development Prerequisites
+
+Use the sections below only when you need a local PREQSTATION web app checkout for self-hosting, migration validation, or local development.
 
 - **Node.js 22** or later
 - **PostgreSQL 13+** (self-hosted or managed)
 - **GitHub access** to the current private PREQSTATION web app development repository
 
-## Environment Variables
+## Local Environment Variables
 
-Create a `.env.local` file in the project root. Copy from `.env.example` and fill in the required values:
+Create a `.env.local` file in the project root. Copy from `.env.example` and fill in the required values for local development:
 
 | Variable           | Required | Description                                                                  |
 | ------------------ | -------- | ---------------------------------------------------------------------------- |
@@ -36,7 +57,7 @@ Any standard PostgreSQL provider that exposes a compatible connection string wor
 
 `PORT` is not part of the runtime env schema or `.env.example`, but the local `npm run dev` script reads `PORT` from `.env.local` if you want a non-default port.
 
-## Installation Steps
+## Self-Hosted Local Development Steps
 
 ### 1. Clone and Install
 
@@ -97,18 +118,20 @@ To enable Telegram notifications:
 3. Test the connection
 4. Token is encrypted at rest with AES-GCM
 
-## Configure API Keys
+## API Keys for Shell Helper Mode or the Legacy Local Bridge
 
-Issue tokens for agents to authenticate:
+Issue tokens only when an agent cannot use the recommended remote `/mcp` + OAuth flow and must authenticate through shell-helper mode or the legacy local bridge:
 
 1. Open `/api-keys` after signing in, or click **API Keys** in the workspace sidebar
 2. Use the **Create API Key** form to enter a name and optional expiration
 3. Click **Create Key**
 4. Copy the token from the success panel right away. It starts with `preq_` and is shown only once.
 
-Use these tokens in your agent environment or `preqstation-skill` MCP configuration:
+Use these tokens in your agent environment or legacy `preqstation-skill` MCP configuration:
 
 ```bash
 export PREQSTATION_API_URL=http://localhost:3000
 export PREQSTATION_TOKEN=preq_your_new_token
 ```
+
+For the full compatibility details, see [API Keys](/guide/web-app/api-keys) and [Environment Variables](/guide/reference/environment-variables).

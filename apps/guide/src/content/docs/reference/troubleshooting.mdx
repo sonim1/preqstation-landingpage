@@ -5,9 +5,9 @@ description: Common issues and solutions for PREQSTATION task execution
 
 import { Tabs, TabItem } from '@astrojs/starlight/components';
 
-This guide covers common problems and their solutions. Check your issue below.
+The standard PREQSTATION setup path uses the hosted `/mcp` endpoint plus browser OAuth. Use the token-based steps below only if you are troubleshooting shell-helper mode or the legacy local stdio bridge.
 
-## MCP Connection Issues
+## Remote MCP & OAuth Issues
 
 ### Remote MCP stays unauthenticated or tools do not appear
 
@@ -46,6 +46,8 @@ codex mcp remove preqstation
 codex mcp add preqstation --url https://<your-domain>/mcp
 ```
 
+## Legacy Compatibility Issues
+
 ### Legacy local MCP bridge fails to start
 
 **Symptom:** `Error: Cannot find module` or local stdio bridge never boots.
@@ -83,9 +85,9 @@ claude mcp add -s user \
   preqstation -- node /path/to/preqstation-mcp-server.mjs
 ```
 
-### Tools appear in MCP but return errors
+### Tools appear in MCP but shell-helper mode or the legacy local bridge returns errors
 
-**Symptom:** `preq_list_tasks` or other tools fail with `401 Unauthorized` in shell-helper mode or the legacy local bridge
+**Symptom:** `preq_list_tasks` or other tools fail with `401 Unauthorized` while using shell-helper mode or the legacy local bridge.
 
 1. Verify token format (should start with `preq_`):
 ```bash
@@ -110,11 +112,11 @@ curl -H "Authorization: Bearer $PREQSTATION_TOKEN" \
 # ✅ Good: "https://preqstation-lp.vercel.app"
 ```
 
-## Token & Authentication Issues
+5. If you still need the token-based setup reference, see [API Keys](/guide/web-app/api-keys) and [Environment Variables](/guide/reference/environment-variables).
 
-### "Invalid token" error on every MCP call
+### "Invalid token" error on every MCP call in shell-helper mode or the legacy local bridge
 
-**Symptom:** Token auth fails even with correct-looking token in shell-helper mode or the legacy local bridge
+**Symptom:** Token auth fails even with a correct-looking token while using shell-helper mode or the legacy local bridge. If you are on the recommended remote `/mcp` path, return to the Remote MCP & OAuth section above instead.
 
 <Tabs>
 <TabItem label="Cause: Expired Token">
