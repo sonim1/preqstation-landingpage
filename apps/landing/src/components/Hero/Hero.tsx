@@ -4,6 +4,7 @@ import LetterFlip from "./LetterFlip";
 
 export default function Hero({ guideHref }: { guideHref: string }) {
   const t = useT();
+
   return (
     <section className="min-h-screen flex items-center bg-gradient-to-b from-charcoal/80 to-[#1e2528]/80">
       <div className="max-w-4xl mx-auto text-center px-6 py-24">
