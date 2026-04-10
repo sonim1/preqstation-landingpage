@@ -282,7 +282,7 @@ export default function WhoIsItFor() {
   return (
     <section
       ref={ref}
-      className="py-24 bg-charcoal/85"
+      className="overflow-x-hidden py-24 bg-charcoal/85"
       aria-label={t.whoIsItFor.title}
     >
       <div className="max-w-6xl mx-auto">

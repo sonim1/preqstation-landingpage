@@ -44,13 +44,27 @@ const ko: typeof en = {
     ],
   },
   problem: {
-    title: "\ubcd1\ubaa9\uc740 \uc544\uc774\ub514\uc5b4\uac00 \uc544\ub2c8\ub77c \uc9c0\uc18d \uac00\ub2a5\ud55c \uc2e4\ud589\uc785\ub2c8\ub2e4",
-    subtitle: "PREQSTATION\uc740 \uc88b\uc740 \uc544\uc774\ub514\uc5b4\uc5d0\uc11c \ub9ac\ubdf0 \uac00\ub2a5\ud55c \uacb0\uacfc\ub85c \ub118\uc5b4\uac00\ub294 \uacf5\ubc31\uc744 \ub2e4\ub8f9\ub2c8\ub2e4. \ud2b9\ud788 \ud55c \uba85\uc758 \uac1c\ubc1c\uc790\ub098 \uc791\uc740 \ud300\uc774 \ud558\ub8e8 \uc885\uc77c \uac19\uc740 \ud130\ubbf8\ub110 \uc55e\uc5d0 \uc788\uc9c0 \ubabb\ud560 \ub54c \ub354 \uc911\uc694\ud574\uc9d1\ub2c8\ub2e4.",
-    poster: {
-      eyebrow: "\uc2e4\ud589 \uc555\ub825",
-      title: "AI\uac00 \ucd08\uc548\uc744 \uc368 \uc900 \ub4a4\uc5d0 \ub0a8\ub294 \uc2e4\uc81c \ubcd1\ubaa9\uc744 \ubcf4\uc5ec\uc8fc\uc138\uc694",
-      prompt: "\ubaa8\ubc14\uc77c\uc5d0\uc11c \uc791\uc5c5\uc744 \uc7a1\uace0, \uac00\ubcbc\uc6b4 \uc2e4\ud589 \ud750\ub984\uc73c\ub85c \ub118\uae30\uace0, \uac70\uce5c MVP\uac00 \ub9ac\ubdf0 \uac00\ub2a5\ud55c \ud504\ub85c\ub355\uc158 \ubcc0\uacbd\uc73c\ub85c \uc790\ub77c\ub294 \uc2e4\uc6a9\uc801 \uc7a5\uba74.",
-      replaceNote: "\ucd5c\uc885 \uc544\ud2b8\uc6cc\ud06c \uc790\ub9ac.",
+    title: "\ubd80\uc871\ud55c \uac74 \uc2e4\ud589 \uaddc\uc728\uc785\ub2c8\ub2e4",
+    subtitle: "AI\uac00 \ucf54\ub4dc\ub97c \uc4f8 \uc218\ub294 \uc788\uc5b4\ub3c4, \uc544\uc774\ub514\uc5b4\uc5d0\uc11c \uac80\uc99d\ub41c \uacb0\uacfc\uae4c\uc9c0 \uac00\ub294 \uacfc\uc815\uc740 \uc5ec\uc804\ud788 \ub290\uc2a8\ud569\ub2c8\ub2e4.",
+    proof: {
+      eyebrow: "\uc2e4\ud589 \uacf5\ubc31",
+      title: "\ud560\ub2f9\uc5d0\uc11c \ubc30\ud3ec\uae4c\uc9c0 \uc65c \uc790\uafb8 \uba48\ucd94\ub294\uac00",
+      columns: [
+        {
+          label: "\ubc31\ub85c\uadf8",
+          items: ["\ud2b8\ub798\ucee4\uc5d0 \ubc94\uc704 \uc815\ub9ac", "\uc5d0\uc774\uc804\ud2b8 \uc2e4\ud589 \uc2dc\uc791", "\ub9ac\ubdf0 \uc99d\uac70 \uc5c6\uc74c"],
+        },
+        {
+          label: "\uc138\uc158",
+          items: ["codex/PQSL-11", "run_state: working", "\ube0c\ub79c\uce58 \uc5f4\ub9bc"],
+        },
+        {
+          label: "\ub9ac\uc2a4\ud06c",
+          items: ["\uac10\uc0ac \ud754\uc801 \uc5c6\uc74c", "\ub9ac\ubdf0 \uac8c\uc774\ud2b8 \uc5c6\uc74c", "\uac80\uc99d\ub41c \uacb0\uacfc \uc5c6\uc74c"],
+        },
+      ],
+      footerLabel: "\ubd84\ud574",
+      footerValue: "\uc2e4\ud589\uc740 \ub418\uace0 \uc788\uc9c0\ub9cc \uc99d\uac70\uac00 \ud769\uc5b4\uc838 \uc788\uc2b5\ub2c8\ub2e4.",
     },
     painPoints: [
       {
@@ -78,11 +92,30 @@ const ko: typeof en = {
   solution: {
     title: "\uc8fc\ubc29\ucc98\ub7fc \uc77c\ud558\uc138\uc694.",
     highlight: "\ub2f9\uc2e0\uc740 \uc178\ud504\uc785\ub2c8\ub2e4.",
-    poster: {
-      eyebrow: "\uc8fc\ubc29 \ubaa8\ub378",
-      title: "\uc178\ud504\uac00 AI \ub77c\uc778 \ucfe1\uc744 \uc9c0\ud718\ud558\ub294 \uc7a5\uba74",
-      prompt: "\ud55c \uba85\uc758 \ub9ac\ub4dc \uac1c\ubc1c\uc790\uac00 \uc5ec\ub7ec AI \uc791\uc5c5\uc790\ub97c \ucc28\ubd84\ud788 \uc9c0\ud718\ud558\ub294 \ubcd1\ub82c \uc2e4\ud589 \uc7a5\uba74.",
-      replaceNote: "\ucd5c\uc885 \uc544\ud2b8\uc6cc\ud06c \uc790\ub9ac.",
+    proof: {
+      eyebrow: "\ubc94\uc704\uac00 \uc815\ub9ac\ub41c \ud0dc\uc2a4\ud06c",
+      title: "PREQ \ud0dc\uc2a4\ud06c \ud558\ub098\ub85c \uc178\ud504\uac00 \ud1b5\uc81c\uad8c\uc744 \uc720\uc9c0\ud569\ub2c8\ub2e4",
+      taskNumberLabel: "\ud0dc\uc2a4\ud06c",
+      taskNumber: "PQSL-11",
+      taskTitle: "\ub79c\ub529 \ucf58\uc149\ud2b8 \ud50c\ub808\uc774\uc2a4\ud640\ub354\ub97c \uc81c\ud488 \uc99d\uac70 \ud328\ub110\ub85c \uad50\uccb4",
+      taskSummary: "\ud0dc\uc2a4\ud06c\uac00 \ucc44\ud305 \ub85c\uadf8 \uc18d\uc73c\ub85c \uc0ac\ub77c\uc9c0\uc9c0 \uc54a\uace0 \ubc94\uc704, \ub2f4\ub2f9 \uc5d4\uc9c4, \ub9ac\ubdf0 \uae30\uc900\uc744 \uc720\uc9c0\ud569\ub2c8\ub2e4.",
+      criteriaLabel: "\uac80\uc99d \uae30\uc900",
+      criteria: [
+        "\ud50c\ub808\uc774\uc2a4\ud640\ub354 \ud328\ub110 4\uac1c\ub97c \uc81c\ud488 \uc99d\uac70 \ubaa8\ub4c8\ub85c \uad50\uccb4",
+        "\uc601\ubb38/\ud55c\uae00 \ud328\ub110 \uad6c\uc870\ub97c \ub3d9\uc77c\ud558\uac8c \uc720\uc9c0",
+        "\uc678\ubd80 \uc544\ud2b8\uc6cc\ud06c \uc5c6\uc774 \uc99d\uac70 \uc911\uc2ec \ucf58\ud150\uce20\ub97c \ucd9c\uace0",
+      ],
+      meta: [
+        { label: "\ud560\ub2f9 \uc5d4\uc9c4", value: "Codex" },
+        { label: "\uc2e4\ud589 \uc0c1\ud0dc", value: "working" },
+        { label: "\ub9ac\ubdf0 \uac8c\uc774\ud2b8", value: "build + \uacbd\ub85c \ud655\uc778" },
+      ],
+      evidenceTitle: "\ub9ac\ubdf0 \uc99d\uac70",
+      evidence: [
+        { label: "\ube0c\ub79c\uce58", value: "task/pqsl-11/..." },
+        { label: "\uc0b0\ucd9c\ubb3c", value: "\ucf54\ub4dc\uc640 \ub85c\uceec\ub77c\uc774\uc81c\uc158\uc744 \ud568\uaed8 \uc81c\ucd9c" },
+        { label: "\ub2e4\uc74c \ub2e8\uacc4", value: "\ub9ac\ubdf0 \ub178\ud2b8\ub85c \uba38\uc9c0 \ub610\ub294 \ud6c4\uc18d \uc791\uc5c5 \uacb0\uc815" },
+      ],
     },
     chefHeader: "\ud83e\uddd1\u200d\ud83c\udf73 \uc178\ud504\uc758 \uc5ed\ud560",
     chefItems: [
@@ -151,7 +184,7 @@ const ko: typeof en = {
         eyebrow: "어디서든 Dispatch",
         title: "지금 태스크를 준비하고, 순간이 오면 실행하세요",
         summary: "PREQSTATION은 책상 앞이 아니더라도 작업이 떠오르는 개발자를 위한 도구입니다. 작업을 잡고, 필요한 컨텍스트를 남기고, 여유가 생기면 dispatch하세요. 나중에 생각을 처음부터 다시 만들 필요가 없습니다.",
-        imageAlt: "PREQSTATION에서 어디서든 태스크를 준비하고 dispatch하는 흐름을 보여주는 placeholder 스크린샷.",
+        imageAlt: "PREQSTATION에서 어디서든 태스크를 준비하고 dispatch하는 흐름.",
         bullets: [
           "컨텍스트가 사라지기 전에 범위를 잡을 수 있습니다.",
           "Claude, Codex, Gemini 중 맞는 엔진에 같은 태스크를 넘길 수 있습니다.",
@@ -163,7 +196,7 @@ const ko: typeof en = {
         eyebrow: "Solo & Small Teams",
         title: "엔터프라이즈 오버헤드 없이 실행 규율만 가져오세요",
         summary: "PREQSTATION은 로드맵 토론 장소가 아니라 실행 시스템입니다. 계획은 기존 도구에 두고, 에이전트가 바로 실행할 작업만 PREQ로 옮기세요.",
-        imageAlt: "PREQSTATION이 1인 개발자와 작은 팀에 맞는 실행 흐름을 보여주는 placeholder 스크린샷.",
+        imageAlt: "PREQSTATION이 1인 개발자와 작은 팀에 맞는 실행 흐름.",
         bullets: [
           "백로그 계획은 GitHub Issues, Linear, Jira에 두세요.",
           "PREQ는 태스크가 에이전트 실행 준비를 마친 순간에 시작합니다.",
@@ -175,7 +208,7 @@ const ko: typeof en = {
         eyebrow: "MVP to Production",
         title: "유망한 AI 초안을 실제로 배포 가능한 작업으로 만드세요",
         summary: "이제 첫 번째 초안은 어렵지 않습니다. PREQSTATION은 빠른 프로토타입 에너지를 제작 가능한 후속 작업으로 바꾸는 데 필요한 격리, 리뷰 신호, 검증 기록을 더해줍니다.",
-        imageAlt: "PREQSTATION이 AI 출력을 MVP에서 프로덕션 리뷰 단계로 옮기는 흐름을 보여주는 placeholder 스크린샷.",
+        imageAlt: "PREQSTATION이 AI 출력을 MVP에서 프로덕션 리뷰 단계로 옮기는 흐름.",
         bullets: [
           "main branch에 위험하게 손대는 대신 격리된 worktree를 사용합니다.",
           "실제 워크플로우 상태는 inbox, todo, hold, ready, done을 그대로 유지합니다.",
@@ -288,12 +321,24 @@ const ko: typeof en = {
   },
   cta: {
     title: "\uc9c0\uae08 \ub2f9\uc2e0\uc758 \uc8fc\ubc29\uc744 \uc5f4\uc5b4\ubcf4\uc138\uc694",
-    subtitle: "먼저 워크플로우를 보고, 그 다음 PREQ 도입 단계에 맞는 설정 경로를 고르세요.",
-    poster: {
-      eyebrow: "\ub7f0\uce58 \ubaa8\uba58\ud2b8",
-      title: "\ucc28\ubd84\ud558\uac8c \uc900\ube44\ub41c \uc2e4\ud589 \uc7a5\uba74\uc73c\ub85c \ub9c8\ubb34\ub9ac",
-      prompt: "\uae54\ub054\ud55c prep station\uacfc \uc815\ub9ac\ub41c AI \uc2e4\ud589 \ud050, \uc2dc\uc791 \uc9c1\uc804\uc758 \ud0c4\ub825\uc774 \ub290\uaef4\uc9c0\ub294 \uc7a5\uba74.",
-      replaceNote: "\ucd5c\uc885 \uc544\ud2b8\uc6cc\ud06c \uc790\ub9ac.",
+    subtitle: "\uba3c\uc800 \uc2e4\ud589 \uc99d\uac70\ub97c \ubcf4\uace0, \uadf8 \ub2e4\uc74c \uac00\uc774\ub4dc\ub85c PREQ\ub97c \uc790\uc2e0\uc758 \uc6cc\ud06c\ud50c\ub85c\uc6b0\uc5d0 \uc5f0\uacb0\ud558\uc138\uc694.",
+    proof: {
+      eyebrow: "\uc2dc\uc791 \uc9c0\uc810",
+      title: "\uc99d\uac70 \uacbd\ub85c, \uac00\uc774\ub4dc, \uc800\uc7a5\uc18c\ub97c \ud568\uaed8 \uc5ec\uc138\uc694",
+      checklistLabel: "\uc2dc\uc791 \uccb4\ud06c\ub9ac\uc2a4\ud2b8",
+      checklist: [
+        "\uba3c\uc800 \uc2e4\ud589 \uc99d\uac70\ub97c \ud655\uc778",
+        "\uac00\uc774\ub4dc\ub85c \uc6cc\ud06c\ud50c\ub85c\uc6b0\ub97c \uc5f0\uacb0",
+        "GitHub\ub97c \uc5f4\uace0 \uccab \ud0dc\uc2a4\ud06c\ub97c \uc2e4\ud589",
+      ],
+      linksLabel: "\ucee4\ub9e8\ub4dc \uc13c\ud130",
+      links: [
+        { label: "\uc2e4\ud589 \uc99d\uac70", value: "#execution-proof" },
+        { label: "\uac00\uc774\ub4dc", value: "/guide/getting-started/overview" },
+        { label: "GitHub", value: "github.com/sonim1/preqstation" },
+      ],
+      summaryLabel: "\uacb0\uacfc",
+      summaryValue: "\ub2e4\uc74c \ub2e8\uacc4\ub294 \ubd84\uba85\ud569\ub2c8\ub2e4. \uc99d\uac70\ub97c \ud655\uc778\ud558\uace0 PREQ\ub97c \uc5f0\uacb0\ud55c \ub4a4 \uccab \ub9ac\ubdf0 \uc644\ub8cc \ud0dc\uc2a4\ud06c\ub97c \ubc30\ud3ec\ud558\uc138\uc694.",
     },
     primary: "워크플로우 보기",
     guide: "설정 시작",

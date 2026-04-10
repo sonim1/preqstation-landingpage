@@ -1,11 +1,11 @@
 import { motion } from "motion/react";
 import { useT } from "../../i18n/context";
-import ConceptPosterPlaceholder from "../common/ConceptPosterPlaceholder";
+import SolutionProofPanel from "./SolutionProofPanel";
 
 export default function Solution() {
   const t = useT();
   return (
-    <section className="py-24 bg-charcoal/85">
+    <section className="overflow-x-hidden py-24 bg-charcoal/85">
       <div className="max-w-6xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
@@ -27,12 +27,7 @@ export default function Solution() {
           transition={{ duration: 0.6, delay: 0.1 }}
           className="mt-12"
         >
-          <ConceptPosterPlaceholder
-            eyebrow={t.solution.poster.eyebrow}
-            title={t.solution.poster.title}
-            prompt={t.solution.poster.prompt}
-            replaceNote={t.solution.poster.replaceNote}
-          />
+          <SolutionProofPanel proof={t.solution.proof} />
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mt-16">

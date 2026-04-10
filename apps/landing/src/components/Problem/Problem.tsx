@@ -1,6 +1,6 @@
 import { motion } from "motion/react";
 import { useT } from "../../i18n/context";
-import ConceptPosterPlaceholder from "../common/ConceptPosterPlaceholder";
+import ProblemProofPanel from "./ProblemProofPanel";
 
 const cardVariants = {
   hidden: { opacity: 0, y: 24 },
@@ -39,13 +39,7 @@ export default function Problem() {
           transition={{ duration: 0.6, delay: 0.1 }}
           className="mt-12"
         >
-          <ConceptPosterPlaceholder
-            eyebrow={t.problem.poster.eyebrow}
-            title={t.problem.poster.title}
-            prompt={t.problem.poster.prompt}
-            replaceNote={t.problem.poster.replaceNote}
-            accentClassName="from-coral/18 via-transparent to-warm-yellow/16"
-          />
+          <ProblemProofPanel proof={t.problem.proof} />
         </motion.div>
 
         <motion.div

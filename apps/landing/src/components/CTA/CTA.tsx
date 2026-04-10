@@ -1,6 +1,6 @@
 import { motion } from "motion/react";
 import { useT } from "../../i18n/context";
-import ConceptPosterPlaceholder from "../common/ConceptPosterPlaceholder";
+import CtaProofPanel from "./CtaProofPanel";
 
 export default function CTA({ guideHref }: { guideHref: string }) {
   const t = useT();
@@ -22,13 +22,7 @@ export default function CTA({ guideHref }: { guideHref: string }) {
           </p>
 
           <div className="mt-12 text-left">
-            <ConceptPosterPlaceholder
-              eyebrow={t.cta.poster.eyebrow}
-              title={t.cta.poster.title}
-              prompt={t.cta.poster.prompt}
-              replaceNote={t.cta.poster.replaceNote}
-              accentClassName="from-mint/16 via-transparent to-warm-yellow/16"
-            />
+            <CtaProofPanel proof={t.cta.proof} />
           </div>
 
           <div className="flex gap-4 justify-center mt-12 flex-wrap">

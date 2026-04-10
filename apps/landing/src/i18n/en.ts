@@ -42,13 +42,27 @@ export default {
     ],
   },
   problem: {
-    title: "The bottleneck is not ideas. It is sustained execution.",
-    subtitle: "PREQSTATION is for the gap between a good idea and a reviewable result, especially when one person or a tiny team has to keep momentum without sitting in front of the same terminal all day.",
-    poster: {
-      eyebrow: "Execution pressure",
-      title: "Show the real bottlenecks after AI writes the first draft",
-      prompt: "A practical scene with mobile capture, lightweight execution flow, and a rough MVP turning into a reviewable product change.",
-      replaceNote: "Final artwork placeholder.",
+    title: "The missing part is execution discipline",
+    subtitle: "AI can write code. Shipping still breaks down between the idea and the verified result.",
+    proof: {
+      eyebrow: "Execution gap",
+      title: "Why teams stall between assignment and ship",
+      columns: [
+        {
+          label: "Backlog",
+          items: ["Scoped in tracker", "Agent run started", "Review proof missing"],
+        },
+        {
+          label: "Session",
+          items: ["codex/PQSL-11", "run_state: working", "branch opened"],
+        },
+        {
+          label: "Risk",
+          items: ["No audit trail", "No review gate", "No verified result"],
+        },
+      ],
+      footerLabel: "Breakdown",
+      footerValue: "Execution is happening, but the evidence is fragmented.",
     },
     painPoints: [
       {
@@ -76,11 +90,30 @@ export default {
   solution: {
     title: "Work like a kitchen.",
     highlight: "You are the chef.",
-    poster: {
-      eyebrow: "Kitchen model",
-      title: "Show the chef directing AI line cooks",
-      prompt: "A calm scene of one lead developer directing several AI workers through parallel execution.",
-      replaceNote: "Final artwork placeholder.",
+    proof: {
+      eyebrow: "Scoped task record",
+      title: "One PREQ task keeps the chef in control",
+      taskNumberLabel: "Task",
+      taskNumber: "PQSL-11",
+      taskTitle: "Replace landing concept placeholders with product-proof visuals",
+      taskSummary: "The task stays scoped, assigned, and reviewable instead of disappearing into a chat log.",
+      criteriaLabel: "Acceptance criteria",
+      criteria: [
+        "Replace four placeholder panels with product-proof modules",
+        "Keep English and Korean panel structure aligned",
+        "Ship proof content without waiting on artwork",
+      ],
+      meta: [
+        { label: "Assigned engine", value: "Codex" },
+        { label: "Run state", value: "working" },
+        { label: "Review gate", value: "build + route check" },
+      ],
+      evidenceTitle: "Review evidence",
+      evidence: [
+        { label: "Branch", value: "task/pqsl-11/..." },
+        { label: "Output", value: "Code and localization moved together" },
+        { label: "Next", value: "Review notes decide merge or follow-up" },
+      ],
     },
     chefHeader: "\ud83e\uddd1\u200d\ud83c\udf73 Chef's Role",
     chefItems: [
@@ -149,7 +182,7 @@ export default {
         eyebrow: "Dispatch Anywhere",
         title: "Prepare the task now. Fire it when the moment is right.",
         summary: "PREQSTATION is designed for developers whose best ideas arrive away from the desk. Capture the work, leave the right context, and dispatch it when you have a window instead of restarting the whole thought later.",
-        imageAlt: "Placeholder screenshot for PREQSTATION task capture and dispatch from anywhere.",
+        imageAlt: "PREQSTATION task capture and dispatch workflow.",
         bullets: [
           "Capture scope before context disappears.",
           "Hand the same prepared task to Claude, Codex, or Gemini.",
@@ -161,7 +194,7 @@ export default {
         eyebrow: "Built for Solo & Small Teams",
         title: "Execution discipline without the overhead of enterprise process.",
         summary: "PREQSTATION gives smaller teams a focused execution system instead of another place to debate roadmap items. Keep planning wherever you already do it, then move the ready-to-run work into PREQ.",
-        imageAlt: "Placeholder screenshot for PREQSTATION workflow built for solo developers and small teams.",
+        imageAlt: "PREQSTATION workflow for solo developers and small teams.",
         bullets: [
           "Keep backlog planning in GitHub Issues, Linear, or Jira.",
           "Use PREQ when a task is ready for an agent to execute.",
@@ -173,7 +206,7 @@ export default {
         eyebrow: "From MVP to Production",
         title: "Turn promising AI output into work you can actually ship.",
         summary: "The first draft is not the hard part anymore. PREQSTATION adds the isolation, review signals, and verification trail that help you move from quick prototype energy to production follow-through.",
-        imageAlt: "Placeholder screenshot for PREQSTATION moving AI output from MVP toward production review.",
+        imageAlt: "PREQSTATION moving AI output from MVP toward production review.",
         bullets: [
           "Use isolated worktrees instead of risky edits on the main branch.",
           "Keep the real workflow states intact: inbox, todo, hold, ready, done.",
@@ -286,12 +319,24 @@ export default {
   },
   cta: {
     title: "Open your kitchen today",
-    subtitle: "Start with the workflow, then choose the setup path that matches your PREQ rollout.",
-    poster: {
-      eyebrow: "Launch moment",
-      title: "Close with a calm execution-ready scene",
-      prompt: "A clean prep station, a calm AI queue, and opening-day momentum.",
-      replaceNote: "Final artwork placeholder.",
+    subtitle: "Start with the execution proof, then use the guide to wire PREQ into your own workflow.",
+    proof: {
+      eyebrow: "Start here",
+      title: "Open the proof path, guide, and repo together",
+      checklistLabel: "Launch checklist",
+      checklist: [
+        "Review the execution proof first",
+        "Use the guide to wire your workflow",
+        "Open GitHub and run the first task",
+      ],
+      linksLabel: "Command center",
+      links: [
+        { label: "Execution proof", value: "#execution-proof" },
+        { label: "Guide", value: "/guide/getting-started/overview" },
+        { label: "GitHub", value: "github.com/sonim1/preqstation" },
+      ],
+      summaryLabel: "Outcome",
+      summaryValue: "The next step is concrete: inspect proof, install PREQ, then ship the first reviewed task.",
     },
     primary: "See the workflow",
     guide: "Start Setup",
