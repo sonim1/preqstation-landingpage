@@ -10,6 +10,16 @@ PREQSTATION is an execution platform for AI-agent-driven development workflows. 
 
 If you want the product story before the system diagram, read [Product Philosophy](/guide/getting-started/philosophy) first.
 
+## Recommended First Step
+
+If you're starting PREQSTATION from scratch, begin with [Quick Start](/guide/getting-started/quick-start). It gets the web app running, covers login, and ends with your first API key. If you prefer the full local checklist instead of the shortest path, use [Web App Setup](/guide/web-app/setup).
+
+## Setup Path Order
+
+- **Web App Setup** — [Quick Start](/guide/getting-started/quick-start) for the fastest first run, or [Web App Setup](/guide/web-app/setup) for the complete local checklist
+- **Worker Connection** — [Worker Installation](/guide/skill/installation) once the app is already running and you have an API key
+- **Dispatcher Setup** — add queued delivery only if you need it from the web app: [Claude Code Dispatch Installation](/guide/claude-dispatch/installation) or [OpenClaw Installation](/guide/openclaw/setup)
+
 ## Core Systems and Dispatcher Paths
 
 PREQSTATION separates the queued dispatch target from the task engine:
@@ -89,13 +99,6 @@ Claude Code dispatcher path:
     -> local Claude dispatcher session emits the task into the dispatcher channel
     -> dispatcher launches the task engine recorded on the task
 ```
-
-## Setup Paths
-
-- [Product Philosophy](/guide/getting-started/philosophy) — why PREQSTATION exists and what kind of workflow it is built for
-- [Worker Installation](/guide/skill/installation) — install `preqstation-skill` for Claude, Codex, or Gemini workers
-- [Claude Code Dispatch Installation](/guide/claude-dispatch/installation) — queued dispatch without OpenClaw
-- [OpenClaw Installation](/guide/openclaw/setup) — Telegram/OpenClaw dispatcher path
 
 ### Agent Execution and Status Reporting
 

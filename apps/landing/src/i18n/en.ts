@@ -5,7 +5,7 @@ export default {
   },
   nav: {
     github: "GitHub",
-    cta: "Read the Philosophy",
+    cta: "Start Setup",
     localeLabel: "Language",
     openMenu: "Open menu",
     closeMenu: "Close menu",
@@ -32,7 +32,7 @@ export default {
     preqTagline: "Queue the task. Agents take it.",
     prepTagline: "Review the result. Then ship.",
     cta: "See the workflow",
-    guideCta: "Read the Philosophy",
+    guideCta: "Start Setup",
     github: "View on GitHub",
     socialProof: "Open Source \u00b7 Self-hosted \u00b7 Multi-engine execution queue",
     tickets: [
@@ -286,7 +286,7 @@ export default {
   },
   cta: {
     title: "Open your kitchen today",
-    subtitle: "Start with the workflow, then use the philosophy guide to wire PREQ into your own execution setup.",
+    subtitle: "Start with the workflow, then choose the setup path that matches your PREQ rollout.",
     poster: {
       eyebrow: "Launch moment",
       title: "Close with a calm execution-ready scene",
@@ -294,7 +294,7 @@ export default {
       replaceNote: "Final artwork placeholder.",
     },
     primary: "See the workflow",
-    guide: "Read the Philosophy",
+    guide: "Start Setup",
     secondary: "View on GitHub",
   },
   footer: {

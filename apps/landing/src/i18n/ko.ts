@@ -7,7 +7,7 @@ const ko: typeof en = {
   },
   nav: {
     github: "GitHub",
-    cta: "\ucca0\ud559 \ubcf4\uae30",
+    cta: "\uc124\uc815 \uc2dc\uc791",
     localeLabel: "\uc5b8\uc5b4",
     openMenu: "\uba54\ub274 \uc5f4\uae30",
     closeMenu: "\uba54\ub274 \ub2eb\uae30",
@@ -34,7 +34,7 @@ const ko: typeof en = {
     preqTagline: "\ud0dc\uc2a4\ud06c\ub97c \ud050\uc5d0 \ub123\uc73c\uc138\uc694. \uc5d0\uc774\uc804\ud2b8\uac00 \uac00\uc838\uac11\ub2c8\ub2e4.",
     prepTagline: "\uacb0\uacfc\ub97c \uac80\ud1a0\ud558\uace0 \ubc30\ud3ec\ud558\uc138\uc694.",
     cta: "워크플로우 보기",
-    guideCta: "철학 보기",
+    guideCta: "설정 시작",
     github: "GitHub에서 보기",
     socialProof: "\uc624\ud508\uc18c\uc2a4 \u00b7 Self-hosted \u00b7 \uba40\ud2f0 \uc5d4\uc9c4 \uc2e4\ud589 \ud050",
     tickets: [
@@ -288,7 +288,7 @@ const ko: typeof en = {
   },
   cta: {
     title: "\uc9c0\uae08 \ub2f9\uc2e0\uc758 \uc8fc\ubc29\uc744 \uc5f4\uc5b4\ubcf4\uc138\uc694",
-    subtitle: "먼저 워크플로우를 보고, 그 다음 철학 가이드로 PREQ를 자신의 실행 흐름에 연결하세요.",
+    subtitle: "먼저 워크플로우를 보고, 그 다음 PREQ 도입 단계에 맞는 설정 경로를 고르세요.",
     poster: {
       eyebrow: "\ub7f0\uce58 \ubaa8\uba58\ud2b8",
       title: "\ucc28\ubd84\ud558\uac8c \uc900\ube44\ub41c \uc2e4\ud589 \uc7a5\uba74\uc73c\ub85c \ub9c8\ubb34\ub9ac",
@@ -296,7 +296,7 @@ const ko: typeof en = {
       replaceNote: "\ucd5c\uc885 \uc544\ud2b8\uc6cc\ud06c \uc790\ub9ac.",
     },
     primary: "워크플로우 보기",
-    guide: "철학 보기",
+    guide: "설정 시작",
     secondary: "GitHub에서 보기",
   },
   footer: {

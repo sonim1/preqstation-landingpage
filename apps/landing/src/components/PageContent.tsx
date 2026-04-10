@@ -22,7 +22,7 @@ interface Props {
 }
 
 export default function PageContent({ translations, locale }: Props) {
-  const guideHref = getGuideDocPath(locale, "getting-started/overview");
+  const guideHref = getGuideDocPath(locale, "");
 
   return (
     <I18nProvider translations={translations}>

@@ -6,8 +6,8 @@ hero:
   title: PREQSTATION Guide
   tagline: "Queue the task. Agents execute. You verify before marking it done."
   actions:
-    - text: Product Philosophy
-      link: /guide/getting-started/philosophy
+    - text: Start with Quick Start
+      link: /guide/getting-started/quick-start
       icon: right-arrow
       variant: primary
     - text: API Reference
@@ -18,9 +18,29 @@ hero:
 
 PREQSTATION is an execution system for developers using Claude, Codex, and Gemini in real projects.
 
-Start with [Product Philosophy](/guide/getting-started/philosophy) if you want the short answer to why PREQSTATION exists before you dive into setup details.
+## Recommended First Step
 
-It consists of the core web app, a worker package, and two dispatcher paths:
+If you're setting up PREQSTATION for the first time, start with [Quick Start](/guide/getting-started/quick-start). It gets the web app running, walks you through login, and ends with your first API key. If you want the full local checklist instead of the shortest path, continue with [Web App Setup](/guide/web-app/setup).
+
+## Choose Your Setup Path
+
+### 1. Web App Setup
+
+- [Quick Start](/guide/getting-started/quick-start) — fastest path to local app startup, login, and your first API key
+- [Web App Setup](/guide/web-app/setup) — full local setup details, environment variables, and first-login flow
+
+### 2. Worker Connection
+
+- [Worker Installation](/guide/skill/installation) — connect Claude, Codex, or Gemini after the app is already running
+
+### 3. Dispatcher Setup
+
+Choose a dispatcher only if you want queued delivery from the web app.
+
+- [Claude Code Dispatch Installation](/guide/claude-dispatch/installation) — queued dispatch without OpenClaw
+- [OpenClaw Installation](/guide/openclaw/setup) — Telegram/OpenClaw delivery from the web app
+
+## How PREQSTATION Fits Together
 
 - **PREQSTATION web app** — Central web app with the Kanban board, REST API, dispatch action UI, Telegram delivery, and execution overlays
 - **preqstation-skill** — Agent-side package for worker MCP access
@@ -29,12 +49,7 @@ It consists of the core web app, a worker package, and two dispatcher paths:
 
 Users choose a **dispatcher target** in the web app, and that choice is separate from the task's **engine**. The dispatcher decides who picks the task up. The engine still decides whether the run launches `claude-code`, `codex`, or `gemini-cli`.
 
-For setup:
-
-- Start with [Product Philosophy](/guide/getting-started/philosophy)
-- Start with [Worker Installation](/guide/skill/installation)
-- Add [Claude Code Dispatch Installation](/guide/claude-dispatch/installation) if you want queued dispatch without OpenClaw
-- Add [OpenClaw Installation](/guide/openclaw/setup) if you want Telegram/OpenClaw delivery
+Fresh install: start with the web app path. App already running with an API key: move to worker connection. Need queued delivery: add one dispatcher path.
 
 Use it when a task is already scoped and you want reliable execution, not when you need a generic issue backlog.
 
