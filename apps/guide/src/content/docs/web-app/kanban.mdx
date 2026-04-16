@@ -16,7 +16,7 @@ flowchart LR
   todo --> hold[Hold]
   hold --> ready
 `}
-  caption="The board shows workflow status. `queued` and `working` appear as execution overlays on the card itself."
+  caption="The board shows workflow status. `queued` and `working` appear as execution overlays on the card itself, while Ready cards also expose QA history."
 />
 
 ## Task Statuses
@@ -26,10 +26,21 @@ flowchart LR
 | **Inbox** | New tasks waiting for planning | Agent should run `preq_plan_task` to move to Todo |
 | **Todo** | Planned and ready for agents | Agent can start work with `preq_start_task` |
 | **Hold** | Blocked or paused | Agent or user resolves the blocker, then retries |
-| **Ready** | Implementation submitted for verification | You review and run `preq_review_task` to move to Done |
+| **Ready** | Implementation submitted for verification | Choose a QA engine, queue a run, review history, then move to Done after verification |
 | **Done** | Task verified and complete | Archive or reopen if needed |
 
 Archived tasks are hidden from the active board and handled through manual archive actions.
+
+## Ready Lane QA
+
+The Ready lane includes QA runs for each project branch. Use the QA action on a Ready task to:
+
+- choose the engine before queueing
+- review the run history for that project and branch
+- see statuses as `queued`, `running`, `passed`, or `failed`
+- keep task workflow state separate from QA run state
+
+Telegram must be configured before queueing QA runs, because the queue action sends the OpenClaw command through Telegram.
 
 ## Creating a Task
 
@@ -80,6 +91,7 @@ Each card shows:
 - **Engine** — Which agent will work on it
 - **Status indicator** — Current workflow state with timestamp
 - **Execution overlay** — Optional `Queued` or `Working` badge independent from the column
+- **QA run history** — On Ready cards, a modal shows queued/running/passed/failed runs for the branch
 - **Labels** — Custom tags
 
 Click a card to view full details, edit, or add comments.

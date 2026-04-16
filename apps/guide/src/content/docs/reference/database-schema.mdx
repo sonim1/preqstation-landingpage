@@ -88,7 +88,7 @@ Task cards with workflow status plus execution overlay fields.
 | `taskPriority` | Text | `highest`, `high`, `medium`, `none`, `low`, `lowest` |
 | `branch` | Text | Branch name used for work |
 | `engine` | Text | `claude-code`, `codex`, or `gemini-cli` |
-| `dispatchTarget` | Text | Dispatcher chosen by the web app: `claude-code-channel`, `telegram`, or `null` |
+| `dispatchTarget` | Text | Dispatcher chosen by the web app, for example `telegram` or another internal dispatcher value |
 | `runState` | Text | Internal execution state: `queued`, `running`, or `null` |
 | `runStateUpdatedAt` | Timestamp | Last run-state update |
 | `dueAt` | Timestamp | Optional due date |
@@ -124,6 +124,75 @@ Join table between tasks and labels.
 | `labelId` | UUID | Label foreign key |
 | `position` | Integer | Display order within the task |
 | `createdAt` | Timestamp | Creation time |
+
+## OAuth, MCP, and QA Tables
+
+### oauth_codes
+
+Short-lived OAuth authorization codes for MCP login.
+
+| Column | Type | Purpose |
+|---|---|---|
+| `code` | Text | Primary key |
+| `userId` | UUID | Owner foreign key |
+| `clientId` | Text | OAuth client foreign key |
+| `codeChallenge` | Text | PKCE challenge |
+| `codeChallengeMethod` | Text | PKCE challenge method |
+| `redirectUri` | Text | Bound redirect URI |
+| `expiresAt` | Timestamp | Code expiration |
+| `createdAt` | Timestamp | Creation time |
+
+### oauth_clients
+
+Registered OAuth client metadata for remote MCP installs.
+
+| Column | Type | Purpose |
+|---|---|---|
+| `clientId` | Text | Primary key |
+| `ownerId` | UUID | Owner foreign key |
+| `clientName` | Text | Optional display name |
+| `redirectUris` | JSONB | Allowed redirect URIs |
+| `createdAt` | Timestamp | Creation time |
+| `updatedAt` | Timestamp | Last update |
+
+### mcp_connections
+
+Active OAuth-backed MCP connections shown in `/connections`.
+
+| Column | Type | Purpose |
+|---|---|---|
+| `id` | UUID | Primary key |
+| `ownerId` | UUID | Owner foreign key |
+| `clientId` | Text | OAuth client foreign key |
+| `displayName` | Text | Client display name |
+| `redirectUri` | Text | Bound redirect URI |
+| `engine` | Text | Inferred or selected engine |
+| `lastUsedAt` | Timestamp | Last successful use |
+| `expiresAt` | Timestamp | Connection expiration |
+| `revokedAt` | Timestamp | Revocation timestamp |
+| `createdAt` | Timestamp | Creation time |
+| `updatedAt` | Timestamp | Last update |
+
+### qa_runs
+
+Ready-lane QA history and run queue records.
+
+| Column | Type | Purpose |
+|---|---|---|
+| `id` | UUID | Primary key |
+| `ownerId` | UUID | Owner foreign key |
+| `projectId` | UUID | Project foreign key |
+| `branchName` | Text | Branch being tested |
+| `status` | Text | `queued`, `running`, `passed`, or `failed` |
+| `engine` | Text | Selected QA engine |
+| `targetUrl` | Text | Preview or deployed URL |
+| `taskKeys` | JSONB | Ready task keys included in the run |
+| `summary` | JSONB | `{ total, critical, high, medium, low }` |
+| `reportMarkdown` | Text | QA report body |
+| `startedAt` | Timestamp | Run start time |
+| `finishedAt` | Timestamp | Run finish time |
+| `createdAt` | Timestamp | Creation time |
+| `updatedAt` | Timestamp | Last update |
 
 ## API and Audit Tables
 
@@ -233,5 +302,7 @@ Common keys:
 
 - Projects are soft-deleted through `deletedAt`.
 - Tasks keep workflow status and execution state separate.
+- `runState="running"` is the internal database value; REST payloads serialize it as `run_state="working"`.
 - Labels are many-to-many through `task_label_assignments`.
+- `qa_runs` stores Ready-lane QA history separately from task workflow status.
 - Event ids are monotonic cursors, which is why `/api/events` returns `nextCursor`.

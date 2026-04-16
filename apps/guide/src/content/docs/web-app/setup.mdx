@@ -19,10 +19,13 @@ claude mcp add --transport http preqstation https://<your-domain>/mcp
 
 # Codex
 codex mcp add preqstation --url https://<your-domain>/mcp
+
+# Gemini CLI
+gemini mcp add --scope user --transport http preqstation https://<your-domain>/mcp
 ```
 
 4. Complete the browser OAuth flow when prompted.
-5. Continue with [Worker Installation](/guide/skill/installation), [Claude Code Dispatch Installation](/guide/claude-dispatch/installation), or [OpenClaw Installation](/guide/openclaw/setup), depending on the runtime you need.
+5. Continue with [Worker Installation](/guide/skill/installation) or [OpenClaw Installation](/guide/openclaw/setup), depending on the runtime you need.
 
 API tokens are only needed later if you must use shell-helper mode or the legacy local MCP bridge. For that compatibility path, see [API Keys](/guide/web-app/api-keys) and [Environment Variables](/guide/reference/environment-variables).
 

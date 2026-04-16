@@ -11,7 +11,8 @@ The PREQSTATION MCP server exposes read-only tools for discovery and mutation to
 
 | Tool | Purpose |
 |---|---|
-| `preq_list_tasks` | List tasks by status, label, engine, or project key |
+| `preq_list_projects` | List PREQ projects for setup and local repo mapping |
+| `preq_list_tasks` | List tasks by status, label, engine, project key, run state, or dispatch target |
 | `preq_get_task` | Fetch one task by ticket or UUID |
 | `preq_get_project_settings` | Fetch resolved project settings by project key |
 
@@ -23,6 +24,7 @@ The PREQSTATION MCP server exposes read-only tools for discovery and mutation to
 | `preq_plan_task` | Upload a plan and move inbox → todo |
 | `preq_start_task` | Claim execution and set `run_state=working` |
 | `preq_update_task_status` | Manually change workflow status only |
+| `preq_update_qa_run` | Update a branch-level QA run with status/report data |
 | `preq_complete_task` | Upload execution result and move todo/hold → ready |
 | `preq_review_task` | Verify work and move ready → done |
 | `preq_block_task` | Upload blocking reason and move active work → hold |
@@ -46,6 +48,12 @@ Valid engine values:
 
 ## Read-only Tools
 
+### preq_list_projects
+
+Parameters: none.
+
+Returns the current PREQ projects that can be used for `/preqstation:setup` and other local mapping flows.
+
 ### preq_list_tasks
 
 Parameters:
@@ -54,6 +62,8 @@ Parameters:
 - `label` (optional): label name
 - `projectKey` (optional): project key filter
 - `engine` (optional): `claude-code`, `codex`, `gemini-cli`
+- `runState` (optional): `queued`, `working`
+- `dispatchTarget` (optional): `telegram` or another web-app-managed internal value
 - `limit` (optional): max returned items
 
 Example:
@@ -63,6 +73,8 @@ Example:
   "status": "todo",
   "engine": "claude-code",
   "projectKey": "PROJ",
+  "runState": "working",
+  "dispatchTarget": "telegram",
   "limit": 20
 }
 ```
@@ -89,7 +101,9 @@ Returns:
   "settings": {
     "deploy_strategy": "feature_branch",
     "deploy_default_branch": "main",
-    "deploy_auto_pr": "true"
+    "deploy_auto_pr": true,
+    "deploy_commit_on_review": true,
+    "deploy_squash_merge": true
   }
 }
 ```
@@ -155,6 +169,18 @@ Parameters:
 - `taskId` (required)
 - `status` (required): `inbox`, `todo`, `hold`, `ready`, `done`, `archived`
 - `engine` (optional)
+
+### preq_update_qa_run
+
+Updates a branch-level QA run without moving the task workflow state.
+
+Parameters:
+
+- `runId` (required)
+- `status` (optional): `running`, `passed`, `failed`
+- `targetUrl` (optional)
+- `reportMarkdown` (optional)
+- `summary` (optional): object with `total`, `critical`, `high`, `medium`, and `low`
 
 ### preq_complete_task
 

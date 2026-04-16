@@ -102,6 +102,8 @@ process action:kill sessionId:<id>
 
 OpenClaw should not redefine the PREQ lifecycle. It hands off task branching to the core `preqstation` skill.
 
+OpenClaw and the worker docs share the same completion contract: successful runs should finish by calling `preq_complete_task` with the final summary, tests, branch name, and PR URL when available. Review runs still use `preq_review_task`.
+
 The only execution-specific rule to remember here is:
 
 - if a task ID is present, call `preq_get_task()` first

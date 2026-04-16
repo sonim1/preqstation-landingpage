@@ -46,7 +46,7 @@ Get a PostgreSQL connection string from your provider:
 
 ## preqstation-skill
 
-Agent-side variables for shell-helper mode and the legacy local stdio bridge. The recommended remote `/mcp` setup for Claude Code and Codex uses OAuth and does not require exporting these variables just to register the server.
+Agent-side variables for shell-helper mode and the legacy local stdio bridge. The recommended remote `/mcp` setup for Claude Code, Codex, and Gemini CLI uses OAuth and does not require exporting these variables just to register the server.
 
 | Variable | Required | Default | Purpose |
 |----------|----------|---------|---------|
@@ -120,11 +120,15 @@ export OPENCLAW_WORKTREE_ROOT="/workspace/openclaw-worktrees"
 npx skills add sonim1/preqstation-skill -g -a claude-code
 # or:
 npx skills add sonim1/preqstation-skill -g -a codex
+# or:
+npx skills add sonim1/preqstation-skill -g -a gemini-cli
 
 # 2. Register the remote MCP endpoint
 claude mcp add --transport http preqstation https://preqstation.example.com/mcp
 # or:
 codex mcp add preqstation --url https://preqstation.example.com/mcp
+# or:
+gemini mcp add --scope user --transport http preqstation https://preqstation.example.com/mcp
 
 # 3. If you need shell-helper mode, set token-based vars
 export PREQSTATION_API_URL="https://preqstation.example.com"
@@ -138,6 +142,8 @@ export OPENCLAW_WORKTREE_ROOT="$HOME/openclaw-worktrees"
 claude mcp get preqstation
 # or:
 codex mcp get preqstation
+# or:
+gemini mcp list
 ```
 </TabItem>
 <TabItem label="CI/CD Pipeline">

@@ -38,14 +38,11 @@ gemini-cli
 
 This page is only for **worker setup**.
 
-If you also want queued dispatch from the web app, choose one dispatcher path separately:
-
-- [Claude Code Dispatch Installation](/guide/claude-dispatch/installation) — local Claude-hosted dispatcher channel, no OpenClaw required
-- [OpenClaw Installation](/guide/openclaw/setup) — Telegram/OpenClaw dispatcher path with worktree-based routing
+If you also want queued dispatch from the web app, use [OpenClaw Installation](/guide/openclaw/setup) for the Telegram/OpenClaw dispatcher path.
 
 ## Recommended MCP Setup (HTTP + OAuth)
 
-The recommended MCP runtime now lives in the PREQSTATION service itself at `/mcp`. Claude Code and Codex should connect to that remote endpoint and complete the browser OAuth flow when prompted.
+The recommended MCP runtime now lives in the PREQSTATION service itself at `/mcp`. Claude Code, Codex, and Gemini CLI should connect to that remote endpoint and complete the browser OAuth flow when prompted.
 
 ## Claude Code
 
@@ -101,11 +98,12 @@ codex mcp get preqstation
 </TabItem>
 </Tabs>
 
-Codex does not need a Claude-style local plugin or channel runtime for normal worker usage. If you later use [Claude Code Dispatch](/guide/claude-dispatch/installation), keep Codex installed on that dispatcher machine and select `Codex` as the task engine in the UI.
+Codex does not use a Claude-style local plugin or channel runtime. Keep it on the worker + remote MCP path.
 
 ## When Authentication Starts
 
 - Codex often probes the server during `add`, so the browser login flow may start immediately.
+- Gemini CLI may also prompt during `mcp add` or on the first real tool call, depending on the installed CLI build.
 - Claude Code usually saves the server first and may show `Needs authentication` until first use.
 - In Claude Code, authentication commonly starts when you first use the server or run `claude mcp get preqstation`.
 
@@ -115,11 +113,35 @@ Codex does not need a Claude-style local plugin or channel runtime for normal wo
 - **Dispatcher setup** means the web app can queue a task to another runtime.
 - **Engine** still remains separate and can be `claude-code`, `codex`, or `gemini-cli`.
 
-If you only want direct worker usage, this page is enough.
+If you only want direct worker usage, this page is enough. If you want queued dispatch from the web app, continue with [OpenClaw Installation](/guide/openclaw/setup).
 
 ## Gemini CLI
 
-Gemini CLI does not use the documented remote MCP registration flow here. Install the `preqstation` skill for `gemini-cli`, then use shell-helper mode if you need direct REST access. If you later use Claude Code Dispatch or OpenClaw dispatch, make sure `gemini` is also installed on that dispatcher machine:
+Gemini CLI uses the same worker + remote MCP path when the local Gemini CLI supports remote HTTP MCP.
+
+Register the remote PREQSTATION MCP endpoint:
+
+<Tabs>
+<TabItem label="Install">
+```bash
+gemini mcp add --scope user --transport http preqstation https://<your-domain>/mcp
+```
+</TabItem>
+<TabItem label="Verify">
+```bash
+gemini mcp list
+```
+</TabItem>
+<TabItem label="Run">
+```bash
+gemini
+# or
+gemini -p "Read and execute the PREQSTATION task instructions from this workspace."
+```
+</TabItem>
+</Tabs>
+
+If your installed Gemini CLI does not expose remote HTTP MCP, use shell-helper mode instead:
 
 ```bash
 export PREQSTATION_API_URL="https://preqstation.example.com"
@@ -166,7 +188,7 @@ Replace `/ABSOLUTE/PATH/TO/preqstation-skill` with the actual installation path.
 
 **Remote MCP shows `Needs authentication`:**
 - Confirm the server URL ends with `/mcp`
-- Run `claude mcp get preqstation` or `codex mcp get preqstation` to trigger the first real connection
+- Run `claude mcp get preqstation`, `codex mcp get preqstation`, or `gemini mcp list` to trigger or verify the first real connection
 - Complete the browser login flow when prompted
 
 **Legacy local bridge fails to start:**

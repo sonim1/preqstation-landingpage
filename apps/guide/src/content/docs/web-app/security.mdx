@@ -25,6 +25,14 @@ Cookies are signed to prevent tampering and cannot be accessed by JavaScript.
 - **Authentication**: `Authorization: Bearer <token>`
 - **Expiration**: Optional per-token expiration date
 
+### MCP OAuth and Connections
+
+- **Remote MCP** uses OAuth authorization code flow with PKCE and bearer access tokens.
+- **OAuth clients** are stored in `oauth_clients`, and short-lived auth codes are stored in `oauth_codes`.
+- **Active installs** are stored in `mcp_connections` with display name, engine, status, last-used timestamp, and expiry.
+- **Owner review and revocation** happen in `/connections`, which is the page to use for OAuth-backed installs.
+- **Legacy bearer tokens** remain only for direct REST automation and shell-helper compatibility.
+
 ## Authorization
 
 ### Row Level Security (RLS)
@@ -147,13 +155,14 @@ If you only serve the app from one origin, you can leave `ALLOWED_ORIGINS` unset
 
 ### 6. **Protect Bot Token**
 
-- Store Telegram bot token in `.env`
-- Never share or commit to version control
-- Revoke at [@BotFather](https://t.me/BotFather) if exposed
+- Save the Telegram bot token in **Settings > Telegram**
+- PREQSTATION encrypts it at rest in `user_settings` with AES-GCM using a key derived from `AUTH_SECRET`
+- Never commit a plaintext copy or mirror it into `.env`
+- Revoke at [@BotFather](https://t.me/BotFather) if exposed, then save a new token in the app
 
 ### 7. **Encrypt Sensitive Data**
 
-- Telegram bot tokens encrypted with AES-GCM
+- Telegram bot tokens encrypted with AES-GCM at rest in `user_settings`
 - API tokens hashed with SHA-256
 - Session cookies signed with HMAC
 

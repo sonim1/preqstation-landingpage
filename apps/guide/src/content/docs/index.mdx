@@ -20,7 +20,7 @@ PREQSTATION is an execution system for developers using Claude, Codex, and Gemin
 
 ## Recommended First Step
 
-If you're setting up PREQSTATION for the first time, start with [Quick Start](/guide/getting-started/quick-start). It gets the web app running, walks you through login, and ends with your first API key. If you want the full local checklist instead of the shortest path, continue with [Web App Setup](/guide/web-app/setup).
+If you're setting up PREQSTATION for the first time, start with [Quick Start](/guide/getting-started/quick-start). It gets the web app running, walks you through login, and covers the recommended remote MCP path. If you want the full local checklist instead of the shortest path, continue with [Web App Setup](/guide/web-app/setup).
 
 ## Choose Your Setup Path
 
@@ -37,17 +37,15 @@ If you're setting up PREQSTATION for the first time, start with [Quick Start](/g
 
 Choose a dispatcher only if you want queued delivery from the web app.
 
-- [Claude Code Dispatch Installation](/guide/claude-dispatch/installation) — queued dispatch without OpenClaw
 - [OpenClaw Installation](/guide/openclaw/setup) — Telegram/OpenClaw delivery from the web app
 
 ## How PREQSTATION Fits Together
 
 - **PREQSTATION web app** — Central web app with the Kanban board, REST API, dispatch action UI, Telegram delivery, and execution overlays
-- **preqstation-skill** — Agent-side package for worker MCP access
-- **Claude Code Dispatch** — Local Claude-hosted dispatcher channel used by the web app's `Send to Claude Code` action
-- **preqstation-openclaw** — OpenClaw dispatcher path for Telegram or direct runtime messages, still responsible for worktree-based launch on that path
+- **preqstation-skill** — Agent-side package for worker MCP access across Claude Code, Codex, and Gemini CLI
+- **preqstation-openclaw** — Optional OpenClaw dispatcher path for Telegram or copied runtime messages, still responsible for worktree-based launch on that path
 
-Users choose a **dispatcher target** in the web app, and that choice is separate from the task's **engine**. The dispatcher decides who picks the task up. The engine still decides whether the run launches `claude-code`, `codex`, or `gemini-cli`.
+The task **engine** decides whether the run launches `claude-code`, `codex`, or `gemini-cli`. Any queued dispatcher path is separate from that engine choice.
 
 Fresh install: start with the web app path. App already running with an API key: move to worker connection. Need queued delivery: add one dispatcher path.
 

@@ -19,10 +19,13 @@ claude mcp add --transport http preqstation https://<your-domain>/mcp
 
 # Codex
 codex mcp add preqstation --url https://<your-domain>/mcp
+
+# Gemini CLI
+gemini mcp add --scope user --transport http preqstation https://<your-domain>/mcp
 ```
 
 4. 브라우저 OAuth 흐름이 뜨면 완료합니다.
-5. 필요한 런타임에 맞춰 [워커 설치](/guide/ko/skill/installation), [Claude Code Dispatch 설치](/guide/ko/claude-dispatch/installation), [OpenClaw 설치](/guide/ko/openclaw/setup)로 이어서 진행합니다.
+5. 필요한 런타임에 맞춰 [워커 설치](/guide/ko/skill/installation) 또는 [OpenClaw 설치](/guide/ko/openclaw/setup)로 이어서 진행합니다.
 
 API 토큰은 shell-helper 모드 또는 레거시 로컬 MCP 브리지를 써야 할 때만 나중에 필요합니다. 그 호환성 경로는 [API Keys](/guide/ko/web-app/api-keys)와 [Environment Variables](/guide/ko/reference/environment-variables)에서 확인하세요.
 

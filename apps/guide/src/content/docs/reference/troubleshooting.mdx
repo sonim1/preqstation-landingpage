@@ -11,7 +11,7 @@ The standard PREQSTATION setup path uses the hosted `/mcp` endpoint plus browser
 
 ### Remote MCP stays unauthenticated or tools do not appear
 
-**Symptom:** Claude Code shows `Needs authentication`, Codex cannot finish setup, or PREQ tools do not appear after registration.
+**Symptom:** Claude Code shows `Needs authentication`, Codex or Gemini CLI cannot finish setup, or PREQ tools do not appear after registration.
 
 **Solutions:**
 
@@ -20,6 +20,8 @@ The standard PREQSTATION setup path uses the hosted `/mcp` endpoint plus browser
 claude mcp add --transport http preqstation https://<your-domain>/mcp
 # or:
 codex mcp add preqstation --url https://<your-domain>/mcp
+# or:
+gemini mcp add --scope user --transport http preqstation https://<your-domain>/mcp
 ```
 
 2. Make sure the URL ends with `/mcp`:
@@ -33,6 +35,8 @@ codex mcp add preqstation --url https://<your-domain>/mcp
 claude mcp get preqstation
 # or:
 codex mcp get preqstation
+# or:
+gemini mcp list
 ```
 
 4. Complete the browser login flow when prompted.
@@ -44,6 +48,9 @@ claude mcp add --transport http preqstation https://<your-domain>/mcp
 # or:
 codex mcp remove preqstation
 codex mcp add preqstation --url https://<your-domain>/mcp
+# or:
+gemini mcp remove preqstation
+gemini mcp add --scope user --transport http preqstation https://<your-domain>/mcp
 ```
 
 ## Legacy Compatibility Issues

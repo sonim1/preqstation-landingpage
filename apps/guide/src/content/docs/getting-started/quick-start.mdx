@@ -17,18 +17,21 @@ claude mcp add --transport http preqstation https://<your-domain>/mcp
 
 # Codex
 codex mcp add preqstation --url https://<your-domain>/mcp
+
+# Gemini CLI
+gemini mcp add --scope user --transport http preqstation https://<your-domain>/mcp
 ```
 
-4. Complete the browser OAuth flow when prompted. Codex often starts this during `add`, while Claude Code commonly starts it on the first real request or `claude mcp get preqstation`.
+4. Complete the browser OAuth flow when prompted. Codex often starts this during `add`, Claude Code commonly starts it on the first real request or `claude mcp get preqstation`, and Gemini CLI may start it during registration or the first real tool call.
 5. Continue with the worker and optional dispatcher setup docs below.
 
 ## Continue with the Setup Paths
 
 - **Web App Setup** — if you are still finishing hosted setup, self-hosted local development, or compatibility details, use [Web App Setup](/guide/web-app/setup)
 - **Worker Connection** — if you just finished the web app path and have the access you need, continue now with [Worker Installation](/guide/skill/installation)
-- **Dispatcher Setup** — add queued delivery only if you need dispatch from the web app: [Claude Code Dispatch Installation](/guide/claude-dispatch/installation) or [OpenClaw Installation](/guide/openclaw/setup)
+- **Dispatcher Setup** — add queued delivery only if you need dispatch from the web app: [OpenClaw Installation](/guide/openclaw/setup)
 
-Claude Code Dispatch and OpenClaw are alternative dispatcher paths. If you do not need queued dispatch from the web app, stop after worker setup.
+If you do not need queued dispatch from the web app, stop after worker setup.
 
 ## Compatibility: Local Web App Development
 
@@ -116,7 +119,6 @@ For the full token-based compatibility details, see [API Keys](/guide/web-app/ap
 
 - [Web App Setup](/guide/web-app/setup) — Hosted-first setup plus self-hosted local development details
 - [Worker Installation](/guide/skill/installation) — Claude, Codex, and Gemini worker setup
-- [Claude Code Dispatch Installation](/guide/claude-dispatch/installation) — queued dispatch without OpenClaw
 - [OpenClaw Installation](/guide/openclaw/setup) — Telegram/OpenClaw dispatcher setup
 - [Product Philosophy](/guide/getting-started/philosophy) — Why PREQSTATION exists and when to use it
 - [Kanban Board Guide](/guide/web-app/kanban) — Learn task management
