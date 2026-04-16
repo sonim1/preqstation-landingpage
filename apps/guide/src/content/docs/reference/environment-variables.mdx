@@ -14,10 +14,9 @@ Server-side variables for the main PREQSTATION web service.
 | Variable | Required | Default | Purpose |
 |----------|----------|---------|---------|
 | `AUTH_SECRET` | Yes | — | HMAC session secret (minimum 16 characters) |
-| `OWNER_EMAIL` | Yes | — | Single account email address |
-| `OWNER_PASSWORD` | Yes | — | Owner password (minimum 8 characters) |
 | `DATABASE_URL` | Yes | — | Neon PostgreSQL connection string |
 | `ALLOWED_ORIGINS` | No | — | CORS verification (comma-separated URLs) |
+| `PORT` | No | `3000` | HTTP port for local development |
 | `CRON_SECRET` | No | — | Vercel cron job authentication secret |
 
 ### Setup Example
@@ -25,10 +24,9 @@ Server-side variables for the main PREQSTATION web service.
 ```bash
 # .env.local
 AUTH_SECRET="your-secret-min-16-chars"
-OWNER_EMAIL="you@example.com"
-OWNER_PASSWORD="securepassword123"
 DATABASE_URL="postgresql://user:pass@host/dbname"
 ALLOWED_ORIGINS="https://yourdomain.com,https://www.yourdomain.com"
+PORT="3000"
 CRON_SECRET="cron-secret-for-vercel"
 ```
 
@@ -39,15 +37,16 @@ Get your Neon PostgreSQL connection string:
 1. Create project on [Neon Console](https://console.neon.tech)
 2. Copy connection string: `postgresql://[user]:[password]@[host]/[dbname]`
 3. Set as `DATABASE_URL`
+4. Provision the owner account in PostgreSQL `users` after migrations, using `email`, `password_hash`, and `is_owner`
 
 ## preqstation-skill
 
-Agent-side variables for shell-helper mode and the legacy local stdio bridge. The recommended remote `/mcp` setup for Claude Code and Codex uses OAuth and does not require exporting these variables just to register the server.
+Agent-side variables for shell-helper compatibility. The recommended remote `/mcp` setup for Claude Code, Codex, and Gemini CLI uses OAuth and does not require these variables.
 
 | Variable | Required | Default | Purpose |
 |----------|----------|---------|---------|
 | `PREQSTATION_API_URL` | Yes | — | PREQSTATION web app API base URL (e.g., `https://mypreqstation.vercel.app`) |
-| `PREQSTATION_TOKEN` | Yes | — | Bearer token (format: `preq_` prefix, from `/api-keys` page) |
+| `PREQSTATION_TOKEN` | Yes | — | Existing legacy bearer token (format: `preq_` prefix) for shell-helper compatibility |
 | `PREQSTATION_ENGINE` | No | `codex` | Fallback engine when client auto-detection unavailable |
 
 ### Setup Example
@@ -61,11 +60,7 @@ export PREQSTATION_ENGINE="claude-code"  # optional
 
 ### Getting a Token
 
-1. Deploy the PREQSTATION web app
-2. Log into web UI
-3. Go to Settings → API Keys
-4. Click "New Token"
-5. Copy the generated token (starts with `preq_`)
+Prefer `/mcp` OAuth for new installs. If you still need shell-helper compatibility, keep using an existing legacy bearer token from your deployment. The value should start with `preq_`.
 
 ### Engine Values
 
@@ -116,24 +111,32 @@ export OPENCLAW_WORKTREE_ROOT="/workspace/openclaw-worktrees"
 npx skills add sonim1/preqstation-skill -g -a claude-code
 # or:
 npx skills add sonim1/preqstation-skill -g -a codex
+# or:
+npx skills add sonim1/preqstation-skill -g -a gemini-cli
 
 # 2. Register the remote MCP endpoint
 claude mcp add --transport http preqstation https://your-hosted-domain.vercel.app/mcp
 # or:
 codex mcp add preqstation --url https://your-hosted-domain.vercel.app/mcp
+# or:
+gemini mcp add --scope user --transport http preqstation https://your-hosted-domain.vercel.app/mcp
 
-# 3. If you need shell-helper mode, set token-based vars
+# 3. Provision the owner account in PostgreSQL `users`
+
+# 4. If you need shell-helper compatibility, set token-based vars
 export PREQSTATION_API_URL="https://your-hosted-domain.vercel.app"
-export PREQSTATION_TOKEN="preq_xxxxx"  # from /api-keys page
+export PREQSTATION_TOKEN="preq_xxxxx"  # existing legacy token
 export PREQSTATION_ENGINE="claude-code"
 
-# 4. Set preqstation-openclaw variables (optional)
+# 5. Set preqstation-openclaw variables (optional)
 export OPENCLAW_WORKTREE_ROOT="$HOME/openclaw-worktrees"
 
-# 5. Verify MCP registration
+# 6. Verify MCP registration
 claude mcp get preqstation
 # or:
 codex mcp get preqstation
+# or:
+gemini mcp list
 ```
 </TabItem>
 <TabItem label="CI/CD Pipeline">
@@ -156,9 +159,9 @@ FROM node:22-alpine
 
 # PREQSTATION web app
 ENV AUTH_SECRET=your-secret
-ENV OWNER_EMAIL=you@example.com
-ENV OWNER_PASSWORD=secure
 ENV DATABASE_URL=postgresql://...
+ENV ALLOWED_ORIGINS=https://your-domain.vercel.app
+ENV PORT=3000
 
 # preqstation-skill
 ENV PREQSTATION_API_URL=https://your-domain.vercel.app
@@ -178,14 +181,14 @@ RUN npx skills add sonim1/preqstation-skill -g -a codex
 
 | Layer | Variables | Scope |
 |-------|-----------|-------|
-| **Web Service** | `AUTH_SECRET`, `OWNER_EMAIL`, `OWNER_PASSWORD`, `DATABASE_URL`, `ALLOWED_ORIGINS`, `CRON_SECRET` | Server-side only, set during deployment |
-| **Shell Helper / Legacy Bridge** | `PREQSTATION_API_URL`, `PREQSTATION_TOKEN`, `PREQSTATION_ENGINE` | Available to the token-based shell helper flow and legacy local MCP bridge |
+| **Web Service** | `AUTH_SECRET`, `DATABASE_URL`, `ALLOWED_ORIGINS`, `PORT`, `CRON_SECRET` | Server-side only, set during deployment |
+| **Shell Helper Compatibility** | `PREQSTATION_API_URL`, `PREQSTATION_TOKEN`, `PREQSTATION_ENGINE` | Available to the token-based shell helper flow |
 | **Execution** | `OPENCLAW_WORKTREE_ROOT` | Affects where worktrees are created during task execution |
 
 ## Secrets Best Practices
 
 1. **Never commit secrets** — Use `.env.local` (git-ignored)
 2. **Use secret managers** — GitHub Secrets, Vercel Env, HashiCorp Vault
-3. **Rotate tokens regularly** — Revoke old tokens from `/api-keys` page
+3. **Rotate tokens regularly** — Revoke and replace old legacy tokens through your deployment's compatibility flow
 4. **Scope tokens narrowly** — Use separate tokens per environment
 5. **Monitor token usage** — Check audit logs for suspicious activity

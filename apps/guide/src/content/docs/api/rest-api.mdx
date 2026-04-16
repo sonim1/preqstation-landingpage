@@ -18,7 +18,7 @@ https://your-domain.com/api
 
 ## Authentication
 
-- **Bearer token**: `Authorization: Bearer <preq_xxxxx>` for agent-facing task APIs
+- **Bearer token**: `Authorization: Bearer <preq_xxxxx>` for agent-facing task, project, and QA APIs
 - **Session cookie**: used by the web UI after login
 
 See [Authentication](/guide/api/authentication) for setup details.
@@ -38,11 +38,18 @@ These are the endpoints agents use during PREQ execution.
 | `DELETE` | `/tasks/:id` | Delete a task |
 | `PATCH` | `/tasks/:id/status` | Update workflow status only |
 
-### Project Settings
+### Projects
 
 | Method | Endpoint | Purpose |
 |---|---|---|
+| `GET` | `/projects` | List projects |
 | `GET` | `/projects/:id/settings` | Fetch resolved project settings by project key |
+
+### QA Runs
+
+| Method | Endpoint | Purpose |
+|---|---|---|
+| `PATCH` | `/qa-runs/:id` | Update QA run status, report, target URL, or summary |
 
 ### Health
 
@@ -64,6 +71,10 @@ Query parameters:
 - `status`: `inbox`, `todo`, `hold`, `ready`, `done`, `archived`
 - `engine`: `claude-code`, `codex`, `gemini-cli`
 - `label`: label name
+- `run_state`: `queued` or `running`
+- `dispatch_target`: `telegram` or another web-app-managed internal value
+
+`run_state` uses the internal state vocabulary. The API response serializes the active state as `working`, so use `run_state=running` when filtering even though the returned payload says `run_state: "working"`.
 
 Response shape:
 
@@ -77,7 +88,7 @@ Response shape:
       "status": "todo",
       "priority": "high",
       "engine": "claude-code",
-      "dispatch_target": "claude-code-channel",
+      "dispatch_target": "telegram",
       "run_state": "working",
       "run_state_updated_at": "2026-03-12T14:10:00.000Z"
     }
@@ -195,7 +206,7 @@ Common mutable fields:
 - `engine`
 - `result`
 
-`dispatch_target` is returned in task payloads but is not a normal agent-written field. The web app currently manages it through dispatch actions, with values `claude-code-channel`, `telegram`, or `null`.
+`dispatch_target` is returned in task payloads but is not a normal agent-written field. The web app manages it through dispatch actions. The main documented end-user value is `telegram`; some deployments may also return internal values that are not part of the current public setup guide.
 
 ### PATCH /tasks/:id/status
 
@@ -210,6 +221,28 @@ curl -X PATCH \
 ```
 
 Allowed values: `inbox`, `todo`, `hold`, `ready`, `done`, `archived`
+
+### GET /projects
+
+```bash
+curl -H "Authorization: Bearer preq_xxxxx" \
+  https://your-domain.com/api/projects
+```
+
+Response shape:
+
+```json
+{
+  "projects": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "projectKey": "PROJ",
+      "name": "My Project",
+      "repoUrl": "https://github.com/acme/my-app"
+    }
+  ]
+}
+```
 
 ### GET /projects/:id/settings
 
@@ -233,6 +266,36 @@ Response shape:
   }
 }
 ```
+
+### PATCH /qa-runs/:id
+
+Use this endpoint to update a QA run in the Ready-lane history.
+
+```bash
+curl -X PATCH \
+  -H "Authorization: Bearer preq_xxxxx" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "status": "running",
+    "target_url": "https://preview.example.com",
+    "summary": {
+      "total": 12,
+      "critical": 0,
+      "high": 1,
+      "medium": 2,
+      "low": 9
+    },
+    "report_markdown": "## QA report\nAll critical checks passed."
+  }' \
+  https://your-domain.com/api/qa-runs/550e8400-e29b-41d4-a716-446655440000
+```
+
+Allowed values:
+
+- `status`: `running`, `passed`, `failed`
+- `target_url`: preview or deployed URL
+- `report_markdown`: markdown QA report body
+- `summary`: `{ total, critical, high, medium, low }`
 
 ## Session-Cookie Endpoints
 
@@ -258,7 +321,6 @@ These endpoints are used by the PREQSTATION web app.
 
 | Method | Endpoint | Purpose |
 |---|---|---|
-| `POST` | `/dispatch/claude-code` | Queue `dispatch_target=claude-code-channel` |
 | `POST` | `/telegram/send` | Send Telegram message and queue `dispatch_target=telegram` |
 
 ### Todos and Labels
@@ -292,7 +354,6 @@ These endpoints are used by the PREQSTATION web app.
 | Method | Endpoint | Purpose |
 |---|---|---|
 | `GET` | `/settings` | Read settings page data |
-| `POST` | `/dispatch/claude-code` | Queue Claude Code dispatch |
 | `POST` | `/telegram/send` | Send Telegram message |
 | `POST` | `/telegram/test` | Send Telegram test message |
 | `POST` | `/send-to-openclaw` | Legacy OpenClaw relay |

@@ -35,14 +35,14 @@ Then edit `.env.local`:
 ```bash
 # Required
 AUTH_SECRET=<generate with: openssl rand -base64 48>
-OWNER_EMAIL=your-email@example.com
-OWNER_PASSWORD=<your-password>
 DATABASE_URL=postgresql://...  # Your Neon connection string
 
 # Optional
 PORT=3000
 ALLOWED_ORIGINS=http://localhost:3000
 ```
+
+Owner credentials are not read from environment variables. After migrations, provision the owner row in PostgreSQL `users` instead. See [Web App Setup](/guide/web-app/setup) for the SQL steps.
 
 ### 3. Install Dependencies
 
@@ -56,23 +56,26 @@ npm install
 npm run db:migrate
 ```
 
-### 5. Start the Development Server
+### 5. Provision the Owner User
+
+Create or update the owner account in PostgreSQL after the migrations are applied. See [Web App Setup](/guide/web-app/setup) for the SQL example.
+
+### 6. Start the Development Server
 
 ```bash
 npm run dev
 ```
 
-The app runs at `http://localhost:3000`. If you open `/` while signed out, PREQSTATION redirects you to `/login`. Sign in with the email and password you set in `.env.local`.
+The app runs at `http://localhost:3000`. If you open `/` while signed out, PREQSTATION redirects you to `/login`. Sign in with the owner email and password stored in PostgreSQL.
 
-## Issue Your First API Key
+## Connect an Agent
 
-1. Log in, then open `http://localhost:3000/api-keys`. You can also reach the same page from the workspace sidebar by clicking **API Keys**.
-2. In the **Create API Key** form, keep the default expiration or choose one from **Expires In**.
-3. Enter a name such as `local-dev` or `codex-laptop`, then click **Create Key**.
-4. Copy the token from the green **New API key (shown once)** panel immediately. The value starts with `preq_` and the remaining characters use URL-safe letters, numbers, `_`, and `-`, for example `preq_abc123...`.
-5. Save it into your local agent environment before you close the page, because PREQSTATION only shows the full token once.
+1. Log in, then open `/connections`.
+2. Register the remote PREQSTATION `/mcp` endpoint in Claude Code, Codex, or Gemini CLI and complete the browser OAuth flow.
+3. Review connected clients, last-used time, and expiry in `/connections`.
+4. If you need shell-helper compatibility, `/api-keys` redirects to `/connections?legacy=1`.
 
-Use the token with the app URL in your agent runtime:
+Use bearer tokens only for shell-helper compatibility or direct REST automation:
 
 ```bash
 export PREQSTATION_API_URL=http://localhost:3000
@@ -86,17 +89,15 @@ After that, continue with the setup for your agent client or MCP integration.
 Workers and dispatchers are separate in PREQSTATION.
 
 1. Start with [Worker Installation](/guide/skill/installation)
-2. Then choose one optional dispatcher path:
-   - [Claude Code Dispatch Installation](/guide/claude-dispatch/installation) if you want `Send to Claude Code` without OpenClaw
-   - [OpenClaw Installation](/guide/openclaw/setup) if you want `Send to Telegram` or copied Telegram/OpenClaw commands
+2. Add [OpenClaw Installation](/guide/openclaw/setup) if you want `Send to Telegram`, copied Telegram/OpenClaw commands, or queued QA dispatch
 3. If you do not need queued dispatch from the web app, stop after worker setup
 
 ## Next Steps
 
 - [Web App Setup](/guide/web-app/setup) — Full local setup and first-login details
+- [Authentication](/guide/api/authentication) — OAuth MCP, session cookies, and legacy tokens
 - [Kanban Board Guide](/guide/web-app/kanban) — Learn task management
 - [Concepts](/guide/getting-started/concepts) — Understand the kitchen metaphor
-- [API Keys](/guide/web-app/api-keys) — Manage agent tokens
+- [API Keys](/guide/web-app/api-keys) — Legacy token compatibility and redirects
 - [Worker Installation](/guide/skill/installation) — Claude, Codex, and Gemini worker setup
-- [Claude Code Dispatch Installation](/guide/claude-dispatch/installation) — queued dispatch without OpenClaw
 - [OpenClaw Installation](/guide/openclaw/setup) — Telegram/OpenClaw dispatcher setup

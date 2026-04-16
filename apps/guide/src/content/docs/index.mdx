@@ -18,19 +18,17 @@ hero:
 
 PREQSTATION is an execution system for developers using Claude, Codex, and Gemini in real projects.
 
-It consists of the core web app, a worker package, and two dispatcher paths:
+It consists of the core web app, a worker package, and an optional OpenClaw dispatcher path:
 
 - **PREQSTATION web app** — Central web app with the Kanban board, REST API, dispatch action UI, Telegram delivery, and execution overlays
-- **preqstation-skill** — Agent-side package for worker MCP access
-- **Claude Code Dispatch** — Local Claude-hosted dispatcher channel used by the web app's `Send to Claude Code` action
-- **preqstation-openclaw** — OpenClaw dispatcher path for Telegram or direct runtime messages, still responsible for worktree-based launch on that path
+- **preqstation-skill** — Agent-side package for worker MCP access across Claude Code, Codex, and Gemini CLI
+- **preqstation-openclaw** — Optional OpenClaw dispatcher path for Telegram or copied runtime messages, still responsible for worktree-based launch on that path
 
-Users choose a **dispatcher target** in the web app, and that choice is separate from the task's **engine**. The dispatcher decides who picks the task up. The engine still decides whether the run launches `claude-code`, `codex`, or `gemini-cli`.
+The task **engine** decides whether the run launches `claude-code`, `codex`, or `gemini-cli`. Any queued dispatcher path is separate from that engine choice.
 
 For setup:
 
 - Start with [Worker Installation](/guide/skill/installation)
-- Add [Claude Code Dispatch Installation](/guide/claude-dispatch/installation) if you want queued dispatch without OpenClaw
 - Add [OpenClaw Installation](/guide/openclaw/setup) if you want Telegram/OpenClaw delivery
 
 Use it when a task is already scoped and you want reliable execution, not when you need a generic issue backlog.

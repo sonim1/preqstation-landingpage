@@ -1,20 +1,21 @@
 ---
 title: Telegram Integration
-description: Connect Telegram for explicit sends and the OpenClaw dispatcher path.
+description: Connect Telegram for explicit sends, the OpenClaw dispatcher path, and QA run queueing.
 ---
 
 import { Aside } from '@astrojs/starlight/components';
 
-Telegram is optional in PREQSTATION. The current app uses it for explicit `Send to Telegram` actions and the OpenClaw dispatcher path, not as a full automatic notification bus for every task event.
+Telegram is optional for general task work, but it is required for Ready-lane QA run queueing. The current documented setup uses it for explicit `Send to Telegram` actions, the OpenClaw dispatcher path, and the QA queue command rather than as a full automatic notification bus for every task event.
 
 ## Dispatcher Choice in the UI
 
-The web app currently exposes two dispatch actions:
+The current guide documents the Telegram/OpenClaw dispatch action:
 
-- **Send to Claude Code** -> queues `dispatch_target=claude-code-channel`
 - **Send to Telegram** -> queues `dispatch_target=telegram`
 
-The dispatcher target is separate from the task `engine`. Both paths can still launch `claude-code`, `codex`, or `gemini-cli` if that runtime is installed on the dispatcher machine.
+Ready-lane QA queueing also goes through Telegram, so QA runs cannot be queued until Telegram is configured.
+
+The dispatcher target is separate from the task `engine`. The OpenClaw path can still launch `claude-code`, `codex`, or `gemini-cli` if that runtime is installed on the dispatcher machine.
 
 ## Setup
 
@@ -38,7 +39,7 @@ The test message reveals the chat ID that PREQSTATION will use for outgoing mess
 
 ## Token Security
 
-Telegram bot tokens are encrypted at rest using AES-GCM with a key derived from `AUTH_SECRET`.
+Telegram bot tokens are encrypted at rest in `user_settings` using AES-GCM with a key derived from `AUTH_SECRET`.
 
 Stored format:
 
@@ -54,14 +55,9 @@ Telegram is best treated as a delivery channel for:
 - copied Telegram/OpenClaw commands
 - OpenClaw relay messages
 
-## Claude Code dispatch does not require Telegram
-
-The PREQSTATION web app also supports a separate **Send to Claude Code** path. That route queues `dispatch_target=claude-code-channel` and is handled by the local Claude dispatcher runtime in `preqstation-skill`.
-
-Use Telegram only when you want the OpenClaw dispatcher path.
+Use Telegram when you want the OpenClaw dispatcher path or Ready-lane QA queueing.
 
 - For the Telegram/OpenClaw path, continue with [OpenClaw Installation](/guide/openclaw/setup)
-- For the non-Telegram path, continue with [Claude Code Dispatch Installation](/guide/claude-dispatch/installation)
 
 ### Disable notifications
 

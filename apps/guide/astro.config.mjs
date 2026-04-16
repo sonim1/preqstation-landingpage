@@ -150,21 +150,6 @@ export default defineConfig({
           ],
         },
         {
-          label: 'Claude Code Dispatch',
-          translations: {
-            ko: 'Claude Code Dispatch',
-          },
-          items: [
-            {
-              label: 'Installation',
-              translations: {
-                ko: '설치',
-              },
-              slug: 'claude-dispatch/installation',
-            },
-          ],
-        },
-        {
           label: 'OpenClaw',
           translations: {
             ko: 'OpenClaw',

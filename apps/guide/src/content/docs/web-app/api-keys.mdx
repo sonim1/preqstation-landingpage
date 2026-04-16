@@ -1,9 +1,11 @@
 ---
 title: API Keys
-description: Issue and manage Bearer tokens for agent authentication.
+description: Legacy Bearer tokens for shell-helper compatibility.
 ---
 
-API tokens allow coding agents to authenticate to the PREQSTATION REST API and perform task operations.
+Remote `/mcp` plus browser OAuth is the default install path for Claude Code and Codex. This page is the legacy compatibility path for shell-helper mode and direct REST automation. Visiting `/api-keys` redirects to `/connections?legacy=1`.
+
+API tokens allow coding agents to authenticate to the PREQSTATION REST API and perform task operations without OAuth.
 
 ## Token Format
 
@@ -12,18 +14,15 @@ API tokens allow coding agents to authenticate to the PREQSTATION REST API and p
 - **Length**: 32 random characters
 - **Example**: `preq_a7f3c9e2b1d4f6a8c0e2b4d6f8a0c2e4`
 
-## Issuing a Token
+## Current Status
 
-1. Navigate to **Settings > API Keys**
-2. Click **+ New Token**
-3. Enter a descriptive name (e.g., `local-dev`, `claude-code-prod`, `codex-testing`)
-4. (Optional) Set an expiration date
-5. Click **Create**
-6. Copy the token immediately (shown only once)
+Legacy API keys remain available only as a compatibility path. The current web app redirects `/api-keys` to `/connections?legacy=1` to point new installs back toward OAuth-backed MCP.
+
+Use a bearer token only when you already maintain a shell-helper or direct REST setup that still depends on it.
 
 ## Using a Token
 
-The recommended Claude Code and Codex MCP setup now uses the remote PREQSTATION endpoint at `/mcp` and browser OAuth.
+Use tokens when your client needs shell-helper compatibility or direct REST access.
 
 ### Recommended Remote MCP Setup
 
@@ -37,38 +36,22 @@ codex mcp add preqstation --url https://your-domain.com/mcp
 
 OAuth usually starts on the first real request. Codex often triggers it during `add`, while Claude Code commonly starts it when you first use the server or run `claude mcp get preqstation`.
 
-### Token-Based Shell Helper or Legacy Local Bridge
+### Token-Based Shell Helper
 
-Use API tokens when you need shell-helper mode or the legacy local stdio bridge. Configure your environment like this:
+Configure your environment like this:
 
 ```bash
 export PREQSTATION_API_URL=https://your-domain.com
 export PREQSTATION_TOKEN=preq_xxxxxxxxxxxxx
 ```
 
-If you must use the legacy local bridge, the MCP configuration looks like this:
-
-```json
-{
-  "mcpServers": {
-    "preqstation": {
-      "command": "node",
-      "args": ["/ABSOLUTE/PATH/TO/preqstation-skill/scripts/preqstation-mcp-server.mjs"],
-      "env": {
-        "PREQSTATION_API_URL": "https://your-domain.com",
-        "PREQSTATION_TOKEN": "preq_xxxxxxxxxxxxx"
-      }
-    }
-  }
-}
-```
+If you are using the shell helper, the PREQSTATION service still needs a remote URL and token.
 
 ## Revoking a Token
 
-1. Navigate to **Settings > API Keys**
-2. Find the token you want to revoke
-3. Click the **Delete** icon
-4. Confirm
+1. Open the legacy token management flow provided by your deployment
+2. Revoke the token you no longer want to trust
+3. Update any shell-helper or direct REST runtime that still references it
 
 Revoked tokens are immediately invalid. Any agent using a revoked token will receive `401 Unauthorized`.
 

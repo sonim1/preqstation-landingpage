@@ -3,24 +3,78 @@ title: Installation
 description: Install preqstation-skill and connect Claude, Codex, or Gemini as PREQSTATION workers.
 ---
 
-import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+import { Tabs, TabItem } from '@astrojs/starlight/components';
 
-`preqstation-skill` is the core agent-side package for PREQSTATION. It owns the `preqstation` skill name, documents the lifecycle rules, and includes optional shell-helper and legacy stdio bridge support.
+`preqstation-skill` is the core agent-side package for PREQSTATION. It owns the `preqstation` skill name, documents the lifecycle rules, and includes optional shell-helper fallback.
+
+For Claude Code, the plugin install is now the default path. Install the standalone `preqstation` skill only when you explicitly want worker-only mode without plugin helpers.
 
 ## Prerequisites
 
-- Node.js 22+ installed
+- Node.js 18+ installed
 - A running PREQSTATION deployment at `https://<your-domain>`
 - Access to the PREQSTATION web app if you want to use the recommended remote MCP login flow
-- A PREQSTATION API token only if you plan to use shell-helper mode or the legacy local stdio bridge
+- A PREQSTATION API token only if you plan to use shell-helper mode
+
+## Project Path Mapping
+
+`/preqstation:setup` is the path-mapping entrypoint for Claude plugin and worker setups.
+
+It:
+
+- discovers PREQ projects with `preq_list_projects` when the MCP server supports it
+- writes canonical local mappings to `~/.preqstation-dispatch/projects.json`
+- falls back to `PREQSTATION_REPO_ROOTS` when auto-scan needs help finding local repositories
+- accepts manual absolute paths when automatic discovery cannot match a project
+
+The mapping file uses this shape:
+
+```json
+{
+  "projects": {
+    "PROJ": "/absolute/path/to/repo"
+  }
+}
+```
 
 ## Install Skill (Recommended Per Agent)
 
-Install the skill only for the agents that should own the core `preqstation` skill:
+### Claude Code
 
+<Tabs>
+<TabItem label="Plugin install (default)">
+```bash
+claude plugin marketplace add https://github.com/sonim1/preqstation-skill
+claude plugin install preqstation@preqstation
+claude plugin list
+```
+
+After install, run:
+
+```text
+/preqstation:setup
+```
+
+This configures the local project mapping file and keeps the plugin helpers on the same repo paths as your worker checkout.
+</TabItem>
+<TabItem label="Worker-only mode">
 ```bash
 npx skills add sonim1/preqstation-skill -g -a claude-code
+```
+
+Use this only if you intentionally want the core worker skill without the Claude plugin helpers.
+</TabItem>
+</Tabs>
+
+### Codex
+
+```bash
 npx skills add sonim1/preqstation-skill -g -a codex
+```
+
+### Gemini CLI
+
+```bash
 npx skills add sonim1/preqstation-skill -g -a gemini-cli
 ```
 
@@ -38,14 +92,13 @@ gemini-cli
 
 This page is only for **worker setup**.
 
-If you also want queued dispatch from the web app, choose one dispatcher path separately:
-
-- [Claude Code Dispatch Installation](/guide/claude-dispatch/installation) — local Claude-hosted dispatcher channel, no OpenClaw required
-- [OpenClaw Installation](/guide/openclaw/setup) — Telegram/OpenClaw dispatcher path with worktree-based routing
+If you also want queued dispatch from the web app, use [OpenClaw Installation](/guide/openclaw/setup) for the Telegram/OpenClaw dispatcher path.
 
 ## Recommended MCP Setup (HTTP + OAuth)
 
-The recommended MCP runtime now lives in the PREQSTATION service itself at `/mcp`. Claude Code and Codex should connect to that remote endpoint and complete the browser OAuth flow when prompted.
+The recommended MCP runtime now lives in the PREQSTATION service itself at `/mcp`. Claude Code, Codex, and Gemini CLI should connect to that remote endpoint and complete the browser OAuth flow when prompted.
+
+For Claude Code plugin and worker setups, run `/preqstation:setup` after registering `/mcp`. If the installer cannot auto-discover a repo, set `PREQSTATION_REPO_ROOTS` or provide the absolute path manually.
 
 ## Claude Code
 
@@ -101,11 +154,12 @@ codex mcp get preqstation
 </TabItem>
 </Tabs>
 
-Codex does not need a Claude-style local plugin or channel runtime for normal worker usage. If you later use [Claude Code Dispatch](/guide/claude-dispatch/installation), keep Codex installed on that dispatcher machine and select `Codex` as the task engine in the UI.
+Codex does not use the Claude plugin surface. Keep it on the worker + remote MCP path.
 
 ## When Authentication Starts
 
 - Codex often probes the server during `add`, so the browser login flow may start immediately.
+- Gemini CLI may also prompt during `mcp add` or on the first real tool call, depending on the installed CLI build.
 - Claude Code usually saves the server first and may show `Needs authentication` until first use.
 - In Claude Code, authentication commonly starts when you first use the server or run `claude mcp get preqstation`.
 
@@ -115,11 +169,35 @@ Codex does not need a Claude-style local plugin or channel runtime for normal wo
 - **Dispatcher setup** means the web app can queue a task to another runtime.
 - **Engine** still remains separate and can be `claude-code`, `codex`, or `gemini-cli`.
 
-If you only want direct worker usage, this page is enough.
+If you only want direct worker usage, this page is enough. If you want queued dispatch from the web app, continue with [OpenClaw Installation](/guide/openclaw/setup).
 
 ## Gemini CLI
 
-Gemini CLI does not use the documented remote MCP registration flow here. Install the `preqstation` skill for `gemini-cli`, then use shell-helper mode if you need direct REST access. If you later use Claude Code Dispatch or OpenClaw dispatch, make sure `gemini` is also installed on that dispatcher machine:
+Gemini CLI uses the same worker + remote MCP path when the local Gemini CLI supports remote HTTP MCP.
+
+Register the remote PREQSTATION MCP endpoint:
+
+<Tabs>
+<TabItem label="Install">
+```bash
+gemini mcp add --scope user --transport http preqstation https://<your-domain>/mcp
+```
+</TabItem>
+<TabItem label="Verify">
+```bash
+gemini mcp list
+```
+</TabItem>
+<TabItem label="Run">
+```bash
+gemini
+# or
+gemini -p "Read and execute the PREQSTATION task instructions from this workspace."
+```
+</TabItem>
+</Tabs>
+
+If your installed Gemini CLI does not expose remote HTTP MCP, use shell-helper fallback instead:
 
 ```bash
 export PREQSTATION_API_URL="https://your-preqstation-domain.vercel.app"
@@ -127,9 +205,9 @@ export PREQSTATION_TOKEN="preq_xxxxxxxxxxxxxxxxx"
 export PREQSTATION_ENGINE="gemini-cli"  # optional fallback
 ```
 
-## Shell Helper or Legacy Local Bridge (Optional)
+## Shell Helper Fallback (Optional)
 
-If MCP is unavailable, you can still use the shell helper or the legacy local stdio bridge.
+If MCP is unavailable, you can still use the shell helper.
 
 Set these variables first:
 
@@ -139,45 +217,17 @@ export PREQSTATION_TOKEN="preq_xxxxxxxxxxxxxxxxx"
 export PREQSTATION_ENGINE="claude-code"  # or codex, gemini-cli
 ```
 
-## JSON Configuration Example
-
-If you must manually configure the legacy local stdio bridge in settings:
-
-```json
-{
-  "mcpServers": {
-    "preqstation": {
-      "command": "node",
-      "args": ["/ABSOLUTE/PATH/TO/preqstation-skill/scripts/preqstation-mcp-server.mjs"],
-      "env": {
-        "PREQSTATION_API_URL": "https://your-preqstation-domain.vercel.app",
-        "PREQSTATION_TOKEN": "preq_xxxxxxxxxxxxxxxxx"
-      }
-    }
-  }
-}
-```
-
-<Aside>
-Replace `/ABSOLUTE/PATH/TO/preqstation-skill` with the actual installation path. Relative paths will not work. The recommended remote `/mcp` setup above does not need a local script path.
-</Aside>
-
 ## Troubleshooting
 
 **Remote MCP shows `Needs authentication`:**
 - Confirm the server URL ends with `/mcp`
-- Run `claude mcp get preqstation` or `codex mcp get preqstation` to trigger the first real connection
+- Run `claude mcp get preqstation`, `codex mcp get preqstation`, or `gemini mcp list` to trigger or verify the first real connection
 - Complete the browser login flow when prompted
 
-**Legacy local bridge fails to start:**
-- Verify Node.js is installed: `node --version`
-- Check the script path is absolute
-- Confirm `PREQSTATION_API_URL` is valid (should start with `https://`)
-
-**Shell helper or legacy bridge returns `401 Unauthorized`:**
+**Shell helper returns `401 Unauthorized`:**
 - Verify token format (should start with `preq_`)
 - Test connectivity: `curl -H "Authorization: Bearer $PREQSTATION_TOKEN" "$PREQSTATION_API_URL/api/health"`
 
 **Token rejected:**
-- Generate a new token from the PREQSTATION web app `/api-keys` page
+- Generate a new token from the legacy token flow at `/connections?legacy=1`
 - Ensure token has not expired

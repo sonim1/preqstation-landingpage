@@ -10,20 +10,17 @@ PREQSTATION is an execution platform for AI-agent-driven development workflows. 
 
 ## Core Systems and Dispatcher Paths
 
-PREQSTATION separates the queued dispatch target from the task engine:
+PREQSTATION separates any queued dispatcher path from the task engine:
 
 <CardGrid>
 	<Card title="PREQSTATION Web App" icon="setting">
-		Central web app. Manages tasks, renders the Kanban UI, exposes the REST API, and lets the user choose between `Send to Claude Code` and `Send to Telegram`.
+		Central web app. Manages tasks, renders the Kanban UI, exposes the REST API, and lets the user choose the task engine plus any optional Telegram/OpenClaw dispatch action.
 	</Card>
 	<Card title="preqstation-openclaw" icon="rocket">
 		OpenClaw dispatcher path. OpenClaw imports it to resolve projects, create worktrees, and launch coding agents from Telegram or direct runtime messages.
 	</Card>
 	<Card title="preqstation-skill" icon="approve">
-		Agent client. MCP access and shell helpers for workers.
-	</Card>
-	<Card title="Claude Code Dispatch" icon="approve">
-		Local Claude-hosted dispatcher channel. Consumes `dispatch_target=claude-code-channel` without requiring OpenClaw or Telegram.
+		Agent client. MCP access and shell helpers for Claude Code, Codex, and Gemini workers.
 	</Card>
 </CardGrid>
 
@@ -63,16 +60,15 @@ flowchart LR
 User creates task in the Kanban UI
   -> PREQSTATION stores it in PostgreSQL
   -> user optionally chooses a dispatch target
-  -> PREQ queues either Claude Code dispatcher or Telegram/OpenClaw relay
+  -> PREQ queues Telegram/OpenClaw relay only when that path is needed
 ```
 
 ### Dispatcher Target vs Engine
 
-- `dispatch_target=claude-code-channel` means the user chose **Send to Claude Code** in the web app.
 - `dispatch_target=telegram` means the user chose **Send to Telegram** or copied a Telegram/OpenClaw command.
 - `engine=claude-code | codex | gemini-cli` stays separate from the dispatcher target and decides which local CLI actually runs the task.
 
-### Agent Trigger via OpenClaw or Claude Dispatch
+### Agent Trigger via OpenClaw
 
 ```text
 Telegram / OpenClaw path:
@@ -80,18 +76,11 @@ Telegram / OpenClaw path:
     -> OpenClaw resolves project + task + engine
     -> creates an isolated git worktree
     -> launches the requested coding agent
-
-Claude Code dispatcher path:
-  developer queues "Send to Claude Code" in the web app
-    -> PREQ stores run_state=queued with dispatch_target=claude-code-channel
-    -> local Claude dispatcher session emits the task into the dispatcher channel
-    -> dispatcher launches the task engine recorded on the task
 ```
 
 ## Setup Paths
 
 - [Worker Installation](/guide/skill/installation) — install `preqstation-skill` for Claude, Codex, or Gemini workers
-- [Claude Code Dispatch Installation](/guide/claude-dispatch/installation) — queued dispatch without OpenClaw
 - [OpenClaw Installation](/guide/openclaw/setup) — Telegram/OpenClaw dispatcher path
 
 ### Agent Execution and Status Reporting

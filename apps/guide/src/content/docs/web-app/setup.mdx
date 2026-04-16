@@ -20,15 +20,16 @@ Create a `.env.local` file in the project root. Copy from `.env.example` and fil
 | Variable           | Required | Description                                                                  |
 | ------------------ | -------- | ---------------------------------------------------------------------------- |
 | `AUTH_SECRET`      | Yes      | HMAC session signing secret. Generate: `openssl rand -base64 48`              |
-| `OWNER_EMAIL`      | Yes      | The single owner account email                                               |
-| `OWNER_PASSWORD`   | Yes      | Owner login password (min 8 chars)                                           |
 | `DATABASE_URL`     | Yes      | PostgreSQL connection string                                                 |
 | `ALLOWED_ORIGINS`  | No       | Comma-separated CORS origins (e.g., `http://localhost:3000`)                 |
 | `PORT`             | No       | HTTP port (default: 3000)                                                    |
+| `CRON_SECRET`      | No       | Optional secret for cron routes                                              |
 
 <Aside>
 `drizzle-kit` reads `DATABASE_URL` from `.env.local`, so use `.env.local` for local setup before running database commands.
 </Aside>
+
+Owner credentials are not environment variables anymore. After migrations, create or update the owner row in PostgreSQL `users` with `email`, `password_hash`, and `is_owner`.
 
 ## Installation Steps
 
@@ -59,7 +60,35 @@ npm run db:migrate
 
 This applies the checked-in Drizzle migrations to your database.
 
-### 4. Start Development Server
+### 4. Provision the Owner User
+
+Generate a bcrypt hash, then update or insert the owner row.
+
+```bash
+node -e "const bcrypt = require('bcryptjs'); bcrypt.hash(process.argv[1], 10).then(console.log)" 'replace-with-strong-password'
+```
+
+Existing deployment with data already linked to the current owner row:
+
+```sql
+UPDATE users
+SET email = 'you@example.com',
+    password_hash = '$2b$10$replace_me',
+    is_owner = true,
+    updated_at = NOW()
+WHERE is_owner = true;
+```
+
+Fresh database with no owner row yet:
+
+```sql
+INSERT INTO users (email, password_hash, is_owner)
+VALUES ('you@example.com', '$2b$10$replace_me', true);
+```
+
+If you are migrating an existing instance, keep the existing owner row `id` so projects, tasks, API tokens, and work logs stay linked automatically.
+
+### 5. Start Development Server
 
 ```bash
 npm run dev
@@ -70,12 +99,21 @@ The app opens at `http://localhost:3000`. Unauthenticated visits to `/` redirect
 ## First Login
 
 1. Navigate to `http://localhost:3000/login`
-2. Use the email and password from your `.env.local` file
+2. Use the owner email and password stored in PostgreSQL
 3. You are now logged in as the owner
 
 <Aside>
 PREQSTATION is single-owner. All data is scoped to this account at the database level via PostgreSQL RLS.
 </Aside>
+
+## Connect Agents
+
+1. Open `/connections`.
+2. Register the remote PREQSTATION `/mcp` endpoint in Claude Code or Codex.
+3. Complete the browser OAuth flow.
+4. Review connected clients and revoke access from the same page.
+
+If you need shell-helper compatibility, `/api-keys` redirects to `/connections?legacy=1`.
 
 ## Configure Telegram (Optional)
 
@@ -86,16 +124,15 @@ To enable Telegram notifications:
 3. Test the connection
 4. Token is encrypted at rest with AES-GCM
 
-## Configure API Keys
+## Legacy API Keys
 
-Issue tokens for agents to authenticate:
+Use this only for shell-helper compatibility or direct REST automation:
 
-1. Open `/api-keys` after signing in, or click **API Keys** in the workspace sidebar
-2. Use the **Create API Key** form to enter a name and optional expiration
-3. Click **Create Key**
-4. Copy the token from the success panel right away. It starts with `preq_` and is shown only once.
+1. Keep using a legacy bearer token only if your shell-helper or direct REST automation already depends on it
+2. `/api-keys` redirects to `/connections?legacy=1` to signal that this path is compatibility-only
+3. Prefer `/mcp` OAuth plus `/connections` for any new install
 
-Use these tokens in your agent environment or `preqstation-skill` MCP configuration:
+Use these tokens in your agent environment:
 
 ```bash
 export PREQSTATION_API_URL=http://localhost:3000

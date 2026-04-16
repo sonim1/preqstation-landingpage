@@ -8,22 +8,19 @@ import Mermaid from '../../../../components/Mermaid.astro';
 
 PREQSTATION은 AI 에이전트 기반 개발 워크플로우를 위한 실행 플랫폼입니다. 개발자와 코딩 에이전트를 태스크 큐, 웹 앱, 에이전트용 API로 연결합니다.
 
-처음 설정 중이라면 이 페이지보다 [빠른 시작](/guide/ko/getting-started/quick-start)에서 로컬 실행과 첫 API 키 발급을 먼저 끝내는 편이 좋습니다. 전체 설치 항목을 하나씩 확인하려면 [웹 앱 설정](/guide/ko/web-app/setup)을 참고하세요.
+처음 설정 중이라면 이 페이지보다 [빠른 시작](/guide/ko/getting-started/quick-start)에서 로컬 실행과 에이전트 연결을 먼저 끝내는 편이 좋습니다. 전체 설치 항목을 하나씩 확인하려면 [웹 앱 설정](/guide/ko/web-app/setup)을 참고하세요.
 
 ## 핵심 시스템과 dispatcher 경로
 
 <CardGrid>
   <Card title="PREQSTATION 웹 앱" icon="setting">
-    중심 웹 앱입니다. 태스크를 관리하고, 칸반 UI를 렌더링하고, REST API를 노출하고, `Send to Claude Code`와 `Send to Telegram` 중 어떤 dispatch 액션을 쓸지 고르게 합니다.
+    중심 웹 앱입니다. 태스크를 관리하고, 칸반 UI를 렌더링하고, REST API를 노출하고, task engine과 필요 시 Telegram/OpenClaw dispatch 액션을 고르게 합니다.
   </Card>
   <Card title="preqstation-openclaw" icon="rocket">
     OpenClaw dispatcher 경로입니다. OpenClaw가 이 패키지를 불러 프로젝트를 찾고 worktree를 만들고 코딩 에이전트를 실행합니다.
   </Card>
   <Card title="preqstation-skill" icon="approve">
-    에이전트 클라이언트입니다. 코딩 에이전트용 MCP/worker 패키지입니다.
-  </Card>
-  <Card title="Claude Code Dispatch" icon="approve">
-    로컬 Claude-hosted dispatcher channel입니다. OpenClaw나 Telegram 없이 `dispatch_target=claude-code-channel`을 처리합니다.
+    에이전트 클라이언트입니다. Claude Code, Codex, Gemini worker용 MCP/worker 패키지입니다.
   </Card>
 </CardGrid>
 
@@ -63,16 +60,15 @@ flowchart LR
 사용자가 칸반 UI에서 태스크를 생성
   -> PREQSTATION 웹 앱이 PostgreSQL에 저장
   -> 필요하면 dispatch target 선택
-  -> Claude Code dispatcher 또는 Telegram/OpenClaw relay 큐 생성
+  -> 필요할 때만 Telegram/OpenClaw relay 큐 생성
 ```
 
 ### Dispatcher target과 engine의 차이
 
-- `dispatch_target=claude-code-channel`은 웹 앱에서 **Send to Claude Code**를 고른 경우입니다.
 - `dispatch_target=telegram`은 **Send to Telegram**을 누르거나 Telegram/OpenClaw용 명령을 복사한 경우입니다.
 - `engine=claude-code | codex | gemini-cli`는 dispatcher와 별개이며, 실제로 어떤 CLI를 실행할지 정합니다.
 
-### OpenClaw 또는 Claude dispatch를 통한 실행
+### OpenClaw를 통한 실행
 
 ```text
 Telegram / OpenClaw 경로:
@@ -80,18 +76,11 @@ Telegram / OpenClaw 경로:
     -> OpenClaw가 프로젝트 + 태스크 + 엔진 해석
     -> 격리된 git worktree 생성
     -> 요청된 코딩 에이전트 실행
-
-Claude Code dispatcher 경로:
-  개발자가 웹 앱에서 Send to Claude Code 실행
-    -> PREQ가 dispatch_target=claude-code-channel 과 함께 queued 저장
-    -> 로컬 Claude dispatcher session 이 태스크를 channel 로 emit
-    -> dispatcher 가 task.engine 에 맞는 CLI를 실행
 ```
 
 ## 설정 경로
 
 - [워커 설치](/guide/ko/skill/installation) — Claude, Codex, Gemini worker 연결
-- [Claude Code Dispatch 설치](/guide/ko/claude-dispatch/installation) — OpenClaw 없는 queued dispatch
 - [OpenClaw 설치](/guide/ko/openclaw/setup) — Telegram/OpenClaw dispatcher 경로
 
 ### 실행 및 상태 보고

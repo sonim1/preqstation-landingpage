@@ -7,7 +7,7 @@ import { Tabs, TabItem } from '@astrojs/starlight/components';
 
 This guide covers common problems and their solutions. Check your issue below.
 
-## MCP Connection Issues
+## Remote MCP OAuth Issues
 
 ### Remote MCP stays unauthenticated or tools do not appear
 
@@ -37,7 +37,9 @@ codex mcp get preqstation
 
 4. Complete the browser login flow when prompted.
 
-5. If the client still looks stuck, remove and re-add the server:
+5. Open `/connections` to review the install. Revoke stale or expired clients there, then reconnect.
+
+6. If the client still looks stuck, remove and re-add the server:
 ```bash
 claude mcp remove preqstation
 claude mcp add --transport http preqstation https://<your-domain>/mcp
@@ -45,6 +47,12 @@ claude mcp add --transport http preqstation https://<your-domain>/mcp
 codex mcp remove preqstation
 codex mcp add preqstation --url https://<your-domain>/mcp
 ```
+
+### OAuth client is visible but no longer usable
+
+**Symptom:** The connection exists in `/connections`, but calls fail after the expiry or revocation timestamp.
+
+**Fix:** Reconnect the client through the OAuth flow. `/connections` is the page to inspect engine, status, last used time, and expiry before reauthorizing.
 
 ### Legacy local MCP bridge fails to start
 
@@ -93,7 +101,7 @@ echo $PREQSTATION_TOKEN  # Should output: preq_xxxxxxxxx
 ```
 
 2. Verify token is not expired:
-- Go to the PREQSTATION web app → Settings → API Keys
+- Go to the PREQSTATION web app → the legacy API Keys view
 - Check token creation date and expiration
 - Generate a new token if needed
 
@@ -110,15 +118,15 @@ curl -H "Authorization: Bearer $PREQSTATION_TOKEN" \
 # ✅ Good: "https://preqstation-lp.vercel.app"
 ```
 
-## Token & Authentication Issues
+## Legacy Token Issues
 
 ### "Invalid token" error on every MCP call
 
-**Symptom:** Token auth fails even with correct-looking token in shell-helper mode or the legacy local bridge
+**Symptom:** Token auth fails even with correct-looking token in shell-helper mode or the legacy local bridge. This does not apply to OAuth-backed `/mcp` installs.
 
 <Tabs>
 <TabItem label="Cause: Expired Token">
-**Check:** In the PREQSTATION web app, go to Settings → API Keys and check expiration date.
+**Check:** In the PREQSTATION web app, go to the legacy API Keys view and check expiration date.
 
 **Fix:** Generate a new token:
 1. Click "New Token"
@@ -127,7 +135,7 @@ curl -H "Authorization: Bearer $PREQSTATION_TOKEN" \
 4. Re-register MCP server with new token
 </TabItem>
 <TabItem label="Cause: Token Revoked">
-**Check:** List tokens in Settings → API Keys to see if token is still there.
+**Check:** List tokens in the legacy API Keys view to see if token is still there.
 
 **Fix:** Generate a fresh token (old one may have been revoked).
 </TabItem>

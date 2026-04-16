@@ -3,13 +3,27 @@ title: Authentication
 description: Bearer tokens and session authentication.
 ---
 
-import { Aside } from '@astrojs/starlight/components';
+PREQSTATION uses session cookies for the web UI, OAuth-backed MCP connections for Claude Code and Codex, and bearer tokens only for shell-helper compatibility or direct REST automation.
 
-PREQSTATION uses two authentication methods depending on the client type.
+## OAuth-Backed MCP
+
+**For Claude Code and Codex.**
+
+Register the remote `/mcp` endpoint and complete browser OAuth:
+
+```bash
+# Claude Code
+claude mcp add --transport http preqstation https://your-domain.com/mcp
+
+# Codex
+codex mcp add preqstation --url https://your-domain.com/mcp
+```
+
+OAuth usually starts on the first real request. Manage connected clients from `/connections`.
 
 ## Bearer Token Authentication
 
-**For agents and external integrations.**
+**For shell-helper compatibility and direct REST automation.**
 
 ### Token Format
 
@@ -24,13 +38,7 @@ Authorization: Bearer preq_a7f3c9e2b1d4f6a8c0e2b4d6f8a0c2e4
 
 ### Obtaining a Token
 
-1. Log in to PREQSTATION web UI
-2. Navigate to **Settings > API Keys**
-3. Click **+ New Token**
-4. Name it (e.g., `local-dev`, `claude-code-prod`)
-5. Set optional expiration date
-6. Click **Create**
-7. **Copy immediately** (shown only once)
+Legacy bearer tokens are retained for compatibility. Prefer `/mcp` OAuth for new installs, and keep using an existing token only when shell-helper mode or direct REST automation still depends on it.
 
 ### Using a Token
 
@@ -49,7 +57,7 @@ Tokens can have optional expiration dates:
 - **With expiration** — Token invalid after specified date
 - **Expired** — Returns `401 Unauthorized`
 
-Check token expiration in **Settings > API Keys**.
+Check the legacy token state from your deployment's compatibility flow before reusing it.
 
 ## Session Cookie Authentication
 
@@ -78,17 +86,6 @@ Set-Cookie: session=...HMAC-signed...;
 ### Automatic Renewal
 
 Sessions are automatically renewed on each request (up to Max-Age).
-
-## Token vs. Session
-
-| Aspect | Bearer Token | Session Cookie |
-|---|---|---|
-| **Client Type** | Agents, external integrations | Web UI |
-| **Format** | `Authorization: Bearer ...` | HTTP cookie |
-| **Storage** | Application code | Browser storage |
-| **Expiration** | Optional per-token | Session timeout |
-| **Revocation** | Immediate (via UI) | On logout |
-| **Scope** | Full API access | Authenticated user |
 
 ## Error Responses
 
@@ -119,10 +116,6 @@ Token is valid but scoped to different owner (single-owner system):
 ```
 
 ## Best Practices
-
-<Aside type="tip">
-Follow these security practices when working with tokens:
-</Aside>
 
 ### 1. **Never Hardcode Tokens**
 
@@ -158,16 +151,14 @@ export PREQSTATION_TOKEN=preq_xxxxx
 
 ### 5. **Monitor Token Usage**
 
-Check **Settings > Audit Logs** for unexpected API calls.
+Check audit logs for unexpected API calls.
 
 ### 6. **Revoke Immediately if Exposed**
 
 If a token is compromised:
-1. Go to **Settings > API Keys**
+1. Go to the legacy token management flow provided by your deployment
 2. Delete the exposed token
 3. Issue a new one
 4. Update your agents
 
-<Aside>
 Token revocation is immediate. Any agent using a revoked token will receive `401 Unauthorized` on the next API call.
-</Aside>
