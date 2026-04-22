@@ -28,8 +28,8 @@ PREQSTATION separates any queued dispatcher path from the task engine:
 	<Card title="PREQSTATION Web App" icon="setting">
 		Central web app. Manages tasks, renders the Kanban UI, exposes the REST API, and lets the user choose the task engine plus any optional Telegram/OpenClaw dispatch action.
 	</Card>
-	<Card title="preqstation-openclaw" icon="rocket">
-		OpenClaw dispatcher path. OpenClaw imports it to resolve projects, create worktrees, and launch coding agents from Telegram or direct runtime messages.
+	<Card title="preqstation-dispatcher" icon="rocket">
+		OpenClaw-native dispatcher path. OpenClaw uses it to resolve projects, create worktrees, and launch coding agents from Telegram or direct runtime messages. Some runtime identifiers still use `preqstation-openclaw` for compatibility.
 	</Card>
 	<Card title="preqstation-skill" icon="approve">
 		Agent client. MCP access and shell helpers for Claude Code, Codex, and Gemini workers.

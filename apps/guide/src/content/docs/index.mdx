@@ -43,7 +43,7 @@ Choose a dispatcher only if you want queued delivery from the web app.
 
 - **PREQSTATION web app** — Central web app with the Kanban board, REST API, dispatch action UI, Telegram delivery, and execution overlays
 - **preqstation-skill** — Agent-side package for worker MCP access across Claude Code, Codex, and Gemini CLI
-- **preqstation-openclaw** — Optional OpenClaw dispatcher path for Telegram or copied runtime messages, still responsible for worktree-based launch on that path
+- **preqstation-dispatcher** — Optional OpenClaw-native dispatcher path for Telegram or copied runtime messages. Some package/plugin/config identifiers still use `preqstation-openclaw` for compatibility.
 
 The task **engine** decides whether the run launches `claude-code`, `codex`, or `gemini-cli`. Any queued dispatcher path is separate from that engine choice.
 

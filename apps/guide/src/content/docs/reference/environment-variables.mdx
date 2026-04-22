@@ -5,7 +5,7 @@ description: Complete reference of all environment variables for PREQSTATION sys
 
 import { Tabs, TabItem } from '@astrojs/starlight/components';
 
-This reference documents all environment variables used by the PREQSTATION web app, preqstation-skill, and preqstation-openclaw.
+This reference documents all environment variables used by the PREQSTATION web app, preqstation-skill, and preqstation-dispatcher.
 
 ## PREQSTATION web app
 
@@ -79,9 +79,9 @@ export PREQSTATION_ENGINE="claude-code"  # optional
 | `codex` | Codex (OpenAI) |
 | `gemini-cli` | Gemini CLI |
 
-## preqstation-openclaw
+## preqstation-dispatcher
 
-Execution layer variables for OpenClaw skill and worktree management.
+Execution layer variables for the OpenClaw-native dispatcher and worktree management.
 
 | Variable | Required | Default | Purpose |
 |----------|----------|---------|---------|
@@ -135,7 +135,7 @@ export PREQSTATION_API_URL="https://preqstation.example.com"
 export PREQSTATION_TOKEN="preq_xxxxx"  # from /api-keys page
 export PREQSTATION_ENGINE="claude-code"
 
-# 4. Set preqstation-openclaw variables (optional)
+# 4. Set preqstation-dispatcher variables (optional)
 export OPENCLAW_WORKTREE_ROOT="$HOME/openclaw-worktrees"
 
 # 5. Verify MCP registration
@@ -176,7 +176,7 @@ ENV PREQSTATION_API_URL=https://preqstation.example.com
 ENV PREQSTATION_TOKEN=preq_xxxxx
 ENV PREQSTATION_ENGINE=claude-code
 
-# preqstation-openclaw
+# preqstation-dispatcher
 ENV OPENCLAW_WORKTREE_ROOT=/app/worktrees
 
 WORKDIR /app

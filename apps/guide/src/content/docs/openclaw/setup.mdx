@@ -1,11 +1,13 @@
 ---
 title: Installation
-description: Install and configure preqstation-openclaw for the OpenClaw dispatcher path.
+description: Install and configure preqstation-dispatcher for the OpenClaw dispatcher path.
 ---
 
 import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
-`preqstation-openclaw` is a skill package for OpenClaw runtimes. It does not ship Telegram or webhook infrastructure by itself; the runtime imports this repo to resolve projects, create worktrees, and launch coding agents.
+`preqstation-dispatcher` is the durable public dispatcher repo for OpenClaw runtimes. It does not ship Telegram or webhook infrastructure by itself; the runtime imports this repo to resolve projects, create worktrees, and launch coding agents.
+
+Some package, plugin, and config identifiers still use `preqstation-openclaw` for compatibility. Treat that as a technical legacy identifier, not the preferred public repo name.
 
 Use this page when you want the **OpenClaw dispatcher** path.
 
@@ -21,7 +23,7 @@ Use OpenClaw when you want:
 Repository URL:
 
 ```text
-https://github.com/sonim1/preqstation-openclaw
+https://github.com/sonim1/preqstation-dispatcher
 ```
 
 <Tabs>
@@ -40,9 +42,9 @@ https://github.com/sonim1/preqstation-openclaw
 
 ## Project Path Mapping
 
-Real project mappings live in **OpenClaw agent memory**, not in this repository.
+Real project mappings can come from an explicit path in the dispatch message, saved plugin config, the shared `~/.preqstation-dispatch/projects.json` file, or fallback `MEMORY.md`.
 
-`/Users/kendrick/projects/preqstation-openclaw/MEMORY.md` is only a sample schema reference.
+`/Users/kendrick/projects/preqstation-dispatcher/MEMORY.md` is only a sample fallback schema reference.
 
 Use short lowercase keys that map to absolute checkout paths, for example:
 
@@ -56,9 +58,9 @@ Use short lowercase keys that map to absolute checkout paths, for example:
 Resolution order:
 
 1. Absolute path mentioned directly in the message
-2. Project key from OpenClaw agent memory
-3. Task prefix key match from OpenClaw agent memory
-4. Ask the user for an absolute path, then save it to agent memory
+2. Saved plugin mapping
+3. Shared `~/.preqstation-dispatch/projects.json`
+4. Fallback `MEMORY.md`
 
 ## Environment Variable
 
@@ -123,12 +125,12 @@ Natural-language examples:
 
 ## Next Steps
 
-1. Import the skill into your OpenClaw runtime
-2. Confirm project key → path mappings exist in agent memory
+1. Import the dispatcher into your OpenClaw runtime
+2. Confirm project key → path mappings exist in plugin config, the shared mapping file, or fallback memory
 3. Set `OPENCLAW_WORKTREE_ROOT` if you do not want the default
 4. Verify `claude`, `codex`, or `gemini` is installed locally
 5. Continue to [Execution](/guide/openclaw/execution)
 
 <Aside>
-If OpenClaw cannot resolve a project path, it should ask for the absolute path and persist that mapping in agent memory before continuing.
+If OpenClaw cannot resolve a project path from the message, plugin config, shared mapping file, or fallback memory, add an explicit mapping before continuing.
 </Aside>

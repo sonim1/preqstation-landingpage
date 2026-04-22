@@ -5,7 +5,9 @@ description: Worktree-first execution model for OpenClaw task runs
 
 import { Aside } from '@astrojs/starlight/components';
 
-OpenClaw uses a worktree-first execution model. `preqstation-openclaw` prepares an isolated workspace, writes the PREQ prompt to disk, then launches the requested coding agent with a short bootstrap instruction.
+OpenClaw uses a worktree-first execution model. `preqstation-dispatcher` prepares an isolated workspace, writes the PREQ prompt to disk, then launches the requested coding agent with a short bootstrap instruction.
+
+Some current package, plugin, and config identifiers still use `preqstation-openclaw` for compatibility. Treat that as a technical legacy identifier, not the preferred public repo name.
 
 ## Execution Flow
 
@@ -20,8 +22,9 @@ OpenClaw uses a worktree-first execution model. `preqstation-openclaw` prepares 
 
 2. Resolve project_cwd
    → absolute path in message
-   → OpenClaw agent memory
-   → task-prefix key match
+   → saved plugin mapping
+   → shared `~/.preqstation-dispatch/projects.json`
+   → fallback `MEMORY.md`
 
 3. Create isolated worktree
    → git -C <project_cwd> worktree add -b <branch_name> <cwd> HEAD
@@ -34,8 +37,9 @@ OpenClaw uses a worktree-first execution model. `preqstation-openclaw` prepares 
    → Codex:   codex exec --dangerously-bypass-approvals-and-sandbox "Read and execute instructions from ./.preqstation-prompt.txt ..."
    → Gemini:  GEMINI_SANDBOX=false gemini -p "Read and execute instructions from ./.preqstation-prompt.txt ..."
 
-6. Monitor background process
-   → list / poll / log / write / submit / kill
+6. Persist detached runtime artifacts
+   → `.preqstation-dispatch/<engine>.pid`
+   → `.preqstation-dispatch/<engine>.log`
 
 7. Clean up worktree
    → git -C <project_cwd> worktree remove <cwd> --force
@@ -83,20 +87,9 @@ codex exec --dangerously-bypass-approvals-and-sandbox "Read and execute instruct
 GEMINI_SANDBOX=false gemini -p "Read and execute instructions from ./.preqstation-prompt.txt in the current workspace. Treat that file as the source of truth. If a Task ID is present there, call preq_get_task first, then preq_start_task before substantive work."
 ```
 
-## Background Execution
+## Detached Execution
 
-OpenClaw should launch agents with `pty:true` and `background:true` by default.
-
-Useful process actions:
-
-```text
-process action:list
-process action:poll sessionId:<id>
-process action:log sessionId:<id>
-process action:write sessionId:<id> data:"..."
-process action:submit sessionId:<id> data:"..."
-process action:kill sessionId:<id>
-```
+The dispatcher no longer treats OpenClaw PTY/background session monitoring as the primary public contract. Instead it launches the coding CLI as a detached process and records runtime artifacts inside the worktree for later inspection.
 
 ## Lifecycle Handoff
 
@@ -120,7 +113,7 @@ The executing agent:
 - must clean up the worktree when finished
 
 <Aside>
-The repo `preqstation-openclaw` is only the execution skill. Telegram/webhook integration belongs to the OpenClaw runtime around it.
+The repo `preqstation-dispatcher` is the durable execution/dispatcher surface. Telegram/webhook integration still belongs to the OpenClaw runtime around it.
 </Aside>
 
 ## Output Format
