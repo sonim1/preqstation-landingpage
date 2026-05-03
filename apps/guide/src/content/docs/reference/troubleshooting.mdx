@@ -17,7 +17,7 @@ The standard PREQSTATION setup path uses the hosted `/mcp` endpoint plus browser
 
 1. Confirm you registered the remote endpoint, not the legacy local script:
 ```bash
-claude mcp add --transport http preqstation https://<your-domain>/mcp
+claude mcp add -s user --transport http preqstation https://<your-domain>/mcp
 # or:
 codex mcp add preqstation --url https://<your-domain>/mcp
 # or:
@@ -44,7 +44,7 @@ gemini mcp list
 5. If the client still looks stuck, remove and re-add the server:
 ```bash
 claude mcp remove preqstation
-claude mcp add --transport http preqstation https://<your-domain>/mcp
+claude mcp add -s user --transport http preqstation https://<your-domain>/mcp
 # or:
 codex mcp remove preqstation
 codex mcp add preqstation --url https://<your-domain>/mcp

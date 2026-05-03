@@ -9,13 +9,14 @@ Before executing any git operations on a task, agents must resolve and follow th
 
 ## Strategy Types
 
-Each project configures one of three strategies:
+Each project configures one of two active strategies:
 
 | Strategy | Behavior | When to Use |
 |----------|----------|-------------|
-| `none` | No git operations; code changes + task update only | Development/testing workflows |
 | `direct_commit` | Merge worktree commits to default branch and push | Single-branch production deployments |
 | `feature_branch` | Push worktree branch; create PR if auto_pr=true | Multi-environment, review-based deployments |
+
+Missing, invalid, and legacy `none` values are normalized to `direct_commit`.
 
 ## Configuration
 
@@ -34,7 +35,7 @@ When strategy is missing or invalid:
 
 ```json
 {
-  "strategy": "none",
+  "strategy": "direct_commit",
   "default_branch": "main",
   "auto_pr": false,
   "commit_on_review": true,
@@ -46,26 +47,11 @@ When strategy is missing or invalid:
 
 | Setting | Type | Purpose |
 |---------|------|---------|
-| `deploy_strategy` | string | `direct_commit`, `feature_branch`, or `none` |
+| `deploy_strategy` | string | `direct_commit` or `feature_branch` |
 | `deploy_default_branch` | string | Target branch name (usually `main`) |
 | `deploy_auto_pr` | boolean | Auto-create PR (feature_branch only) |
 | `deploy_commit_on_review` | boolean | Require remote push before the task can move to `ready` |
 | `deploy_squash_merge` | boolean | Squash commits (direct_commit only) |
-
-## Strategy: none
-
-**No git operations.** Only code changes and task status updates.
-
-Use this for:
-- Local development workflows
-- Testing/sandbox environments
-- Tasks that don't modify code
-
-**Implementation:**
-```bash
-# Just update the task without any git push
-preq_complete_task PROJ-284 "Implementation complete" claude-code
-```
 
 ## Strategy: direct_commit
 
@@ -180,7 +166,6 @@ When `deploy_commit_on_review=false`:
 3. Resolve strategy from response
 4. Execute code changes in worktree
 5. Deploy per strategy:
-   - none: skip git
    - direct_commit: merge + push default_branch
    - feature_branch: push <worktree_branch>, create PR if auto_pr=true
 6. Verify remote push (if commit_on_review=true)

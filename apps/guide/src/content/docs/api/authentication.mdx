@@ -3,20 +3,23 @@ title: Authentication
 description: Bearer tokens and session authentication.
 ---
 
-PREQSTATION uses session cookies for the web UI, OAuth-backed MCP connections for Claude Code and Codex, and bearer tokens only for shell-helper compatibility or direct REST automation.
+PREQSTATION uses session cookies for the web UI, OAuth-backed MCP connections for Claude Code, Codex, and Gemini CLI, and bearer tokens only for shell-helper compatibility or direct REST automation.
 
 ## OAuth-Backed MCP
 
-**For Claude Code and Codex.**
+**For Claude Code, Codex, and Gemini CLI.**
 
 Register the remote `/mcp` endpoint and complete browser OAuth:
 
 ```bash
 # Claude Code
-claude mcp add --transport http preqstation https://your-domain.com/mcp
+claude mcp add -s user --transport http preqstation https://your-domain.com/mcp
 
 # Codex
 codex mcp add preqstation --url https://your-domain.com/mcp
+
+# Gemini CLI
+gemini mcp add --scope user --transport http preqstation https://your-domain.com/mcp
 ```
 
 OAuth usually starts on the first real request. Manage connected clients from `/connections`.

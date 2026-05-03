@@ -15,7 +15,7 @@ Most users do not need to clone the web app repository. If you already have acce
 
 ```bash
 # Claude Code
-claude mcp add --transport http preqstation https://<your-domain>/mcp
+claude mcp add -s user --transport http preqstation https://<your-domain>/mcp
 
 # Codex
 codex mcp add preqstation --url https://<your-domain>/mcp
@@ -35,7 +35,7 @@ Use the sections below only when you need a local PREQSTATION web app checkout f
 
 - **Node.js 22** or later
 - **PostgreSQL 13+** (self-hosted or managed)
-- **GitHub access** to the current private PREQSTATION web app development repository
+- **GitHub access** to [github.com/sonim1/preqstation](https://github.com/sonim1/preqstation)
 
 ## Local Environment Variables
 
@@ -64,15 +64,13 @@ Any standard PostgreSQL provider that exposes a compatible connection string wor
 
 ### 1. Clone and Install
 
-The public PREQSTATION repository is [github.com/sonim1/preqstation](https://github.com/sonim1/preqstation). Until the web app source is moved there, local setup still uses the current private development repository:
+The PREQSTATION web app source lives in [github.com/sonim1/preqstation](https://github.com/sonim1/preqstation):
 
 ```bash
-git clone git@github.com:sonim1/project-manager.git projects-manager
-cd projects-manager
+git clone git@github.com:sonim1/preqstation.git
+cd preqstation
 npm install
 ```
-
-If you do not have access yet, ask the maintainer to invite your GitHub account before continuing.
 
 ### 2. Configure Environment
 
@@ -114,12 +112,17 @@ PREQSTATION is single-owner. All data is scoped to this account at the database 
 
 ## Configure Telegram (Optional)
 
-To enable Telegram notifications:
+Use [Telegram Integration](/guide/web-app/telegram) for the full OpenClaw and Hermes setup, including separate chat IDs, Hermes profile setup, and bot-to-bot group delivery.
+
+At minimum, from **Settings > Telegram**:
 
 1. Go to **Settings > Telegram**
-2. Enter your Telegram bot token
-3. Test the connection
-4. Token is encrypted at rest with AES-GCM
+2. Enter your shared sender **Bot Token**
+3. Save **OpenClaw Chat ID** if you want standard Telegram/OpenClaw delivery
+4. Save **Hermes Chat ID** if you want the **H Telegram** Hermes dispatch target
+5. Run the test actions for the channels you enabled
+
+The bot token is encrypted at rest with AES-GCM.
 
 ## API Keys for Shell Helper Mode or the Legacy Local Bridge
 

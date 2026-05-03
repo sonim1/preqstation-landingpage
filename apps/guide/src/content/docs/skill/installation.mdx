@@ -5,7 +5,7 @@ description: Install preqstation-skill and connect Claude, Codex, or Gemini as P
 
 import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
-`preqstation-skill` is the core agent-side package for PREQSTATION. It owns the `preqstation` skill name, documents the lifecycle rules, and includes optional shell-helper and legacy stdio bridge support.
+`preqstation-skill` is the core agent-side package for PREQSTATION. It owns the `preqstation` worker skill, documents the lifecycle rules, and provides the Claude Code helper plugin plus Codex/Gemini worker install paths.
 
 ## Prerequisites
 
@@ -14,17 +14,34 @@ import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 - Access to the PREQSTATION web app if you want to use the recommended remote MCP login flow
 - A PREQSTATION API token only if you plan to use shell-helper mode or the legacy local stdio bridge
 
-## Install Skill (Recommended Per Agent)
+## Choose a Worker Install
 
-Install the skill only for the agents that should own the core `preqstation` skill:
+### Claude Code Plugin (Recommended)
+
+For Claude Code, install the plugin. It includes the packaged `preqstation` worker skill and helper commands.
+
+```bash
+claude plugin marketplace add https://github.com/sonim1/preqstation-skill
+claude plugin install preqstation@preqstation
+```
+
+Then open Claude Code and run:
+
+```text
+/preqstation:setup
+```
+
+`/preqstation:setup` can add or verify the user-scoped `preqstation` MCP connection, fetch projects when `preq_list_projects` is available, and save repo mappings in `~/.preqstation-dispatch/projects.json`.
+
+### Worker-Only Installs
+
+Use worker-only install when you do not want the Claude plugin helpers, or when installing for Codex or Gemini CLI:
 
 ```bash
 npx skills add sonim1/preqstation-skill -g -a claude-code
 npx skills add sonim1/preqstation-skill -g -a codex
 npx skills add sonim1/preqstation-skill -g -a gemini-cli
 ```
-
-Avoid a bare shared install if you do not want OpenClaw-linked skills exposed through the global skills store.
 
 PREQ engine values match these agent targets:
 
@@ -51,7 +68,7 @@ Register the remote PREQSTATION MCP endpoint:
 <Tabs>
 <TabItem label="Install">
 ```bash
-claude mcp add --transport http preqstation https://<your-domain>/mcp
+claude mcp add -s user --transport http preqstation https://<your-domain>/mcp
 ```
 </TabItem>
 <TabItem label="Update">
@@ -190,6 +207,7 @@ Replace `/ABSOLUTE/PATH/TO/preqstation-skill` with the actual installation path.
 - Confirm the server URL ends with `/mcp`
 - Run `claude mcp get preqstation`, `codex mcp get preqstation`, or `gemini mcp list` to trigger or verify the first real connection
 - Complete the browser login flow when prompted
+- In Claude Code, prefer a single user-scoped `preqstation` MCP registration. Multiple local or project-scoped entries can cause repeated auth prompts.
 
 **Legacy local bridge fails to start:**
 - Verify Node.js is installed: `node --version`

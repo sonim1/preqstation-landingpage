@@ -5,7 +5,7 @@ description: preqstation-skill을 설치하고 Claude, Codex, Gemini를 PREQSTAT
 
 import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
-`preqstation-skill`은 PREQSTATION의 핵심 에이전트 측 패키지입니다. `preqstation` 스킬 이름을 소유하고, 작업 수명 주기 규칙을 문서화하며, 선택적으로 셸 헬퍼와 레거시 stdio 브리지도 제공합니다.
+`preqstation-skill`은 PREQSTATION의 핵심 에이전트 측 패키지입니다. `preqstation` worker skill, 작업 수명 주기 규칙, Claude Code helper plugin, Codex/Gemini worker 설치 경로를 제공합니다.
 
 ## 사전 준비
 
@@ -14,17 +14,34 @@ import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 - 권장 원격 MCP 로그인 플로우를 쓰려면 PREQSTATION 웹 앱 접근 권한
 - 셸 헬퍼 모드나 레거시 로컬 stdio 브리지를 쓸 계획이라면 PREQSTATION API 토큰
 
-## 스킬 설치 (에이전트별 권장)
+## Worker 설치 경로 선택
 
-핵심 `preqstation` 스킬을 소유해야 하는 에이전트에만 설치하세요.
+### Claude Code Plugin (권장)
+
+Claude Code에서는 plugin 설치가 권장 경로입니다. Plugin 안에 packaged `preqstation` worker skill과 helper command가 포함되어 있습니다.
+
+```bash
+claude plugin marketplace add https://github.com/sonim1/preqstation-skill
+claude plugin install preqstation@preqstation
+```
+
+그다음 Claude Code를 열고 실행합니다.
+
+```text
+/preqstation:setup
+```
+
+`/preqstation:setup`은 user-scoped `preqstation` MCP 연결을 추가하거나 검증하고, `preq_list_projects`를 사용할 수 있으면 프로젝트를 가져오며, repo mapping을 `~/.preqstation-dispatch/projects.json`에 저장할 수 있습니다.
+
+### Worker-only 설치
+
+Claude plugin helper가 필요 없거나 Codex/Gemini CLI에 설치할 때는 worker-only 경로를 사용합니다.
 
 ```bash
 npx skills add sonim1/preqstation-skill -g -a claude-code
 npx skills add sonim1/preqstation-skill -g -a codex
 npx skills add sonim1/preqstation-skill -g -a gemini-cli
 ```
-
-OpenClaw와 연결된 스킬이 공용 skills store에 노출되는 것을 원하지 않는다면 bare shared install은 피하세요.
 
 PREQ 엔진 값은 아래 에이전트 타깃과 일치합니다.
 
@@ -51,7 +68,7 @@ gemini-cli
 <Tabs>
 <TabItem label="설치">
 ```bash
-claude mcp add --transport http preqstation https://<your-domain>/mcp
+claude mcp add -s user --transport http preqstation https://<your-domain>/mcp
 ```
 </TabItem>
 <TabItem label="업데이트">
@@ -190,6 +207,7 @@ export PREQSTATION_ENGINE="claude-code"  # or codex, gemini-cli
 - 서버 URL 끝이 `/mcp`인지 확인하세요.
 - `claude mcp get preqstation`, `codex mcp get preqstation`, `gemini mcp list`로 첫 실제 연결이나 등록 상태를 확인하세요.
 - 브라우저 로그인 플로우가 뜨면 완료하세요.
+- Claude Code에서는 user-scoped `preqstation` MCP 등록을 하나만 유지하는 것이 좋습니다. local 또는 project-scoped entry가 여러 개 있으면 인증 프롬프트가 반복될 수 있습니다.
 
 **레거시 로컬 브리지가 시작되지 않을 때:**
 - Node.js 설치 여부 확인: `node --version`

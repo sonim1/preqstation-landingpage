@@ -13,7 +13,7 @@ For most users, PREQSTATION setup now starts in the hosted web app and uses the 
 
 ```bash
 # Claude Code
-claude mcp add --transport http preqstation https://<your-domain>/mcp
+claude mcp add -s user --transport http preqstation https://<your-domain>/mcp
 
 # Codex
 codex mcp add preqstation --url https://<your-domain>/mcp
@@ -41,18 +41,16 @@ Use this branch only if you are self-hosting the web app, validating migration-e
 
 - **Node.js 22** — [Download](https://nodejs.org)
 - **PostgreSQL** — Any managed or self-hosted PostgreSQL works, for example Supabase, Neon, Railway, or your own Postgres instance
-- **GitHub access** — The public canonical repository is `sonim1/preqstation`, but local web app setup still requires access to the current private development repository
+- **GitHub access** — the web app source lives in `sonim1/preqstation`
 
 ### 1. Clone the Repository
 
-The public PREQSTATION repository is [github.com/sonim1/preqstation](https://github.com/sonim1/preqstation). Until the web app source is moved there, local setup still uses the current private development repository:
+Clone the PREQSTATION web app repository:
 
 ```bash
-git clone git@github.com:sonim1/project-manager.git projects-manager
-cd projects-manager
+git clone git@github.com:sonim1/preqstation.git
+cd preqstation
 ```
-
-If you do not have access yet, ask the maintainer to invite your GitHub account before continuing.
 
 ### 2. Configure Environment
 

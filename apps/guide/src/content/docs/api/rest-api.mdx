@@ -72,7 +72,7 @@ Query parameters:
 - `engine`: `claude-code`, `codex`, `gemini-cli`
 - `label`: label name
 - `run_state`: `queued` or `running`
-- `dispatch_target`: `telegram` or another web-app-managed internal value
+- `dispatch_target`: `telegram` or `hermes-telegram`
 
 `run_state` uses the internal state vocabulary. The API response serializes the active state as `working`, so use `run_state=running` when filtering even though the returned payload says `run_state: "working"`.
 
@@ -321,7 +321,9 @@ These endpoints are used by the PREQSTATION web app.
 
 | Method | Endpoint | Purpose |
 |---|---|---|
-| `POST` | `/telegram/send` | Send Telegram message and queue `dispatch_target=telegram` |
+| `POST` | `/telegram/send` | Send task Telegram message to OpenClaw or Hermes |
+| `POST` | `/telegram/send/insight` | Send project insight to OpenClaw or Hermes |
+| `POST` | `/projects/:id/qa-runs/trigger` | Queue a QA run through `telegram` or `hermes-telegram` |
 
 ### Todos and Labels
 
@@ -354,8 +356,8 @@ These endpoints are used by the PREQSTATION web app.
 | Method | Endpoint | Purpose |
 |---|---|---|
 | `GET` | `/settings` | Read settings page data |
-| `POST` | `/telegram/send` | Send Telegram message |
-| `POST` | `/telegram/test` | Send Telegram test message |
+| `POST` | `/telegram/send` | Send task Telegram message |
+| `POST` | `/telegram/test` | Send OpenClaw or Hermes Telegram test message |
 | `POST` | `/send-to-openclaw` | Legacy OpenClaw relay |
 
 ## Response Format

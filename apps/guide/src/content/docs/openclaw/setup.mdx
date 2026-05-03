@@ -5,68 +5,99 @@ description: Install and configure preqstation-dispatcher for the OpenClaw dispa
 
 import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
-`preqstation-dispatcher` is the durable public dispatcher repo for OpenClaw runtimes. It does not ship Telegram or webhook infrastructure by itself; the runtime imports this repo to resolve projects, create worktrees, and launch coding agents.
+`preqstation-dispatcher` is the durable public dispatcher package for PREQSTATION. OpenClaw loads it as a plugin, then the plugin resolves projects, creates worktrees, writes `.preqstation-prompt.txt`, and launches Claude Code, Codex, or Gemini CLI as a detached process.
 
-Some package, plugin, and config identifiers still use `preqstation-openclaw` for compatibility. Treat that as a technical legacy identifier, not the preferred public repo name.
+Some package, plugin, and config identifiers may still mention `preqstation-openclaw` for compatibility. Treat that as a legacy technical identifier unless a command explicitly requires it.
 
 Use this page when you want the **OpenClaw dispatcher** path.
 
 Use OpenClaw when you want:
 
-- Telegram-triggered dispatch
-- copied Telegram/OpenClaw commands
-- OpenClaw project-key and path resolution
-- worktree-first execution managed by the OpenClaw runtime
+- Telegram-triggered dispatch through the OpenClaw channel
+- copied OpenClaw dispatch commands
+- OpenClaw-native `/preqsetup` project mapping
+- detached, worktree-first execution on an OpenClaw host
 
-## ClawHub Import
+## Install the Plugin
 
-Repository URL:
+Install from npm on the machine where OpenClaw runs:
 
-```text
-https://github.com/sonim1/preqstation-dispatcher
+```bash
+openclaw plugins install @sonim1/preqstation-dispatcher --dangerously-force-unsafe-install
+openclaw gateway restart
 ```
 
-<Tabs>
-<TabItem label="ClawHub Web UI">
-1. Open ClawHub
-2. Choose **Import Skill**
-3. Paste the repository URL
-4. Confirm that `SKILL.md` is detected from the repo root
-</TabItem>
-<TabItem label="Manual Setup">
-1. Clone the repository
-2. Keep `SKILL.md` at repository root
-3. Point your OpenClaw runtime to that checkout
-</TabItem>
-</Tabs>
+If the standalone dispatcher CLI is already installed, it can run the plugin install command:
+
+```bash
+preqstation-dispatcher install openclaw
+openclaw gateway restart
+```
+
+For active local development, link a checkout:
+
+```bash
+openclaw plugins install --link --dangerously-force-unsafe-install /path/to/preqstation-dispatcher
+openclaw gateway restart
+```
+
+The plugin intentionally uses local process execution to create git worktrees and launch detached coding CLIs, so current OpenClaw installs require `--dangerously-force-unsafe-install`.
+
+## Verify Installation
+
+```bash
+openclaw plugins inspect preqstation-dispatcher
+openclaw status --all
+```
 
 ## Project Path Mapping
 
-Real project mappings can come from an explicit path in the dispatch message, saved plugin config, the shared `~/.preqstation-dispatch/projects.json` file, or fallback `MEMORY.md`.
+After install, map PREQ project keys to local checkouts on the OpenClaw host.
 
-`/Users/kendrick/projects/preqstation-dispatcher/MEMORY.md` is only a sample fallback schema reference.
+<Tabs>
+<TabItem label="Auto">
+```text
+/preqsetup auto PROJ=https://github.com/example/project
+```
 
-Use short lowercase keys that map to absolute checkout paths, for example:
+`/preqsetup auto` scans local git repos under `PREQSTATION_REPO_ROOTS` when set, otherwise under `~/projects`, matches local git `origin` URLs against the provided repo URLs, and stores successful matches in OpenClaw plugin config.
+</TabItem>
+<TabItem label="Manual">
+```text
+/preqsetup set PROJ /absolute/path/to/project
+/preqsetup status
+```
+</TabItem>
+<TabItem label="Shared Store">
+```text
+/preqsetup import
+```
 
-```markdown
-| key | cwd | note |
-|-----|-----|------|
-| proj | /Users/kendrick/projects/my-app | Main product repo |
-| docs | /Users/kendrick/projects/preqstation-lp | Guide site |
+Use this when another dispatcher host already populated `~/.preqstation-dispatch/projects.json`.
+</TabItem>
+</Tabs>
+
+Useful setup commands:
+
+```text
+/preqsetup
+/preqsetup auto
+/preqsetup import
+/preqsetup set <PROJECT_KEY> <ABSOLUTE_PATH>
+/preqsetup status
+/preqsetup unset PROJ
 ```
 
 Resolution order:
 
 1. Absolute path mentioned directly in the message
-2. Saved plugin mapping
+2. Saved OpenClaw plugin mapping
 3. Shared `~/.preqstation-dispatch/projects.json`
-4. Fallback `MEMORY.md`
+4. Legacy `MEMORY.md` fallback
 
-## Environment Variable
+## Worktree Root
 
-### OPENCLAW_WORKTREE_ROOT
-
-Controls where task worktrees are created.
+OpenClaw uses `OPENCLAW_WORKTREE_ROOT` for task worktrees.
 
 ```bash
 export OPENCLAW_WORKTREE_ROOT="/tmp/openclaw-worktrees"
@@ -74,34 +105,22 @@ export OPENCLAW_WORKTREE_ROOT="/tmp/openclaw-worktrees"
 
 Default: `/tmp/openclaw-worktrees`
 
-## Worktree Layout
-
 Each task runs inside a dedicated worktree:
 
 ```text
 <OPENCLAW_WORKTREE_ROOT>/<project_key>/<branch_slug>/
 ```
 
-Branch naming priority:
-
-1. `branch_name="..."` from the message
-2. Fallback `preqstation/<project_key>`
-
-If a custom branch name does not already include the project key, OpenClaw normalizes it to:
+Detached runtime artifacts are written inside that worktree:
 
 ```text
-preqstation/<project_key>/<branch_name>
-```
-
-Example:
-
-```text
-/tmp/openclaw-worktrees/proj/preqstation-proj-rate-limit/
+.preqstation-dispatch/<engine>.pid
+.preqstation-dispatch/<engine>.log
 ```
 
 ## Engine Keys
 
-OpenClaw resolves engine identity with PREQ engine keys while launching local CLI binaries:
+OpenClaw resolves PREQ engine keys to local CLI binaries:
 
 | Engine key | Local binary |
 |---|---|
@@ -111,26 +130,28 @@ OpenClaw resolves engine identity with PREQ engine keys while launching local CL
 
 Default engine key: `claude-code`
 
-This means the OpenClaw path can still launch:
+Make sure the selected CLI is installed in a stable executable location that the OpenClaw gateway can inherit.
 
-- Claude Code
-- Codex
-- Gemini CLI
+## Dispatch Commands
 
-Natural-language examples:
+The OpenClaw adapter intercepts explicit PREQ dispatch messages before the normal chat run:
 
-- `Start PROJ-284 in the example project using Claude Code.`
-- `Use Codex to fix README command examples in the example project.`
-- `Use Gemini CLI to draft notes for DOC-12 in the example project.`
+```text
+!/skill preqstation-dispatch implement PROJ-284 using codex branch_name="task/proj-284-example"
+/skill preqstation-dispatch review PROJ-284 using claude-code
+/skill preqstation-dispatch ask PROJ-285 using gemini-cli ask_hint="Acceptance criteria"
+```
+
+Telegram/OpenClaw sends from the web app use the same OpenClaw command shape.
 
 ## Next Steps
 
-1. Import the dispatcher into your OpenClaw runtime
-2. Confirm project key → path mappings exist in plugin config, the shared mapping file, or fallback memory
-3. Set `OPENCLAW_WORKTREE_ROOT` if you do not want the default
-4. Verify `claude`, `codex`, or `gemini` is installed locally
+1. Install or update the plugin
+2. Restart OpenClaw
+3. Map project keys with `/preqsetup auto` or `/preqsetup set`
+4. Verify `claude`, `codex`, or `gemini` is available to the gateway process
 5. Continue to [Execution](/guide/openclaw/execution)
 
 <Aside>
-If OpenClaw cannot resolve a project path from the message, plugin config, shared mapping file, or fallback memory, add an explicit mapping before continuing.
+If OpenClaw cannot resolve a project path from the message, plugin config, shared mapping file, or legacy fallback, add an explicit mapping before dispatching.
 </Aside>

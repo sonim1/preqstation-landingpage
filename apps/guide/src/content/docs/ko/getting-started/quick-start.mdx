@@ -13,7 +13,7 @@ description: PREQSTATION을 몇 분 안에 시작합니다.
 
 ```bash
 # Claude Code
-claude mcp add --transport http preqstation https://<your-domain>/mcp
+claude mcp add -s user --transport http preqstation https://<your-domain>/mcp
 
 # Codex
 codex mcp add preqstation --url https://<your-domain>/mcp
@@ -41,18 +41,16 @@ gemini mcp add --scope user --transport http preqstation https://<your-domain>/m
 
 - **Node.js 22** — [다운로드](https://nodejs.org)
 - **PostgreSQL** — Supabase, Neon, Railway 같은 관리형 서비스나 직접 운영하는 PostgreSQL 모두 사용할 수 있습니다
-- **GitHub 접근 권한** — 공개 기준 저장소는 `sonim1/preqstation`이지만, 로컬 웹 앱 설정에는 아직 현재 비공개 개발 저장소 접근 권한이 필요합니다
+- **GitHub 접근 권한** — 웹 앱 소스는 `sonim1/preqstation`에 있습니다
 
 ### 1. 저장소 클론
 
-공개 PREQSTATION 저장소는 [github.com/sonim1/preqstation](https://github.com/sonim1/preqstation)입니다. 웹 앱 소스가 아직 그쪽으로 완전히 옮겨지지 않아, 로컬 설정은 현재 비공개 개발 저장소를 사용합니다.
+PREQSTATION 웹 앱 저장소를 클론합니다.
 
 ```bash
-git clone git@github.com:sonim1/project-manager.git projects-manager
-cd projects-manager
+git clone git@github.com:sonim1/preqstation.git
+cd preqstation
 ```
-
-아직 접근 권한이 없다면 계속 진행하기 전에 관리자에게 GitHub 초대를 요청하세요.
 
 ### 2. 환경 변수 설정
 

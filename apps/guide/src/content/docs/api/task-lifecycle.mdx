@@ -24,7 +24,7 @@ flowchart LR
   todo --> hold[Hold]
   hold --> ready
   queued[Queued overlay] -.-> todo
-  working[Working overlay] -.-> ready
+  running[Running overlay] -.-> ready
 `}
   caption="The happy path is inbox -> todo -> ready -> done. Hold is a side branch for blocked or paused work."
 />
@@ -48,9 +48,9 @@ Run state is tracked independently from workflow status:
 |---|---|
 | `null` | No active execution claim |
 | `queued` | Requested or dispatched, but not yet claimed by an agent |
-| `working` | Claimed by an agent through `preq_start_task()` |
+| `running` internally, `working` in PREQ/MCP payloads | Claimed by an agent through `preq_start_task()` |
 
-Telegram/OpenClaw relays or Claude Code dispatch can mark a task as `queued` before an agent picks it up. `preq_start_task()` upgrades that to `working`.
+Telegram dispatch can mark a task as `queued` before an agent picks it up. `preq_start_task()` upgrades that to the active working state.
 
 ## Lifecycle Branches
 
@@ -149,9 +149,10 @@ Task execution still respects the project deployment strategy:
 
 | Strategy | Behavior |
 |---|---|
-| `none` | No git operations. Code changes only. |
 | `direct_commit` | Merge and push to the default branch. |
 | `feature_branch` | Push the task branch and optionally create a PR. |
+
+Missing, invalid, and legacy `none` values are normalized to `direct_commit`.
 
 Agents resolve the strategy through `preq_get_project_settings()` before deploy steps.
 
