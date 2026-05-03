@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PREQSTATION - Improved Prototype</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+KR:wght@500;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            charcoal: '#2D3436',
+            mint: '#00B894',
+            'warm-yellow': '#FDCB6E',
+            coral: '#E17055',
+            'kitchen-white': '#F8F9FA',
+            steel: '#DFE6E9',
+            'review-blue': '#74B9FF',
+          },
+          fontFamily: {
+            display: ['"Space Grotesk"', '"Noto Sans KR"', 'sans-serif'],
+            body: ['"Inter"', '"Noto Sans KR"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: theme('colors.kitchen-white');
+      color: theme('colors.charcoal');
+    }
+    .raw-border {
+      border: 2px solid theme('colors.charcoal');
+    }
+    .raw-border-b {
+      border-bottom: 2px solid theme('colors.charcoal');
+    }
+    .receipt-edge {
+      background-image: linear-gradient(to right, transparent 50%, theme('colors.charcoal') 50%);
+      background-size: 20px 2px;
+      background-repeat: repeat-x;
+      height: 2px;
+      width: 100%;
+    }
+  </style>
+</head>
+<body class="font-body antialiased">
+  <!-- Nav -->
+  <nav class="sticky top-0 z-50 bg-kitchen-white raw-border-b px-6 py-4 flex justify-between items-center">
+    <div class="font-display font-bold text-xl tracking-tight uppercase">
+      PREQSTATION
+    </div>
+    <div class="flex gap-6 font-mono text-sm items-center">
+      <a href="#" class="hover:underline decoration-2 underline-offset-4">GitHub</a>
+      <a href="#" class="hover:underline decoration-2 underline-offset-4">Guide</a>
+      <button class="bg-mint text-charcoal px-4 py-2 font-bold uppercase raw-border hover:bg-charcoal hover:text-kitchen-white transition-colors">
+        Try now
+      </button>
+    </div>
+  </nav>
+
+  <main>
+    <!-- Hero / Brutalist & Left Aligned -->
+    <section class="max-w-7xl mx-auto px-6 py-24 grid grid-cols-1 lg:grid-cols-2 gap-12 items-end">
+      <div>
+        <div class="inline-block bg-charcoal text-white px-3 py-1 font-mono text-xs mb-8 uppercase tracking-widest">
+          Developer's Kitchen
+        </div>
+        <h1 class="font-display text-5xl md:text-8xl font-black leading-[0.95] tracking-tight whitespace-pre-line mb-8">
+          태스크를
+          큐에 넣으세요.
+          에이전트가
+          실행합니다.
+        </h1>
+      </div>
+      <div class="space-y-8 pb-4">
+        <p class="text-xl md:text-2xl font-medium leading-relaxed">
+          PREQSTATION은 AI 코딩 엔진을 쓰는 개발자를 위한 self-hosted 실행 큐입니다.
+        </p>
+        <p class="text-lg text-charcoal/70">
+          Claude Code는 direct dispatch로, Codex와 Gemini는 worker 경로를 유지합니다. 백로그 계획용 Jira를 대체하지 않습니다. 오직 '실행'에 집중합니다.
+        </p>
+        <div class="flex gap-4 pt-4">
+          <button class="bg-charcoal text-kitchen-white px-8 py-4 font-bold text-lg hover:bg-mint hover:text-charcoal transition-colors uppercase tracking-wide">
+            가이드 보기
+          </button>
+          <button class="raw-border bg-kitchen-white px-8 py-4 font-bold text-lg hover:bg-steel transition-colors uppercase tracking-wide">
+            GitHub
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Visual Divider -->
+    <div class="receipt-edge my-12"></div>
+
+    <!-- Features / Tabular Data (Not Cards) -->
+    <section class="max-w-7xl mx-auto px-6 py-12">
+      <h2 class="font-display text-4xl md:text-6xl font-bold mb-16">
+        왜 큐(Queue)가 필요한가요?
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-12 raw-border">
+        <!-- Feature 1 -->
+        <div class="md:col-span-12 grid grid-cols-1 md:grid-cols-12 raw-border-b">
+          <div class="p-6 md:p-8 md:col-span-3 raw-border-r font-mono text-4xl text-charcoal bg-warm-yellow/20">01</div>
+          <div class="p-6 md:p-8 md:col-span-9">
+            <h3 class="font-display text-2xl font-bold mb-3">준비된 작업만 intake</h3>
+            <p class="text-lg text-charcoal/80 max-w-2xl">범위, acceptance criteria, 오너가 에이전트가 추측 없이 실행할 수 있을 정도로 정리되었을 때만 태스크를 만드세요.</p>
+          </div>
+        </div>
+        <!-- Feature 2 -->
+        <div class="md:col-span-12 grid grid-cols-1 md:grid-cols-12 raw-border-b">
+          <div class="p-6 md:p-8 md:col-span-3 raw-border-r font-mono text-4xl text-charcoal bg-mint/20">02</div>
+          <div class="p-6 md:p-8 md:col-span-9">
+            <h3 class="font-display text-2xl font-bold mb-3">맞는 엔진 dispatch</h3>
+            <p class="text-lg text-charcoal/80 max-w-2xl">Claude Code는 direct dispatch로 보내고, Codex나 Gemini는 worker 경로에 두면서, queued와 working은 진짜 상태로 관리합니다.</p>
+          </div>
+        </div>
+        <!-- Feature 3 -->
+        <div class="md:col-span-12 grid grid-cols-1 md:grid-cols-12 raw-border-b">
+          <div class="p-6 md:p-8 md:col-span-3 raw-border-r font-mono text-4xl text-charcoal bg-coral/20">03</div>
+          <div class="p-6 md:p-8 md:col-span-9">
+            <h3 class="font-display text-2xl font-bold mb-3">막힌 작업은 hold로 분기</h3>
+            <p class="text-lg text-charcoal/80 max-w-2xl">blocked execution은 hold로 분기해, 리뷰 대기 작업과 추가 입력이 필요한 태스크를 섞지 않게 합니다.</p>
+          </div>
+        </div>
+        <!-- Feature 4 -->
+        <div class="md:col-span-12 grid grid-cols-1 md:grid-cols-12">
+          <div class="p-6 md:p-8 md:col-span-3 raw-border-r font-mono text-4xl text-charcoal bg-review-blue/20">04</div>
+          <div class="p-6 md:p-8 md:col-span-9">
+            <h3 class="font-display text-2xl font-bold mb-3">Done 전에 증거 필수</h3>
+            <p class="text-lg text-charcoal/80 max-w-2xl">ready는 에이전트가 노트, 체크, 브랜치 결과를 들고 돌아왔다는 뜻입니다. done으로 옮기기 전에 그 증거를 리뷰하세요.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pipeline / Kanban-like, Utilitarian -->
+    <section class="max-w-7xl mx-auto px-6 py-24">
+      <div class="flex flex-col md:flex-row justify-between md:items-end mb-12">
+        <div>
+          <h2 class="font-display text-4xl md:text-6xl font-bold">실행 파이프라인</h2>
+          <p class="text-xl mt-4 max-w-lg">행복 경로는 inbox → todo → ready → done입니다. 막힌 작업은 hold로 빠집니다.</p>
+        </div>
+        <div class="font-mono text-sm bg-steel px-4 py-2 border border-charcoal mt-6 md:mt-0">
+          TARGET: DIRECT EXECUTIONS
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        <!-- Inbox -->
+        <div class="raw-border bg-charcoal text-kitchen-white flex flex-col h-full">
+          <div class="p-4 border-b border-white/20 font-mono text-sm flex justify-between items-center bg-white/5">
+            <span>INBOX</span>
+            <span class="w-2 h-2 bg-steel rounded-full"></span>
+          </div>
+          <div class="p-6 flex-grow">
+            <h3 class="text-xl font-bold mb-2">Scope Defined</h3>
+            <p class="text-white/60 text-sm">작업 범위 확정 및 접수 완료</p>
+          </div>
+        </div>
+
+        <!-- Todo -->
+        <div class="raw-border bg-warm-yellow flex flex-col h-full">
+          <div class="p-4 border-b border-charcoal/20 font-mono text-sm flex justify-between items-center bg-black/5">
+            <span>TODO</span>
+            <span class="w-2 h-2 bg-charcoal rounded-full"></span>
+          </div>
+          <div class="p-6 flex-grow">
+            <h3 class="text-xl font-bold mb-2">Claimed</h3>
+            <p class="text-charcoal/70 text-sm">에이전트가 워크트리를 열고 작업 시작</p>
+          </div>
+        </div>
+
+        <!-- Hold -->
+        <div class="raw-border bg-coral text-white flex flex-col h-full transform translate-y-4 shadow-[4px_4px_0_theme('colors.charcoal')]">
+          <div class="p-4 border-b border-black/20 font-mono text-sm flex justify-between items-center bg-black/10">
+            <span>HOLD</span>
+            <span class="w-2 h-2 bg-white rounded-full"></span>
+          </div>
+          <div class="p-6 flex-grow">
+            <h3 class="text-xl font-bold mb-2">Blocked</h3>
+            <p class="text-white/80 text-sm">리뷰나 구현이 실제로 막혀서 대기 중</p>
+          </div>
+        </div>
+
+        <!-- Ready -->
+        <div class="raw-border bg-review-blue flex flex-col h-full">
+          <div class="p-4 border-b border-charcoal/20 font-mono text-sm flex justify-between items-center bg-white/20">
+            <span>READY</span>
+            <span class="w-2 h-2 bg-charcoal rounded-full"></span>
+          </div>
+          <div class="p-6 flex-grow">
+            <h3 class="text-xl font-bold mb-2">Review</h3>
+            <p class="text-charcoal/70 text-sm">코드 병합 전 증거 및 실행 결과 확인</p>
+          </div>
+        </div>
+
+        <!-- Done -->
+        <div class="raw-border bg-mint flex flex-col h-full">
+          <div class="p-4 border-b border-charcoal/20 font-mono text-sm flex justify-between items-center bg-white/20">
+            <span>DONE</span>
+            <span class="w-2 h-2 bg-charcoal rounded-full"></span>
+          </div>
+          <div class="p-6 flex-grow">
+            <h3 class="text-xl font-bold mb-2">Verified</h3>
+            <p class="text-charcoal/70 text-sm">빌드 통과 및 결과물 배포 완료</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="bg-charcoal text-kitchen-white py-12 border-t-[8px] border-mint">
+    <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div class="md:col-span-2">
+        <h2 class="font-display font-bold text-3xl mb-4 text-mint">PREQSTATION</h2>
+        <p class="text-white/60 mb-6">Built with kitchen love. Open Source.</p>
+        <div class="font-mono text-sm bg-white/10 inline-block px-3 py-1">
+          v0.1.0-beta
+        </div>
+      </div>
+      <div>
+        <h3 class="font-bold mb-4 font-mono text-white/40 tracking-wider text-sm">LINKS</h3>
+        <ul class="space-y-2 opacity-80">
+          <li><a href="#" class="hover:text-mint transition-colors">GitHub Repository</a></li>
+          <li><a href="#" class="hover:text-mint transition-colors">Documentation</a></li>
+          <li><a href="#" class="hover:text-mint transition-colors">Getting Started</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="font-bold mb-4 font-mono text-white/40 tracking-wider text-sm">LEGAL</h3>
+        <ul class="space-y-2 opacity-80">
+          <li><a href="#" class="hover:text-mint transition-colors">Privacy Policy</a></li>
+          <li><a href="#" class="hover:text-mint transition-colors">Terms of Service</a></li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
