@@ -18,6 +18,18 @@ Use OpenClaw when you want:
 - OpenClaw-native `/preqsetup` project mapping
 - detached, worktree-first execution on an OpenClaw host
 
+## Before You Install
+
+You need:
+
+- OpenClaw installed on the dispatcher host
+- local checkouts for the projects PREQSTATION will dispatch
+- at least one worker CLI available on the OpenClaw host: `claude`, `codex`, or `gemini`
+- the matching PREQ worker setup from [Worker Installation](/guide/skill/installation)
+- Telegram settings only if the web app should send dispatch messages through Telegram
+
+If you only want an agent to work directly from its own terminal, stop at worker setup. OpenClaw is for queued dispatch from the web app or an OpenClaw chat.
+
 ## Install the Plugin
 
 Install from npm on the machine where OpenClaw runs:

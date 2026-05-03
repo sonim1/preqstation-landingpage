@@ -7,6 +7,16 @@ description: PREQSTATION을 몇 분 안에 시작합니다.
 
 대부분의 사용자는 배포된 PREQSTATION 웹 앱에서 시작하고, `/mcp`의 원격 MCP 엔드포인트를 사용하는 것이 기본 경로입니다.
 
+## 내 상황에 맞는 경로 선택
+
+| 상황 | 먼저 볼 문서 | 필요할 때만 추가 |
+|---|---|---|
+| Claude Code, Codex, Gemini로 혼자 PREQSTATION을 쓰는 경우 | hosted 웹 앱 + [워커 설치](/guide/ko/skill/installation) | Telegram/OpenClaw dispatch |
+| self-hosting 또는 migration 검증을 하는 개발자 | [웹 앱 설정](/guide/ko/web-app/setup) | 로그인 확인 후 worker 설치 |
+| 에이전트 작업 결과를 리뷰하는 founder/operator | hosted 웹 앱 + worker OAuth | QA 큐잉과 project insight dispatch |
+| 웹 앱에서 로컬 에이전트로 task를 보내고 싶은 vibe coder | worker 설치 먼저, 그다음 [OpenClaw 설치](/guide/ko/openclaw/setup) | OpenClaw가 host가 아니면 Hermes Telegram |
+| 예전 token 기반 설정을 유지 중인 경우 | [API Keys](/guide/ko/web-app/api-keys) | runtime이 지원하면 원격 `/mcp` OAuth로 전환 |
+
 1. PREQSTATION 배포에 로그인합니다.
 2. `/connections`를 열고 worker 또는 dispatcher 경로에 필요한 provider 설정을 완료합니다.
 3. 원격 MCP 엔드포인트를 등록합니다.

@@ -7,6 +7,16 @@ description: Get PREQSTATION running in 5 minutes.
 
 For most users, PREQSTATION setup now starts in the hosted web app and uses the remote MCP endpoint at `/mcp`.
 
+## Choose Your Path
+
+| You are... | Start with | Add later only if needed |
+|---|---|---|
+| Using PREQSTATION alone with Claude Code, Codex, or Gemini | Hosted web app + [Worker Installation](/guide/skill/installation) | Telegram/OpenClaw dispatch |
+| A developer self-hosting or validating migrations | [Web App Setup](/guide/web-app/setup) | Worker install after login works |
+| A founder or operator reviewing work from agents | Hosted web app + worker OAuth | QA queueing and project insight dispatch |
+| A vibe coder who wants the app to send tasks to local agents | Worker install first, then [OpenClaw Installation](/guide/openclaw/setup) | Hermes Telegram if OpenClaw is not the host |
+| Maintaining an old token-based setup | [API Keys](/guide/web-app/api-keys) | Remote `/mcp` OAuth when the runtime supports it |
+
 1. Sign in to your PREQSTATION deployment.
 2. Open `/connections` and complete the provider setup you need for your worker or dispatcher path.
 3. Register the remote MCP endpoint:

@@ -9,6 +9,18 @@ Telegram is optional for normal task work, but it becomes important once you wan
 
 The web app uses one shared Telegram sender bot token, then routes messages to separate OpenClaw and Hermes chats.
 
+## Which Telegram Setup Do You Need?
+
+| Need | Configure |
+|---|---|
+| Send tasks to OpenClaw only | Sender bot token + OpenClaw Chat ID |
+| Queue Ready-lane QA through OpenClaw | Sender bot token + OpenClaw Chat ID |
+| Send project insights through OpenClaw | Sender bot token + OpenClaw Chat ID |
+| Send tasks, QA, or insights to Hermes | Sender bot token + Hermes Chat ID + Hermes receiver bot |
+| Test whether OpenClaw is alive | OpenClaw Chat ID; `/status` is OpenClaw-only |
+
+The sender bot belongs to PREQSTATION. A Hermes receiver bot belongs to the Hermes host. OpenClaw and Hermes can share a Telegram group, but they are different dispatcher hosts.
+
 ## What Telegram Is Used For
 
 - explicit task sends from the UI through **Send to Telegram**

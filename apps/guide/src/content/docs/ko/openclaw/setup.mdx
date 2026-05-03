@@ -18,6 +18,18 @@ OpenClaw는 아래 경우에 적합합니다.
 - OpenClaw-native `/preqsetup` project mapping
 - OpenClaw host에서 detached, worktree-first 실행
 
+## 설치 전에 필요한 것
+
+아래가 필요합니다.
+
+- dispatcher host에 OpenClaw 설치
+- PREQSTATION이 dispatch할 프로젝트의 로컬 checkout
+- OpenClaw host에서 실행 가능한 worker CLI: `claude`, `codex`, `gemini` 중 하나 이상
+- [워커 설치](/guide/ko/skill/installation)에 따른 PREQ worker 설정
+- 웹 앱에서 Telegram으로 dispatch message를 보낼 경우 Telegram 설정
+
+에이전트가 자기 터미널에서 직접 PREQ task를 처리하면 충분하다면 worker 설정까지만 하면 됩니다. OpenClaw는 웹 앱이나 OpenClaw chat에서 queued dispatch를 보낼 때 쓰는 경로입니다.
+
 ## Plugin 설치
 
 OpenClaw가 실행되는 머신에서 npm package를 설치합니다.
