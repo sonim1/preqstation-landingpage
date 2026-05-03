@@ -127,11 +127,21 @@ When an agent submits `preq_complete_task()`, it uploads a result object like:
   "tests": "npm test",
   "pr_url": "https://github.com/project/pull/456",
   "notes": "Stored JWT in an httpOnly cookie.",
+  "artifacts": [
+    {
+      "type": "image",
+      "title": "Verification screenshot",
+      "url": "https://fast.io/s/example",
+      "provider": "fastio",
+      "access": "quickshare",
+      "expires": "2026-05-10T00:00:00.000Z"
+    }
+  ],
   "completed_at": "2026-03-12T14:22:00.000Z"
 }
 ```
 
-PREQSTATION stores that as a work log entry attached to the task.
+PREQSTATION stores the result summary as a work log entry attached to the task. Structured `artifacts` are stored separately from markdown note/report content, so agents should not append `Artifacts:` blocks to task notes.
 
 ## Deployment Strategy
 

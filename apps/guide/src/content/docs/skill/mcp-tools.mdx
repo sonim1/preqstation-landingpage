@@ -23,6 +23,7 @@ The PREQSTATION MCP server exposes read-only tools for discovery and mutation to
 | `preq_create_task` | Create a new inbox task |
 | `preq_plan_task` | Upload a plan and move inbox → todo |
 | `preq_start_task` | Claim execution and set `run_state=working` |
+| `preq_update_task_note` | Replace task note markdown and attach structured artifacts without changing workflow status |
 | `preq_update_task_status` | Manually change workflow status only |
 | `preq_update_qa_run` | Update a branch-level QA run with status/report data |
 | `preq_complete_task` | Upload execution result and move todo/hold → ready |
@@ -85,7 +86,7 @@ Parameters:
 
 - `taskId` (required): task key such as `PROJ-123` or a UUID
 
-Returns the full serialized task payload including `status`, `run_state`, `deploy_strategy`, `labels`, and `acceptance_criteria`.
+Returns the full serialized task payload including `status`, `run_state`, `deploy_strategy`, `labels`, `acceptance_criteria`, and structured `artifacts`.
 
 ### preq_get_project_settings
 
@@ -180,7 +181,10 @@ Parameters:
 - `status` (optional): `running`, `passed`, `failed`
 - `targetUrl` (optional)
 - `reportMarkdown` (optional)
+- `artifacts` (optional): structured artifact objects for screenshots, videos, documents, links, local paths, or publication skip reasons
 - `summary` (optional): object with `total`, `critical`, `high`, `medium`, and `low`
+
+Keep the markdown report focused on findings. Do not append an `Artifacts:` markdown block; pass artifact metadata through `artifacts`.
 
 ### preq_complete_task
 
@@ -194,6 +198,7 @@ Parameters:
 - `prUrl` (optional)
 - `notes` (optional)
 - `branchName` (optional)
+- `artifacts` (optional): structured artifact objects saved separately from notes and work log markdown
 - `engine` (optional)
 
 Example:
@@ -205,7 +210,55 @@ Example:
   "engine": "claude-code",
   "branchName": "preqstation/PROJ/rate-limit",
   "prUrl": "https://github.com/org/repo/pull/123",
-  "tests": "npm test"
+  "tests": "npm test",
+  "artifacts": [
+    {
+      "type": "image",
+      "title": "Desktop screenshot",
+      "provider": "fastio",
+      "access": "quickshare",
+      "expires": "2026-05-10T00:00:00.000Z",
+      "url": "https://fast.io/s/example"
+    }
+  ]
+}
+```
+
+Artifact object fields are intentionally provider-neutral: `type`, `title`, `url`, `provider`, `access`, `expires`, `localPath`, `reason`, and optional `metadata`. If publication is skipped, include `localPath` and `reason` instead of putting the skip note in an `Artifacts:` markdown block.
+
+### preq_update_task_note
+
+Updates task note markdown without changing workflow status. Ask/prototype flows should use this for note rewrites and pass generated review artifacts separately.
+
+Parameters:
+
+- `taskId` (required)
+- `noteMarkdown` (required)
+- `artifacts` (optional): structured artifact objects saved separately from task note markdown
+- `engine` (optional)
+
+Example:
+
+```json
+{
+  "taskId": "PROJ-284",
+  "noteMarkdown": "## Direction\n\nUse the compact left rail concept.",
+  "artifacts": [
+    {
+      "type": "document",
+      "title": "HTML prototype",
+      "provider": "fastio",
+      "access": "private-workspace",
+      "url": "https://fast.io/s/prototype"
+    },
+    {
+      "type": "image",
+      "title": "Local screenshot",
+      "localPath": "artifacts/prototype.png",
+      "reason": "provider unavailable"
+    }
+  ],
+  "engine": "codex"
 }
 ```
 
