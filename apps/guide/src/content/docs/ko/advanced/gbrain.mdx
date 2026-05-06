@@ -1,0 +1,222 @@
+---
+title: GBrain으로 PREQSTATION 사용하기
+description: PREQSTATION task memory를 GBrain에 안전하게 동기화하면서 source repo를 깨끗하게 유지합니다.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+PREQSTATION은 작업 lifecycle의 source of truth로 유지하고, GBrain은 private durable memory와 handoff layer로 사용합니다. 이렇게 하면 다음 에이전트에게 필요한 기억은 남기면서도 public repo나 source-controlled repo에는 private memory가 들어가지 않습니다.
+
+<Aside type="caution">
+아래의 `~/projects`, `~/brain`, `~/gbrain`, repo root, brain folder, PREQ project key는 예시입니다. 그대로 쓰라는 뜻이 아닙니다. 반드시 자신의 machine, 팀 구조, 실제 repo root, private brain folder, project key에 맞게 바꾸세요.
+</Aside>
+
+## 이 통합이 하는 일
+
+이 패턴은 에이전트가 run 사이에 유용한 task memory를 유지해야 하지만, source repository에는 memory file을 남기고 싶지 않을 때 사용합니다.
+
+- PREQSTATION은 task status, acceptance criteria, work log, lifecycle transition을 관리합니다.
+- GBrain은 source repo 밖의 private handoff note와 durable summary를 저장합니다.
+- sync process는 PREQSTATION에서 읽고 private brain folder에 씁니다.
+- source repo에는 generated memory file, task dump, private implementation note를 남기지 않습니다.
+
+sync는 PREQSTATION 기준 read-only, private GBrain workspace 기준 write-only여야 합니다. task status를 바꾸면 안 됩니다.
+
+## 먼저 경로를 커스터마이즈하세요
+
+agent setup prompt나 cron job을 실행하기 전에 실제 경로를 결정하세요.
+
+| 예시 | 바꿔야 하는 값 |
+|---|---|
+| `~/projects/preqstation-lp` | 해당 project의 실제 repo root |
+| `~/brain/preqstation` | 해당 project의 private memory folder |
+| `~/gbrain` | local GBrain checkout 또는 runtime folder |
+| `PQSL` | 실제 PREQSTATION project key |
+
+private memory folder는 모든 source repo 밖에 두세요. repo가 `~/projects/my-app`에 있다면 `~/brain/my-app`처럼 sibling 또는 별도 private 위치를 권장합니다.
+
+## 권장 폴더 구조
+
+```text
+~
+├── projects/
+│   └── preqstation-lp/        # source repo
+├── brain/
+│   └── preqstation/           # private memory, commit 금지
+│       ├── tasks/
+│       ├── handoffs/
+│       ├── decisions.md
+│       └── project-map.md
+└── gbrain/                    # GBrain runtime 또는 checkout
+```
+
+brain folder가 repo 근처에 생길 가능성이 있다면 local ignore rule도 추가하세요.
+
+```text
+.brain/
+brain/
+gbrain/
+*.handoff.md
+```
+
+단, `.gitignore`에만 의존하지 말고 처음부터 repo 밖에 두는 편이 더 안전합니다.
+
+## Public Repo에서 안전한 이유
+
+source repo에는 ship할 code, docs, tests, project-owned asset만 있어야 합니다. private run memory에는 implementation note, operator preference, temporary path, unreleased detail, security-sensitive context가 섞일 수 있습니다. 이를 repo 밖에 두면 accidental commit을 막고 public/open-source repo를 더 안전하게 다룰 수 있습니다.
+
+경계는 단순해야 합니다.
+
+- PREQSTATION: canonical task state와 acceptance criteria
+- Source repo: ship할 code와 documentation
+- GBrain: private memory와 handoff context
+
+## 동기화할 것과 하지 말 것
+
+future execution에 도움이 되는 짧은 정보만 동기화하세요.
+
+- task key, title, status, label, acceptance criteria
+- current note나 plan의 concise summary
+- latest result summary와 test command
+- durable decision, blocker, handoff note
+- full dump 대신 PREQSTATION task link
+
+다음 정보는 동기화하지 마세요.
+
+- cron이 매번 만드는 full task dump
+- secret, token, API key, private customer data
+- handoff에 필요 없는 generated log
+- 이미 다른 곳에 저장된 large artifact
+- source repo에 reviewed documentation으로 들어가야 하는 내용
+
+## 권장 GBrain Project Files
+
+작고 안정적인 파일 세트로 시작하세요.
+
+```text
+~/brain/preqstation/
+├── project-map.md
+├── decisions.md
+├── tasks/
+│   └── PQSL-18.md
+└── handoffs/
+    └── latest.md
+```
+
+`project-map.md`에는 local repo path, PREQ project key, private brain path, naming convention을 적습니다. `decisions.md`에는 오래 유지할 결정만 남깁니다. task file은 짧고 replaceable해야 합니다.
+
+## One-shot Agent Setup Prompt
+
+아래 prompt를 project마다 한 번 사용하세요. 실행 전에 경로와 project key를 반드시 자신의 값으로 바꿉니다.
+
+```text
+Set up private GBrain memory for this PREQSTATION project.
+
+Project key: PQSL
+Source repo: ~/projects/preqstation-lp
+Private brain folder: ~/brain/preqstation
+GBrain runtime: ~/gbrain
+
+Rules:
+- PREQSTATION is the lifecycle source of truth.
+- Read task metadata and latest result from PREQSTATION only.
+- Write concise handoff memory only under ~/brain/preqstation.
+- Do not create brain notes inside the source repo.
+- Do not call lifecycle mutation tools during memory sync.
+- Do not commit or push private memory.
+
+Create the folder layout, write project-map.md, and create a short latest.md handoff note.
+```
+
+## Daily Sync Cron Prompt
+
+manual run이 올바른 파일만 생성하는 것을 확인한 뒤에 daily sync를 예약하세요.
+
+```text
+Daily PREQSTATION to GBrain sync for project PQSL.
+
+Read current PREQSTATION tasks and latest task results.
+Update concise private memory under ~/brain/preqstation.
+
+Strict rules:
+- This is read-only from PREQSTATION.
+- This is write-only into the private brain folder.
+- Do not call preq_update_task_status.
+- Do not call preq_complete_task.
+- Do not call preq_review_task.
+- Do not call preq_block_task.
+- Do not write into source repositories.
+- Do not overwrite hand-authored notes unless the file says it is generated.
+
+Output a short sync summary with changed files.
+```
+
+cron wrapper 예시:
+
+```bash
+0 8 * * * cd ~/gbrain && gbrain run --prompt-file ~/brain/preqstation/daily-sync.prompt.txt >> ~/brain/preqstation/sync.log 2>&1
+```
+
+실제 GBrain CLI나 automation runtime에 맞게 command를 조정하세요.
+
+## 선택적 Project Mapping
+
+여러 PREQSTATION project를 관리한다면 repo 밖의 private mapping file을 유지하세요.
+
+```md
+# PREQSTATION Project Mapping
+
+| Project | Repo | Brain folder |
+|---|---|---|
+| PQSL | ~/projects/preqstation-lp | ~/brain/preqstation |
+| APP | ~/projects/my-app | ~/brain/my-app |
+```
+
+이 파일은 private operator configuration입니다. 팀이 의도적으로 sanitized version을 관리하는 경우가 아니라면 commit하지 마세요.
+
+## 수동 검증
+
+scheduled sync를 켜기 전에 boundary를 직접 확인하세요.
+
+1. setup prompt를 한 번 실행합니다.
+2. file이 private brain folder 아래에만 생성됐는지 확인합니다.
+3. source repo에서 `git status`를 실행해 brain file이 생기지 않았는지 확인합니다.
+4. generated task note가 짧고 handoff에 필요한 내용만 담는지 확인합니다.
+5. PREQSTATION task status가 바뀌지 않았는지 확인합니다.
+
+이 guide app에서는 다음 명령으로 문서 route를 검증합니다.
+
+```bash
+pnpm --filter @preqstation/guide build
+```
+
+그다음 `/guide/ko/advanced/gbrain/`와 영어 route가 sidebar에 보이는지 확인하세요.
+
+## 문제 해결
+
+**brain file이 source repo에 생겼을 때**
+
+private brain folder로 옮기고 local ignore rule을 추가한 뒤 commit 전에 `git status`를 확인하세요. private memory는 commit하지 않습니다.
+
+**sync가 PREQSTATION task status를 바꿨을 때**
+
+automation을 중지하세요. memory sync는 lifecycle mutation tool을 호출하면 안 됩니다. job을 다시 켜기 전에 PREQSTATION board에서 task state를 복구하세요.
+
+**brain folder가 반복 dump로 가득 찼을 때**
+
+prompt를 수정해 durable decision과 handoff context만 요약하게 만드세요. canonical detail은 PREQSTATION link로 되돌아가게 유지합니다.
+
+**generated file이 hand-written note를 덮어썼을 때**
+
+generated file과 hand-authored file을 분리하세요. replaceable output은 `generated/latest.md` 같은 경로를 쓰고, `decisions.md`는 manual file로 유지합니다.
+
+## 에이전트가 피해야 할 행동
+
+- `docs/brain.md`나 `.brain/tasks/*.md` 같은 repo-local brain note 생성
+- 매번 모든 PREQSTATION field를 GBrain에 dump
+- sync 중 PREQ lifecycle mutation 호출
+- private memory commit 또는 push
+- hand-authored note blind overwrite
+- GBrain을 task status의 source of truth로 취급
+
+확신이 없으면 PREQSTATION을 canonical로 두고, GBrain은 private으로 유지하며, source repo는 깨끗하게 둡니다.

@@ -200,6 +200,21 @@ export default defineConfig({
           ],
         },
         {
+          label: 'Advanced',
+          translations: {
+            ko: '고급',
+          },
+          items: [
+            {
+              label: 'GBrain Memory Sync',
+              translations: {
+                ko: 'GBrain 메모리 동기화',
+              },
+              slug: 'advanced/gbrain',
+            },
+          ],
+        },
+        {
           label: 'API Reference',
           translations: {
             ko: 'API 레퍼런스',
