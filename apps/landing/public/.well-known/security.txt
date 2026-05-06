@@ -1,0 +1,4 @@
+Contact: mailto:security@preqstation.com
+Expires: 2027-05-06T00:00:00Z
+Preferred-Languages: en
+Canonical: https://preqstation.com/.well-known/security.txt
