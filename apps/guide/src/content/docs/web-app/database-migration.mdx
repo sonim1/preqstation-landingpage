@@ -1,11 +1,11 @@
 ---
 title: Database Migration
-description: Move PREQSTATION between PostgreSQL providers with dump-and-restore.
+description: Move PreqStation between PostgreSQL providers with dump-and-restore.
 ---
 
 import { Aside } from '@astrojs/starlight/components';
 
-Any PostgreSQL provider that works with `DATABASE_URL` can host PREQSTATION. Use this guide when you need to move an existing installation from one PostgreSQL provider to another.
+Any PostgreSQL provider that works with `DATABASE_URL` can host PreqStation. Use this guide when you need to move an existing installation from one PostgreSQL provider to another.
 
 <Aside type="caution">
 Plan for a maintenance window. This guide uses standard PostgreSQL dump-and-restore steps and does not promise zero-downtime cutovers or managed cross-provider replication.
@@ -27,9 +27,9 @@ Plan for a maintenance window. This guide uses standard PostgreSQL dump-and-rest
 1. Back up the current database with `pg_dump`
 2. Create the target PostgreSQL database and confirm you can connect to it
 3. Restore the backup with `pg_restore` or `psql`
-4. Update `DATABASE_URL` in your PREQSTATION environment
+4. Update `DATABASE_URL` in your PreqStation environment
 5. Run `npm run db:migrate`
-6. Log in to PREQSTATION and verify task access and API-key flows
+6. Log in to PreqStation and verify task access and API-key flows
 
 ## Example commands
 
@@ -65,6 +65,6 @@ psql "$TARGET_DATABASE_URL" < preqstation.sql
 
 ## After the move
 
-- Update `DATABASE_URL` anywhere PREQSTATION runs
+- Update `DATABASE_URL` anywhere PreqStation runs
 - Restart the app or redeploy so it picks up the new environment
 - Sign in and verify existing tasks, API keys, and owner-only flows behave as expected

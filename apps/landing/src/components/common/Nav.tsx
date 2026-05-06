@@ -109,7 +109,7 @@ export default function Nav({ locale, guideHref }: { locale: Locale; guideHref: 
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:h-16 sm:px-6">
         <a
           href={getLocalePath(locale)}
-          aria-label="PREQSTATION home"
+          aria-label="PreqStation home"
           className="inline-flex items-center gap-2.5 transition hover:opacity-95"
         >
           <img
@@ -124,7 +124,7 @@ export default function Nav({ locale, guideHref }: { locale: Locale; guideHref: 
             className="text-sm font-semibold tracking-[0.16em] text-white sm:text-base"
             style={{ fontFamily: '"Outfit", system-ui, sans-serif' }}
           >
-            PREQSTATION
+            PreqStation
           </span>
         </a>
 

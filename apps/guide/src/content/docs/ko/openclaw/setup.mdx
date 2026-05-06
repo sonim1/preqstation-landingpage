@@ -5,7 +5,7 @@ description: OpenClaw dispatcher 경로를 위해 preqstation-dispatcher를 설�
 
 import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
-`preqstation-dispatcher`는 PREQSTATION의 durable public dispatcher package입니다. OpenClaw는 이 패키지를 plugin으로 로드하고, plugin은 프로젝트를 찾고 worktree를 만들고 `.preqstation-prompt.txt`를 쓴 다음 Claude Code, Codex, Gemini CLI를 detached process로 실행합니다.
+`preqstation-dispatcher`는 PreqStation의 durable public dispatcher package입니다. OpenClaw는 이 패키지를 plugin으로 로드하고, plugin은 프로젝트를 찾고 worktree를 만들고 `.preqstation-prompt.txt`를 쓴 다음 Claude Code, Codex, Gemini CLI를 detached process로 실행합니다.
 
 일부 package/plugin/config identifier에는 호환성을 위해 아직 `preqstation-openclaw`가 남아 있을 수 있습니다. 명령이 명시적으로 요구하지 않는 한 legacy technical identifier로만 보세요.
 
@@ -23,7 +23,7 @@ OpenClaw는 아래 경우에 적합합니다.
 아래가 필요합니다.
 
 - dispatcher host에 OpenClaw 설치
-- PREQSTATION이 dispatch할 프로젝트의 로컬 checkout
+- PreqStation이 dispatch할 프로젝트의 로컬 checkout
 - OpenClaw host에서 실행 가능한 worker CLI: `claude`, `codex`, `gemini` 중 하나 이상
 - [워커 설치](/guide/ko/skill/installation)에 따른 PREQ worker 설정
 - 웹 앱에서 Telegram으로 dispatch message를 보낼 경우 Telegram 설정

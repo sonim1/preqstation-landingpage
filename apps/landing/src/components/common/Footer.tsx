@@ -20,7 +20,7 @@ export default function Footer() {
               className="text-sm font-semibold tracking-[0.16em] text-white sm:text-base"
               style={{ fontFamily: '"Outfit", system-ui, sans-serif' }}
             >
-              PREQSTATION
+              PreqStation
             </span>
             <span>— {t.footer.tagline}</span>
           </div>

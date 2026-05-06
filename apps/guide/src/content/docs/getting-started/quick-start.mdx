@@ -1,23 +1,23 @@
 ---
 title: Quick Start
-description: Get PREQSTATION running in 5 minutes.
+description: Get PreqStation running in 5 minutes.
 ---
 
 ## Recommended Setup Path
 
-For most users, PREQSTATION setup now starts in the hosted web app and uses the remote MCP endpoint at `/mcp`.
+For most users, PreqStation setup now starts in the hosted web app and uses the remote MCP endpoint at `/mcp`.
 
 ## Choose Your Path
 
 | You are... | Start with | Add later only if needed |
 |---|---|---|
-| Using PREQSTATION alone with Claude Code, Codex, or Gemini | Hosted web app + [Worker Installation](/guide/skill/installation) | Telegram/OpenClaw dispatch |
+| Using PreqStation alone with Claude Code, Codex, or Gemini | Hosted web app + [Worker Installation](/guide/skill/installation) | Telegram/OpenClaw dispatch |
 | A developer self-hosting or validating migrations | [Web App Setup](/guide/web-app/setup) | Worker install after login works |
 | A founder or operator reviewing work from agents | Hosted web app + worker OAuth | QA queueing and project insight dispatch |
 | A vibe coder who wants the app to send tasks to local agents | Worker install first, then [OpenClaw Installation](/guide/openclaw/setup) | Hermes Telegram if OpenClaw is not the host |
 | Maintaining an old token-based setup | [API Keys](/guide/web-app/api-keys) | Remote `/mcp` OAuth when the runtime supports it |
 
-1. Sign in to your PREQSTATION deployment.
+1. Sign in to your PreqStation deployment.
 2. Open `/connections` and complete the provider setup you need for your worker or dispatcher path.
 3. Register the remote MCP endpoint:
 
@@ -55,7 +55,7 @@ Use this branch only if you are self-hosting the web app, validating migration-e
 
 ### 1. Clone the Repository
 
-Clone the PREQSTATION web app repository:
+Clone the PreqStation web app repository:
 
 ```bash
 git clone git@github.com:sonim1/preqstation.git
@@ -82,7 +82,7 @@ ALLOWED_ORIGINS=https://your-app.vercel.app,https://your-app-git-main-user.verce
 CRON_SECRET=<optional cleanup route secret>
 ```
 
-Any standard PostgreSQL provider that exposes a compatible connection string works with PREQSTATION.
+Any standard PostgreSQL provider that exposes a compatible connection string works with PreqStation.
 
 ### 3. Install Dependencies
 
@@ -102,7 +102,7 @@ npm run db:migrate
 npm run dev
 ```
 
-The app runs at `http://localhost:3000` by default. Set `PORT=` in `.env.local` before starting if you want a different local port. If you open `/` while signed out, PREQSTATION redirects you to `/login`. Fresh databases show the owner setup form so you can create the first account in the browser. Existing instances use the owner email and password stored in the `users` table.
+The app runs at `http://localhost:3000` by default. Set `PORT=` in `.env.local` before starting if you want a different local port. If you open `/` while signed out, PreqStation redirects you to `/login`. Fresh databases show the owner setup form so you can create the first account in the browser. Existing instances use the owner email and password stored in the `users` table.
 
 ## Compatibility: API Tokens and the Legacy Local Bridge
 
@@ -112,7 +112,7 @@ You only need `/api-keys` and `PREQSTATION_TOKEN` when you are using shell-helpe
 2. In the **Create API Key** form, keep the default expiration or choose one from **Expires In**.
 3. Enter a name such as `local-dev` or `codex-laptop`, then click **Create Key**.
 4. Copy the token from the green **New API key (shown once)** panel immediately. The value starts with `preq_` and the remaining characters use URL-safe letters, numbers, `_`, and `-`, for example `preq_abc123...`.
-5. Save it into your local agent environment before you close the page, because PREQSTATION only shows the full token once.
+5. Save it into your local agent environment before you close the page, because PreqStation only shows the full token once.
 
 Use the token with the app URL in your agent runtime only for those compatibility paths:
 
@@ -128,7 +128,7 @@ For the full token-based compatibility details, see [API Keys](/guide/web-app/ap
 - [Web App Setup](/guide/web-app/setup) — Hosted-first setup plus self-hosted local development details
 - [Worker Installation](/guide/skill/installation) — Claude, Codex, and Gemini worker setup
 - [OpenClaw Installation](/guide/openclaw/setup) — Telegram/OpenClaw dispatcher setup
-- [Product Philosophy](/guide/getting-started/philosophy) — Why PREQSTATION exists and when to use it
+- [Product Philosophy](/guide/getting-started/philosophy) — Why PreqStation exists and when to use it
 - [Kanban Board Guide](/guide/web-app/kanban) — Learn task management
 - [Concepts](/guide/getting-started/concepts) — Understand the kitchen metaphor
 - [API Keys](/guide/web-app/api-keys) — Shell-helper and legacy bridge token management

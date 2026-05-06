@@ -1,11 +1,11 @@
 ---
 title: Troubleshooting
-description: Common issues and solutions for PREQSTATION task execution
+description: Common issues and solutions for PreqStation task execution
 ---
 
 import { Tabs, TabItem } from '@astrojs/starlight/components';
 
-The standard PREQSTATION setup path uses the hosted `/mcp` endpoint plus browser OAuth. Use the token-based steps below only if you are troubleshooting shell-helper mode or the legacy local stdio bridge.
+The standard PreqStation setup path uses the hosted `/mcp` endpoint plus browser OAuth. Use the token-based steps below only if you are troubleshooting shell-helper mode or the legacy local stdio bridge.
 
 ## Remote MCP & OAuth Issues
 
@@ -102,7 +102,7 @@ echo $PREQSTATION_TOKEN  # Should output: preq_xxxxxxxxx
 ```
 
 2. Verify token is not expired:
-- Go to the PREQSTATION web app → Settings → API Keys
+- Go to the PreqStation web app → Settings → API Keys
 - Check token creation date and expiration
 - Generate a new token if needed
 
@@ -127,7 +127,7 @@ curl -H "Authorization: Bearer $PREQSTATION_TOKEN" \
 
 <Tabs>
 <TabItem label="Cause: Expired Token">
-**Check:** In the PREQSTATION web app, go to Settings → API Keys and check expiration date.
+**Check:** In the PreqStation web app, go to Settings → API Keys and check expiration date.
 
 **Fix:** Generate a new token:
 1. Click "New Token"
@@ -386,7 +386,7 @@ git -C <project_cwd> worktree prune
 
 **Issue:** `preq_*` tools are unavailable because the MCP server was never registered.
 
-**Fix:** Ensure the PREQSTATION MCP server is registered:
+**Fix:** Ensure the PreqStation MCP server is registered:
 ```bash
 claude mcp list | grep preqstation
 ```
@@ -413,7 +413,7 @@ If you've checked all above:
 3. **Check logs:**
    - Claude Code: Settings → Logs
    - OpenClaw: Session output via `process action:log`
-   - PREQSTATION web app: deployment or server logs
+   - PreqStation web app: deployment or server logs
 
 4. **File an issue** with:
    - System info (OS, Node version)

@@ -1,23 +1,23 @@
 ---
 title: 빠른 시작
-description: PREQSTATION을 몇 분 안에 시작합니다.
+description: PreqStation을 몇 분 안에 시작합니다.
 ---
 
 ## 권장 설정 경로
 
-대부분의 사용자는 배포된 PREQSTATION 웹 앱에서 시작하고, `/mcp`의 원격 MCP 엔드포인트를 사용하는 것이 기본 경로입니다.
+대부분의 사용자는 배포된 PreqStation 웹 앱에서 시작하고, `/mcp`의 원격 MCP 엔드포인트를 사용하는 것이 기본 경로입니다.
 
 ## 내 상황에 맞는 경로 선택
 
 | 상황 | 먼저 볼 문서 | 필요할 때만 추가 |
 |---|---|---|
-| Claude Code, Codex, Gemini로 혼자 PREQSTATION을 쓰는 경우 | hosted 웹 앱 + [워커 설치](/guide/ko/skill/installation) | Telegram/OpenClaw dispatch |
+| Claude Code, Codex, Gemini로 혼자 PreqStation을 쓰는 경우 | hosted 웹 앱 + [워커 설치](/guide/ko/skill/installation) | Telegram/OpenClaw dispatch |
 | self-hosting 또는 migration 검증을 하는 개발자 | [웹 앱 설정](/guide/ko/web-app/setup) | 로그인 확인 후 worker 설치 |
 | 에이전트 작업 결과를 리뷰하는 founder/operator | hosted 웹 앱 + worker OAuth | QA 큐잉과 project insight dispatch |
 | 웹 앱에서 로컬 에이전트로 task를 보내고 싶은 vibe coder | worker 설치 먼저, 그다음 [OpenClaw 설치](/guide/ko/openclaw/setup) | OpenClaw가 host가 아니면 Hermes Telegram |
 | 예전 token 기반 설정을 유지 중인 경우 | [API Keys](/guide/ko/web-app/api-keys) | runtime이 지원하면 원격 `/mcp` OAuth로 전환 |
 
-1. PREQSTATION 배포에 로그인합니다.
+1. PreqStation 배포에 로그인합니다.
 2. `/connections`를 열고 worker 또는 dispatcher 경로에 필요한 provider 설정을 완료합니다.
 3. 원격 MCP 엔드포인트를 등록합니다.
 
@@ -55,7 +55,7 @@ gemini mcp add --scope user --transport http preqstation https://<your-domain>/m
 
 ### 1. 저장소 클론
 
-PREQSTATION 웹 앱 저장소를 클론합니다.
+PreqStation 웹 앱 저장소를 클론합니다.
 
 ```bash
 git clone git@github.com:sonim1/preqstation.git
@@ -82,7 +82,7 @@ ALLOWED_ORIGINS=https://your-app.vercel.app,https://your-app-git-main-user.verce
 CRON_SECRET=<cleanup route용 선택 비밀값>
 ```
 
-표준 PostgreSQL 연결 문자열을 제공하는 관리형 서비스나 직접 운영하는 PostgreSQL이면 PREQSTATION과 함께 사용할 수 있습니다.
+표준 PostgreSQL 연결 문자열을 제공하는 관리형 서비스나 직접 운영하는 PostgreSQL이면 PreqStation과 함께 사용할 수 있습니다.
 
 ### 3. 의존성 설치
 
@@ -128,7 +128,7 @@ export PREQSTATION_TOKEN=preq_your_new_token
 - [웹 앱 설정](/guide/ko/web-app/setup) — hosted 우선 설정과 self-hosted 로컬 개발 세부 정보
 - [워커 설치](/guide/ko/skill/installation) — Claude, Codex, Gemini worker 설정
 - [OpenClaw 설치](/guide/ko/openclaw/setup) — Telegram/OpenClaw dispatcher 설정
-- [철학](/guide/ko/getting-started/philosophy) — PREQSTATION이 왜 존재하는지와 언제 쓰면 좋은지
+- [철학](/guide/ko/getting-started/philosophy) — PreqStation이 왜 존재하는지와 언제 쓰면 좋은지
 - [칸반 보드 가이드](/guide/ko/web-app/kanban) — 태스크 보드 사용법
-- [개념](/guide/ko/getting-started/concepts) — PREQSTATION의 핵심 모델 이해하기
+- [개념](/guide/ko/getting-started/concepts) — PreqStation의 핵심 모델 이해하기
 - [API Keys](/guide/ko/web-app/api-keys) — shell-helper 및 레거시 브리지 토큰 관리

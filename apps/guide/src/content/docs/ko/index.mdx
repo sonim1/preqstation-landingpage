@@ -1,9 +1,9 @@
 ---
-title: PREQSTATION 가이드
-description: PREQSTATION 실행 가이드. 태스크를 라우팅하고, 에이전트가 구현한 뒤, 직접 검증해 done 상태로 보냅니다.
+title: PreqStation 가이드
+description: PreqStation 실행 가이드. 태스크를 라우팅하고, 에이전트가 구현한 뒤, 직접 검증해 done 상태로 보냅니다.
 template: splash
 hero:
-  title: PREQSTATION 가이드
+  title: PreqStation 가이드
   tagline: "태스크를 큐에 넣고, 에이전트가 실행하고, 당신이 검증합니다."
   actions:
     - text: 빠른 시작부터
@@ -16,11 +16,11 @@ hero:
       variant: secondary
 ---
 
-PREQSTATION은 Claude, Codex, Gemini를 실제 프로젝트에 연결하기 위한 실행 시스템입니다.
+PreqStation은 Claude, Codex, Gemini를 실제 프로젝트에 연결하기 위한 실행 시스템입니다.
 
 ## 추천 첫 단계
 
-처음 PREQSTATION을 설정한다면 [빠른 시작](/guide/ko/getting-started/quick-start)부터 시작하세요. 웹 앱 실행, 로그인, 권장 원격 MCP 경로까지 가장 짧은 경로로 안내합니다. 전체 로컬 체크리스트를 보고 싶다면 [웹 앱 설정](/guide/ko/web-app/setup)으로 이어가면 됩니다.
+처음 PreqStation을 설정한다면 [빠른 시작](/guide/ko/getting-started/quick-start)부터 시작하세요. 웹 앱 실행, 로그인, 권장 원격 MCP 경로까지 가장 짧은 경로로 안내합니다. 전체 로컬 체크리스트를 보고 싶다면 [웹 앱 설정](/guide/ko/web-app/setup)으로 이어가면 됩니다.
 
 ## 설정 경로 선택
 
@@ -39,9 +39,9 @@ PREQSTATION은 Claude, Codex, Gemini를 실제 프로젝트에 연결하기 위�
 
 - [OpenClaw 설치](/guide/ko/openclaw/setup) — 웹 앱에서 Telegram/OpenClaw 전달 사용
 
-## PREQSTATION 구성 이해하기
+## PreqStation 구성 이해하기
 
-- **PREQSTATION 웹 앱** — 칸반 UI, REST API, dispatch 액션 UI, Telegram relay, 실행 오버레이를 제공하는 중심 웹 앱
+- **PreqStation 웹 앱** — 칸반 UI, REST API, dispatch 액션 UI, Telegram relay, 실행 오버레이를 제공하는 중심 웹 앱
 - **preqstation-skill** — Claude Code, Codex, Gemini CLI가 태스크를 읽고 상태를 갱신할 때 쓰는 MCP/worker 패키지
 - **preqstation-dispatcher** — Telegram이나 복사한 런타임 메시지를 받는 선택적 OpenClaw-native dispatcher 경로. 일부 package/plugin/config identifier는 호환성을 위해 아직 `preqstation-openclaw`를 사용합니다.
 

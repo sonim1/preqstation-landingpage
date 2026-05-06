@@ -1,18 +1,18 @@
 ---
 title: Installation
-description: Install preqstation-skill and connect Claude, Codex, or Gemini as PREQSTATION workers.
+description: Install preqstation-skill and connect Claude, Codex, or Gemini as PreqStation workers.
 ---
 
 import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
-`preqstation-skill` is the core agent-side package for PREQSTATION. It owns the `preqstation` worker skill, documents the lifecycle rules, and provides the Claude Code helper plugin plus Codex/Gemini worker install paths.
+`preqstation-skill` is the core agent-side package for PreqStation. It owns the `preqstation` worker skill, documents the lifecycle rules, and provides the Claude Code helper plugin plus Codex/Gemini worker install paths.
 
 ## Prerequisites
 
 - Node.js 22+ installed
-- A running PREQSTATION deployment at `https://<your-domain>`
-- Access to the PREQSTATION web app if you want to use the recommended remote MCP login flow
-- A PREQSTATION API token only if you plan to use shell-helper mode or the legacy local stdio bridge
+- A running PreqStation deployment at `https://<your-domain>`
+- Access to the PreqStation web app if you want to use the recommended remote MCP login flow
+- A PreqStation API token only if you plan to use shell-helper mode or the legacy local stdio bridge
 
 ## Choose a Worker Install
 
@@ -59,11 +59,11 @@ If you also want queued dispatch from the web app, use [OpenClaw Installation](/
 
 ## Recommended MCP Setup (HTTP + OAuth)
 
-The recommended MCP runtime now lives in the PREQSTATION service itself at `/mcp`. Claude Code, Codex, and Gemini CLI should connect to that remote endpoint and complete the browser OAuth flow when prompted.
+The recommended MCP runtime now lives in the PreqStation service itself at `/mcp`. Claude Code, Codex, and Gemini CLI should connect to that remote endpoint and complete the browser OAuth flow when prompted.
 
 ## Claude Code
 
-Register the remote PREQSTATION MCP endpoint:
+Register the remote PreqStation MCP endpoint:
 
 <Tabs>
 <TabItem label="Install">
@@ -90,7 +90,7 @@ claude mcp get preqstation
 
 ## Codex CLI
 
-Register the remote PREQSTATION MCP endpoint:
+Register the remote PreqStation MCP endpoint:
 
 <Tabs>
 <TabItem label="Install">
@@ -136,7 +136,7 @@ If you only want direct worker usage, this page is enough. If you want queued di
 
 Gemini CLI uses the same worker + remote MCP path when the local Gemini CLI supports remote HTTP MCP.
 
-Register the remote PREQSTATION MCP endpoint:
+Register the remote PreqStation MCP endpoint:
 
 <Tabs>
 <TabItem label="Install">
@@ -153,7 +153,7 @@ gemini mcp list
 ```bash
 gemini
 # or
-gemini -p "Read and execute the PREQSTATION task instructions from this workspace."
+gemini -p "Read and execute the PreqStation task instructions from this workspace."
 ```
 </TabItem>
 </Tabs>
@@ -219,5 +219,5 @@ Replace `/ABSOLUTE/PATH/TO/preqstation-skill` with the actual installation path.
 - Test connectivity: `curl -H "Authorization: Bearer $PREQSTATION_TOKEN" "$PREQSTATION_API_URL/api/health"`
 
 **Token rejected:**
-- Generate a new token from the PREQSTATION web app `/api-keys` page
+- Generate a new token from the PreqStation web app `/api-keys` page
 - Ensure token has not expired

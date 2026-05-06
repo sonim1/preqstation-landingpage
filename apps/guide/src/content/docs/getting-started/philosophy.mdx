@@ -1,33 +1,33 @@
 ---
 title: Product Philosophy
-description: Why PREQSTATION exists and what kind of workflow it is built for.
+description: Why PreqStation exists and what kind of workflow it is built for.
 ---
 
-PREQSTATION exists for developers who cannot sit at the computer all day but still want software work to keep moving. AI can already produce rough implementation quickly. The harder problem is preparing the work, dispatching it safely, and coming back to something you can actually review and ship.
+PreqStation exists for developers who cannot sit at the computer all day but still want software work to keep moving. AI can already produce rough implementation quickly. The harder problem is preparing the work, dispatching it safely, and coming back to something you can actually review and ship.
 
 ## Dispatch Anywhere
 
 Useful work does not only appear while you are at your desk. It shows up while you are commuting, in meetings, or between other responsibilities.
 
-PREQSTATION is built so you can capture the task when the idea is fresh, shape it with acceptance criteria, and dispatch it when you have the right moment. The point is not constant activity. The point is not losing momentum every time you leave the keyboard. A prepared task can later move through a dispatch path such as OpenClaw or Hermes, reach the right worker, and leave you with results and verification evidence to review when you return.
+PreqStation is built so you can capture the task when the idea is fresh, shape it with acceptance criteria, and dispatch it when you have the right moment. The point is not constant activity. The point is not losing momentum every time you leave the keyboard. A prepared task can later move through a dispatch path such as OpenClaw or Hermes, reach the right worker, and leave you with results and verification evidence to review when you return.
 
 ## Built for Solo & Small Teams
 
-Most project tools assume a larger human team and a heavier process layer. That can be useful, but it is not the problem PREQSTATION is trying to solve.
+Most project tools assume a larger human team and a heavier process layer. That can be useful, but it is not the problem PreqStation is trying to solve.
 
-PREQSTATION is for the part of the workflow where a task is already clear enough to execute. Keep backlog planning and broad coordination in GitHub Issues, Linear, Jira, Notion, or wherever they already work for you. PREQSTATION stays focused on scoped execution work, review signals, and visible follow-through.
+PreqStation is for the part of the workflow where a task is already clear enough to execute. Keep backlog planning and broad coordination in GitHub Issues, Linear, Jira, Notion, or wherever they already work for you. PreqStation stays focused on scoped execution work, review signals, and visible follow-through.
 
 ## From MVP to Production
 
 The first draft is cheaper than it used to be. AI can get you to an MVP quickly. What still costs time is turning that draft into a change you trust.
 
-PREQSTATION adds the guardrails around that transition: isolated worktrees, explicit ownership, reviewable notes, verification output, and a task record that tells you what happened instead of forcing you to reconstruct it from terminal scrollback.
+PreqStation adds the guardrails around that transition: isolated worktrees, explicit ownership, reviewable notes, verification output, and a task record that tells you what happened instead of forcing you to reconstruct it from terminal scrollback.
 
 ## Separate Engines from Dispatchers
 
-In PREQSTATION, the engine is the model or CLI that actually performs the coding work. For example, `claude-code`, `codex`, and `gemini-cli` select whether the task should run through a Claude, Codex, or Gemini worker.
+In PreqStation, the engine is the model or CLI that actually performs the coding work. For example, `claude-code`, `codex`, and `gemini-cli` select whether the task should run through a Claude, Codex, or Gemini worker.
 
-OpenClaw and Hermes are separate dispatch harnesses. They receive the task, resolve the project, create the worktree, and launch the selected engine. That means a task sent through Hermes is not implemented by Hermes itself. The delivery path and the coding model are different parts of the system, and keeping them separate makes the PREQSTATION workflow easier to reason about.
+OpenClaw and Hermes are separate dispatch harnesses. They receive the task, resolve the project, create the worktree, and launch the selected engine. That means a task sent through Hermes is not implemented by Hermes itself. The delivery path and the coding model are different parts of the system, and keeping them separate makes the PreqStation workflow easier to reason about.
 
 ## Status and Execution Overlay
 

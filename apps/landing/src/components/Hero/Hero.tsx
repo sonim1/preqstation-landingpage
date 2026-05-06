@@ -10,7 +10,7 @@ export default function Hero({ guideHref }: { guideHref: string }) {
       <div className="max-w-4xl mx-auto text-center px-6 py-24">
         <img
           src="/brand/logo.webp"
-          alt="PREQSTATION logo"
+          alt="PreqStation logo"
           className="mx-auto mb-6 h-16 w-auto sm:h-20"
           loading="eager"
           decoding="async"

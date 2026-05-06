@@ -1,18 +1,18 @@
 ---
 title: System Overview
-description: Architecture, components, and data flow of PREQSTATION.
+description: Architecture, components, and data flow of PreqStation.
 ---
 
 import { Aside, Card, CardGrid } from '@astrojs/starlight/components';
 import Mermaid from '../../../components/Mermaid.astro';
 
-PREQSTATION is an execution platform for AI-agent-driven development workflows. It bridges developers and coding agents through a task queue, a web app, and agent-facing APIs.
+PreqStation is an execution platform for AI-agent-driven development workflows. It bridges developers and coding agents through a task queue, a web app, and agent-facing APIs.
 
 If you want the product story before the system diagram, read [Product Philosophy](/guide/getting-started/philosophy) first.
 
 ## Recommended First Step
 
-If you're starting PREQSTATION from scratch, begin with [Quick Start](/guide/getting-started/quick-start). It gets the web app running, covers login, and ends with your first API key. If you prefer the full local checklist instead of the shortest path, use [Web App Setup](/guide/web-app/setup).
+If you're starting PreqStation from scratch, begin with [Quick Start](/guide/getting-started/quick-start). It gets the web app running, covers login, and ends with your first API key. If you prefer the full local checklist instead of the shortest path, use [Web App Setup](/guide/web-app/setup).
 
 ## Setup Path Order
 
@@ -22,10 +22,10 @@ If you're starting PREQSTATION from scratch, begin with [Quick Start](/guide/get
 
 ## Core Systems and Dispatcher Paths
 
-PREQSTATION separates any queued dispatcher path from the task engine:
+PreqStation separates any queued dispatcher path from the task engine:
 
 <CardGrid>
-	<Card title="PREQSTATION Web App" icon="setting">
+	<Card title="PreqStation Web App" icon="setting">
 		Central web app. Manages tasks, renders the Kanban UI, exposes the REST API, and lets the user choose the task engine plus any optional Telegram/OpenClaw dispatch action.
 	</Card>
 	<Card title="preqstation-dispatcher" icon="rocket">
@@ -70,7 +70,7 @@ flowchart LR
 
 ```text
 User creates task in the Kanban UI
-  -> PREQSTATION stores it in PostgreSQL
+  -> PreqStation stores it in PostgreSQL
   -> user optionally chooses a dispatch target
   -> PREQ queues Telegram/OpenClaw relay only when that path is needed
 ```
@@ -126,5 +126,5 @@ Agent lifecycle:
 | Auth       | Session cookies (HMAC-signed), bcryptjs     |
 
 <Aside>
-All data is owner-scoped via PostgreSQL Row Level Security. PREQSTATION is designed for single-developer use.
+All data is owner-scoped via PostgreSQL Row Level Security. PreqStation is designed for single-developer use.
 </Aside>

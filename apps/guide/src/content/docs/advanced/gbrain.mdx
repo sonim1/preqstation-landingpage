@@ -1,11 +1,11 @@
 ---
-title: Using PREQSTATION with GBrain
+title: Using PreqStation with GBrain
 description: Keep source repos clean while syncing durable PREQ task memory into GBrain.
 ---
 
 import { Aside } from '@astrojs/starlight/components';
 
-PREQSTATION should remain the lifecycle source of truth. GBrain is a private durable memory and handoff layer that stores context agents may need later without putting that memory into public or source-controlled repositories.
+PreqStation should remain the lifecycle source of truth. GBrain is a private durable memory and handoff layer that stores context agents may need later without putting that memory into public or source-controlled repositories.
 
 <Aside type="caution">
 The paths and project keys below are examples. Replace `~/projects`, `~/brain`, `~/gbrain`, repository roots, brain folders, and PREQ project keys with values that match your own machine and team. Do not copy the example mapping blindly.
@@ -15,12 +15,12 @@ The paths and project keys below are examples. Replace `~/projects`, `~/brain`, 
 
 Use this pattern when you want agents to keep useful task memory across runs while keeping the actual source repository clean.
 
-- PREQSTATION owns task status, acceptance criteria, work logs, and lifecycle transitions.
+- PreqStation owns task status, acceptance criteria, work logs, and lifecycle transitions.
 - GBrain stores private handoff notes, durable summaries, and operator context outside the source repo.
-- The sync process reads from PREQSTATION and writes into a private brain folder.
+- The sync process reads from PreqStation and writes into a private brain folder.
 - Source repos stay free of generated memory files, task dumps, and private implementation notes.
 
-The sync should be read-only from PREQSTATION and write-only into your private GBrain workspace. It must not change task status.
+The sync should be read-only from PreqStation and write-only into your private GBrain workspace. It must not change task status.
 
 ## Customize These Paths First
 
@@ -31,7 +31,7 @@ Decide the real paths before you run an agent setup prompt or cron job.
 | `~/projects/preqstation-lp` | Your repo root for the project |
 | `~/brain/preqstation` | Your private memory folder for this project |
 | `~/gbrain` | Your local GBrain checkout or runtime folder |
-| `PQSL` | Your PREQSTATION project key |
+| `PQSL` | Your PreqStation project key |
 
 Keep the private memory folder outside every source repo. If your repo is in `~/projects/my-app`, choose a sibling or separate private location such as `~/brain/my-app`.
 
@@ -67,7 +67,7 @@ The source repo should only contain product code, docs, tests, and project-owned
 
 The boundary is simple:
 
-- PREQSTATION: canonical task state and acceptance criteria
+- PreqStation: canonical task state and acceptance criteria
 - Source repo: code and documentation intended to ship
 - GBrain: private memory and handoff context
 
@@ -79,7 +79,7 @@ Sync concise material that improves future execution:
 - Current note or plan, summarized for future agents
 - Latest result summary and test commands
 - Durable decisions, blockers, and handoff notes
-- Links to PREQSTATION tasks rather than full replicated task dumps
+- Links to PreqStation tasks rather than full replicated task dumps
 
 Do not sync noisy or sensitive material:
 
@@ -110,7 +110,7 @@ Start with a small set of stable files:
 Use a prompt like this once per project after changing the paths to your own values:
 
 ```text
-Set up private GBrain memory for this PREQSTATION project.
+Set up private GBrain memory for this PreqStation project.
 
 Project key: PQSL
 Source repo: ~/projects/preqstation-lp
@@ -118,8 +118,8 @@ Private brain folder: ~/brain/preqstation
 GBrain runtime: ~/gbrain
 
 Rules:
-- PREQSTATION is the lifecycle source of truth.
-- Read task metadata and latest result from PREQSTATION only.
+- PreqStation is the lifecycle source of truth.
+- Read task metadata and latest result from PreqStation only.
 - Write concise handoff memory only under ~/brain/preqstation.
 - Do not create brain notes inside the source repo.
 - Do not call lifecycle mutation tools during memory sync.
@@ -133,13 +133,13 @@ Create the folder layout, write project-map.md, and create a short latest.md han
 Schedule a daily sync only after the manual run produces the right files.
 
 ```text
-Daily PREQSTATION to GBrain sync for project PQSL.
+Daily PreqStation to GBrain sync for project PQSL.
 
-Read current PREQSTATION tasks and latest task results.
+Read current PreqStation tasks and latest task results.
 Update concise private memory under ~/brain/preqstation.
 
 Strict rules:
-- This is read-only from PREQSTATION.
+- This is read-only from PreqStation.
 - This is write-only into the private brain folder.
 - Do not call preq_update_task_status.
 - Do not call preq_complete_task.
@@ -161,10 +161,10 @@ Adjust the command to match your actual GBrain CLI or automation runtime.
 
 ## Optional Project Mapping
 
-If you manage several PREQSTATION projects, keep a private mapping file outside the repos:
+If you manage several PreqStation projects, keep a private mapping file outside the repos:
 
 ```md
-# PREQSTATION Project Mapping
+# PreqStation Project Mapping
 
 | Project | Repo | Brain folder |
 |---|---|---|
@@ -182,7 +182,7 @@ Before enabling any scheduled sync, verify the boundaries manually:
 2. Confirm files were created only under the private brain folder.
 3. Run `git status` in the source repo and confirm no brain files appeared.
 4. Open the generated task note and confirm it is concise.
-5. Confirm no PREQSTATION task status changed.
+5. Confirm no PreqStation task status changed.
 
 For this guide app, verify the docs route with:
 
@@ -198,13 +198,13 @@ Then check `/guide/advanced/gbrain/` and the localized route if enabled.
 
 Move them to the private brain folder, add local ignore rules, and check `git status` before committing. Do not commit private memory.
 
-**The sync changed PREQSTATION task status**
+**The sync changed PreqStation task status**
 
-Stop the automation. Memory sync must never call lifecycle mutation tools. Restore the task state from the PREQSTATION board before re-enabling the job.
+Stop the automation. Memory sync must never call lifecycle mutation tools. Restore the task state from the PreqStation board before re-enabling the job.
 
 **The brain folder is full of repeated dumps**
 
-Change the prompt to summarize durable decisions and handoff context. Keep links back to PREQSTATION for canonical details.
+Change the prompt to summarize durable decisions and handoff context. Keep links back to PreqStation for canonical details.
 
 **A generated file overwrote hand-written notes**
 
@@ -213,10 +213,10 @@ Separate generated files from hand-authored files. Use filenames such as `genera
 ## What Agents Must Avoid
 
 - Creating repo-local brain notes such as `docs/brain.md` or `.brain/tasks/*.md`
-- Dumping every PREQSTATION field into GBrain on every run
+- Dumping every PreqStation field into GBrain on every run
 - Calling PREQ lifecycle mutations during sync
 - Committing or pushing private memory
 - Blindly overwriting hand-authored notes
 - Treating GBrain as the source of truth for task status
 
-When in doubt, keep PREQSTATION canonical, keep GBrain private, and keep source repos clean.
+When in doubt, keep PreqStation canonical, keep GBrain private, and keep source repos clean.

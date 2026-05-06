@@ -1,13 +1,13 @@
 ---
 title: Setup
-description: Install and configure the PREQSTATION web application.
+description: Install and configure the PreqStation web application.
 ---
 
 import { Aside } from '@astrojs/starlight/components';
 
 ## Recommended for Most Users
 
-Most users do not need to clone the web app repository. If you already have access to a PREQSTATION deployment, use the hosted setup path first:
+Most users do not need to clone the web app repository. If you already have access to a PreqStation deployment, use the hosted setup path first:
 
 1. Sign in to the web app.
 2. Open `/connections` and complete the provider setup you need.
@@ -31,7 +31,7 @@ API tokens are only needed later if you must use shell-helper mode or the legacy
 
 ## Self-Hosted Local Development Prerequisites
 
-Use the sections below only when you need a local PREQSTATION web app checkout for self-hosting, migration validation, or local development.
+Use the sections below only when you need a local PreqStation web app checkout for self-hosting, migration validation, or local development.
 
 - **Node.js 22** or later
 - **PostgreSQL 13+** (self-hosted or managed)
@@ -55,7 +55,7 @@ Create a `.env.local` file in the project root. Copy from `.env.example` and fil
 </Aside>
 
 <Aside type="note">
-Any standard PostgreSQL provider that exposes a compatible connection string works with PREQSTATION, including managed services and self-hosted deployments.
+Any standard PostgreSQL provider that exposes a compatible connection string works with PreqStation, including managed services and self-hosted deployments.
 </Aside>
 
 `PORT` is not part of the runtime env schema or `.env.example`, but the local `npm run dev` script reads `PORT` from `.env.local` if you want a non-default port.
@@ -64,7 +64,7 @@ Any standard PostgreSQL provider that exposes a compatible connection string wor
 
 ### 1. Clone and Install
 
-The PREQSTATION web app source lives in [github.com/sonim1/preqstation](https://github.com/sonim1/preqstation):
+The PreqStation web app source lives in [github.com/sonim1/preqstation](https://github.com/sonim1/preqstation):
 
 ```bash
 git clone git@github.com:sonim1/preqstation.git
@@ -107,7 +107,7 @@ The app opens at `http://localhost:3000` by default. Set `PORT=` in `.env.local`
 4. For migrations or existing deployments, update the current owner row in PostgreSQL instead of replacing it so related data keeps the same owner ID
 
 <Aside>
-PREQSTATION is single-owner. All data is scoped to this account at the database level via PostgreSQL RLS.
+PreqStation is single-owner. All data is scoped to this account at the database level via PostgreSQL RLS.
 </Aside>
 
 ## Configure Telegram (Optional)

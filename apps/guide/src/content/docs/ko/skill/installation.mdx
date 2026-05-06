@@ -1,18 +1,18 @@
 ---
 title: 설치
-description: preqstation-skill을 설치하고 Claude, Codex, Gemini를 PREQSTATION worker로 연결합니다.
+description: preqstation-skill을 설치하고 Claude, Codex, Gemini를 PreqStation worker로 연결합니다.
 ---
 
 import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
-`preqstation-skill`은 PREQSTATION의 핵심 에이전트 측 패키지입니다. `preqstation` worker skill, 작업 수명 주기 규칙, Claude Code helper plugin, Codex/Gemini worker 설치 경로를 제공합니다.
+`preqstation-skill`은 PreqStation의 핵심 에이전트 측 패키지입니다. `preqstation` worker skill, 작업 수명 주기 규칙, Claude Code helper plugin, Codex/Gemini worker 설치 경로를 제공합니다.
 
 ## 사전 준비
 
 - Node.js 22+ 설치
-- `https://<your-domain>`에서 동작 중인 PREQSTATION 배포
-- 권장 원격 MCP 로그인 플로우를 쓰려면 PREQSTATION 웹 앱 접근 권한
-- 셸 헬퍼 모드나 레거시 로컬 stdio 브리지를 쓸 계획이라면 PREQSTATION API 토큰
+- `https://<your-domain>`에서 동작 중인 PreqStation 배포
+- 권장 원격 MCP 로그인 플로우를 쓰려면 PreqStation 웹 앱 접근 권한
+- 셸 헬퍼 모드나 레거시 로컬 stdio 브리지를 쓸 계획이라면 PreqStation API 토큰
 
 ## Worker 설치 경로 선택
 
@@ -59,11 +59,11 @@ gemini-cli
 
 ## 권장 MCP 설정 (HTTP + OAuth)
 
-권장 MCP 런타임은 이제 PREQSTATION 서비스 내부의 `/mcp`에 있습니다. Claude Code, Codex, Gemini CLI는 이 원격 엔드포인트에 연결하고, 필요할 때 브라우저 OAuth 플로우를 완료하면 됩니다.
+권장 MCP 런타임은 이제 PreqStation 서비스 내부의 `/mcp`에 있습니다. Claude Code, Codex, Gemini CLI는 이 원격 엔드포인트에 연결하고, 필요할 때 브라우저 OAuth 플로우를 완료하면 됩니다.
 
 ## Claude Code
 
-원격 PREQSTATION MCP 엔드포인트를 등록합니다.
+원격 PreqStation MCP 엔드포인트를 등록합니다.
 
 <Tabs>
 <TabItem label="설치">
@@ -90,7 +90,7 @@ claude mcp get preqstation
 
 ## Codex CLI
 
-원격 PREQSTATION MCP 엔드포인트를 등록합니다.
+원격 PreqStation MCP 엔드포인트를 등록합니다.
 
 <Tabs>
 <TabItem label="설치">
@@ -136,7 +136,7 @@ Codex는 Claude 스타일의 로컬 plugin이나 channel runtime이 필요하지
 
 Gemini CLI는 설치된 로컬 CLI가 remote HTTP MCP를 지원할 때 Claude/Codex와 같은 worker + remote MCP 경로를 사용합니다.
 
-원격 PREQSTATION MCP 엔드포인트를 등록합니다.
+원격 PreqStation MCP 엔드포인트를 등록합니다.
 
 <Tabs>
 <TabItem label="설치">
@@ -153,7 +153,7 @@ gemini mcp list
 ```bash
 gemini
 # 또는
-gemini -p "Read and execute the PREQSTATION task instructions from this workspace."
+gemini -p "Read and execute the PreqStation task instructions from this workspace."
 ```
 </TabItem>
 </Tabs>
@@ -219,5 +219,5 @@ export PREQSTATION_ENGINE="claude-code"  # or codex, gemini-cli
 - `curl -H "Authorization: Bearer $PREQSTATION_TOKEN" "$PREQSTATION_API_URL/api/health"`로 연결 확인
 
 **토큰이 거부될 때:**
-- PREQSTATION 웹 앱의 `/api-keys`에서 새 토큰을 발급
+- PreqStation 웹 앱의 `/api-keys`에서 새 토큰을 발급
 - 토큰 만료 여부 확인

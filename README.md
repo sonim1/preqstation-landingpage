@@ -1,6 +1,6 @@
-# PREQSTATION Landingpage
+# PreqStation Landingpage
 
-This repository contains the public PREQSTATION website monorepo:
+This repository contains the public PreqStation website monorepo:
 
 - `apps/landing` — the landing page served at `/`
 - `apps/guide` — the Astro Starlight guide served at `/guide`

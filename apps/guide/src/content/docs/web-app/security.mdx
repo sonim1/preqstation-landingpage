@@ -1,11 +1,11 @@
 ---
 title: Security
-description: PREQSTATION's security model, auth, and best practices.
+description: PreqStation's security model, auth, and best practices.
 ---
 
 import { Aside } from '@astrojs/starlight/components';
 
-PREQSTATION is designed as a single-owner system with comprehensive security controls.
+PreqStation is designed as a single-owner system with comprehensive security controls.
 
 ## Authentication
 
@@ -114,7 +114,7 @@ Records agent execution results:
 ## Best Practices
 
 <Aside type="tip">
-Follow these practices to keep PREQSTATION secure:
+Follow these practices to keep PreqStation secure:
 </Aside>
 
 ### 1. **Secure AUTH_SECRET**
@@ -145,7 +145,7 @@ Follow these practices to keep PREQSTATION secure:
 
 ### 5. **Keep Origin Checks Tight**
 
-PREQSTATION rejects cross-origin requests by default using same-origin verification on `/login` POSTs and protected `/api/` routes. Set `ALLOWED_ORIGINS` only when you need to trust additional first-party origins such as Vercel preview URLs or another app domain:
+PreqStation rejects cross-origin requests by default using same-origin verification on `/login` POSTs and protected `/api/` routes. Set `ALLOWED_ORIGINS` only when you need to trust additional first-party origins such as Vercel preview URLs or another app domain:
 
 ```bash
 ALLOWED_ORIGINS=https://your-app.vercel.app,https://your-app-git-main-user.vercel.app
@@ -156,7 +156,7 @@ If you only serve the app from one origin, you can leave `ALLOWED_ORIGINS` unset
 ### 6. **Protect Bot Token**
 
 - Save the Telegram bot token in **Settings > Telegram**
-- PREQSTATION encrypts it at rest in `user_settings` with AES-GCM using a key derived from `AUTH_SECRET`
+- PreqStation encrypts it at rest in `user_settings` with AES-GCM using a key derived from `AUTH_SECRET`
 - Never commit a plaintext copy or mirror it into `.env`
 - Revoke at [@BotFather](https://t.me/BotFather) if exposed, then save a new token in the app
 
@@ -168,7 +168,7 @@ If you only serve the app from one origin, you can leave `ALLOWED_ORIGINS` unset
 
 ## Compliance
 
-PREQSTATION provides:
+PreqStation provides:
 
 - ✅ Single-owner data isolation (RLS)
 - ✅ Immutable audit logs

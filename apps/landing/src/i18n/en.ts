@@ -1,6 +1,6 @@
 export default {
   meta: {
-    title: "PREQSTATION — AI Agent Execution Platform",
+    title: "PreqStation — AI Agent Execution Platform",
     description: "Queue a task, let agents plan and execute it, then verify the result. An open-source, self-hosted AI agent execution platform.",
   },
   nav: {
@@ -28,7 +28,7 @@ export default {
   hero: {
     badge: "The Developer's Kitchen",
     title: "Queue the task.\nAgents do the work.",
-    description: "PREQSTATION exists for developers who cannot stay at the keyboard all day but still need work to keep moving. Prepare the task ahead of time, dispatch it from wherever you are, and come back to reviewable proof from Claude, Codex, or Gemini instead of another half-finished AI session.",
+    description: "PreqStation exists for developers who cannot stay at the keyboard all day but still need work to keep moving. Prepare the task ahead of time, dispatch it from wherever you are, and come back to reviewable proof from Claude, Codex, or Gemini instead of another half-finished AI session.",
     preqTagline: "Queue the task. Agents take it.",
     prepTagline: "Review the result. Then ship.",
     cta: "See the workflow",
@@ -130,8 +130,8 @@ export default {
     bottomMessage: "You stay in control.",
   },
   whyPreq: {
-    title: "PREQSTATION — Why this layer matters",
-    intro: "PREQSTATION is not trying to replace your whole project stack. It is the execution layer for developers who already know the work they want done and need a clean handoff to AI agents.",
+    title: "PreqStation — Why this layer matters",
+    intro: "PreqStation is not trying to replace your whole project stack. It is the execution layer for developers who already know the work they want done and need a clean handoff to AI agents.",
     problemLabel: "Problem",
     solutionLabel: "Solution",
     sections: [
@@ -175,14 +175,14 @@ export default {
   },
   features: {
     title: "Three product stories",
-    subtitle: "These are the real reasons developers reach for PREQSTATION when they need more than a clever prompt and less than a heavyweight process stack.",
+    subtitle: "These are the real reasons developers reach for PreqStation when they need more than a clever prompt and less than a heavyweight process stack.",
     items: [
       {
         id: "dispatch-anywhere",
         eyebrow: "Dispatch Anywhere",
         title: "Prepare the task now. Fire it when the moment is right.",
-        summary: "PREQSTATION is designed for developers whose best ideas arrive away from the desk. Capture the work, leave the right context, and dispatch it when you have a window instead of restarting the whole thought later.",
-        imageAlt: "PREQSTATION task capture and dispatch workflow.",
+        summary: "PreqStation is designed for developers whose best ideas arrive away from the desk. Capture the work, leave the right context, and dispatch it when you have a window instead of restarting the whole thought later.",
+        imageAlt: "PreqStation task capture and dispatch workflow.",
         bullets: [
           "Capture scope before context disappears.",
           "Hand the same prepared task to Claude, Codex, or Gemini.",
@@ -193,8 +193,8 @@ export default {
         id: "solo-small-teams",
         eyebrow: "Built for Solo & Small Teams",
         title: "Execution discipline without the overhead of enterprise process.",
-        summary: "PREQSTATION gives smaller teams a focused execution system instead of another place to debate roadmap items. Keep planning wherever you already do it, then move the ready-to-run work into PREQ.",
-        imageAlt: "PREQSTATION workflow for solo developers and small teams.",
+        summary: "PreqStation gives smaller teams a focused execution system instead of another place to debate roadmap items. Keep planning wherever you already do it, then move the ready-to-run work into PREQ.",
+        imageAlt: "PreqStation workflow for solo developers and small teams.",
         bullets: [
           "Keep backlog planning in GitHub Issues, Linear, or Jira.",
           "Use PREQ when a task is ready for an agent to execute.",
@@ -205,8 +205,8 @@ export default {
         id: "mvp-to-production",
         eyebrow: "From MVP to Production",
         title: "Turn promising AI output into work you can actually ship.",
-        summary: "The first draft is not the hard part anymore. PREQSTATION adds the isolation, review signals, and verification trail that help you move from quick prototype energy to production follow-through.",
-        imageAlt: "PREQSTATION moving AI output from MVP toward production review.",
+        summary: "The first draft is not the hard part anymore. PreqStation adds the isolation, review signals, and verification trail that help you move from quick prototype energy to production follow-through.",
+        imageAlt: "PreqStation moving AI output from MVP toward production review.",
         bullets: [
           "Use isolated worktrees instead of risky edits on the main branch.",
           "Keep the real workflow states intact: inbox, todo, hold, ready, done.",
@@ -345,7 +345,7 @@ export default {
   footer: {
     tagline: "The Developer's Kitchen",
     madeWith: "Built with kitchen love \ud83c\udf73",
-    copyright: "\u00a9 2026 PREQSTATION. Open Source.",
+    copyright: "\u00a9 2026 PreqStation. Open Source.",
     privacy: "Privacy Policy",
     terms: "Terms of Service",
   },
@@ -356,7 +356,7 @@ export default {
       sections: [
         {
           heading: "1. Introduction",
-          content: "Preq Station (\"we,\" \"us,\" or \"our\") is an open-source, self-hosted AI agent execution platform. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website (preqstation.com) or use our open-source software. Please read this policy carefully. By accessing our website or using the software, you consent to the practices described herein.",
+          content: "PreqStation (\"we,\" \"us,\" or \"our\") is an open-source, self-hosted AI agent execution platform. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website (preqstation.com) or use our open-source software. Please read this policy carefully. By accessing our website or using the software, you consent to the practices described herein.",
         },
         {
           heading: "2. Information We Collect",
@@ -364,7 +364,7 @@ export default {
         },
         {
           heading: "3. Self-Hosted Instances",
-          content: "Preq Station is designed to run entirely on your own infrastructure. When you deploy a self-hosted instance:\n\n\u2022 All data (source code, tasks, AI execution logs, work logs, configuration) remains on YOUR server.\n\u2022 We have zero access to your instance, your data, or your usage patterns.\n\u2022 You are the sole data controller and processor under applicable data protection laws.\n\u2022 Data flows between your instance and third-party AI providers (Anthropic, OpenAI, Google) are governed by your configuration and the respective provider's terms.\n\u2022 We do not receive telemetry, crash reports, or usage statistics from self-hosted instances.",
+          content: "PreqStation is designed to run entirely on your own infrastructure. When you deploy a self-hosted instance:\n\n\u2022 All data (source code, tasks, AI execution logs, work logs, configuration) remains on YOUR server.\n\u2022 We have zero access to your instance, your data, or your usage patterns.\n\u2022 You are the sole data controller and processor under applicable data protection laws.\n\u2022 Data flows between your instance and third-party AI providers (Anthropic, OpenAI, Google) are governed by your configuration and the respective provider's terms.\n\u2022 We do not receive telemetry, crash reports, or usage statistics from self-hosted instances.",
         },
         {
           heading: "4. How We Use Your Information",
@@ -372,7 +372,7 @@ export default {
         },
         {
           heading: "5. Cookies and Tracking Technologies",
-          content: "The Preq Station website does NOT use cookies for tracking or advertising purposes. Cloudflare Web Analytics is a privacy-first analytics solution that does not use cookies or collect personally identifiable information. Cloudflare may set strictly necessary cookies for security and performance purposes (e.g., DDoS protection, bot management). These cookies do not track your browsing activity across other websites.",
+          content: "The PreqStation website does NOT use cookies for tracking or advertising purposes. Cloudflare Web Analytics is a privacy-first analytics solution that does not use cookies or collect personally identifiable information. Cloudflare may set strictly necessary cookies for security and performance purposes (e.g., DDoS protection, bot management). These cookies do not track your browsing activity across other websites.",
         },
         {
           heading: "6. Third-Party Services",
@@ -388,7 +388,7 @@ export default {
         },
         {
           heading: "9. International Data Transfers",
-          content: "The Preq Station website is hosted on Cloudflare's global network. If you access the website from outside the region where our servers are located, your information may be transferred across international borders. Cloudflare participates in the EU-U.S. Data Privacy Framework.\n\nFor self-hosted instances, data resides wherever you choose to deploy. You are responsible for ensuring compliance with applicable data transfer regulations.",
+          content: "The PreqStation website is hosted on Cloudflare's global network. If you access the website from outside the region where our servers are located, your information may be transferred across international borders. Cloudflare participates in the EU-U.S. Data Privacy Framework.\n\nFor self-hosted instances, data resides wherever you choose to deploy. You are responsible for ensuring compliance with applicable data transfer regulations.",
         },
         {
           heading: "10. Children's Privacy",
@@ -400,7 +400,7 @@ export default {
         },
         {
           heading: "12. Contact Information",
-          content: "For privacy-related inquiries, you can reach us through:\n\n\u2022 GitHub: Open an issue on the Preq Station repository\n\u2022 Email: privacy@preqstation.com\n\nWe will respond to your inquiry within 30 days.",
+          content: "For privacy-related inquiries, you can reach us through:\n\n\u2022 GitHub: Open an issue on the PreqStation repository\n\u2022 Email: privacy@preqstation.com\n\nWe will respond to your inquiry within 30 days.",
         },
         {
           heading: "13. Changes to This Policy",
@@ -414,27 +414,27 @@ export default {
       sections: [
         {
           heading: "1. Acceptance of Terms",
-          content: "By accessing the Preq Station website (preqstation.com), downloading, installing, or using the Preq Station software (\"Software\"), you agree to be bound by these Terms of Service (\"Terms\"). If you do not agree to all of these Terms, do not use the website or the Software. These Terms constitute a legally binding agreement between you and the Preq Station project maintainers (\"we,\" \"us,\" or \"our\").",
+          content: "By accessing the PreqStation website (preqstation.com), downloading, installing, or using the PreqStation software (\"Software\"), you agree to be bound by these Terms of Service (\"Terms\"). If you do not agree to all of these Terms, do not use the website or the Software. These Terms constitute a legally binding agreement between you and the PreqStation project maintainers (\"we,\" \"us,\" or \"our\").",
         },
         {
           heading: "2. Description of Service",
-          content: "Preq Station is an open-source, self-hosted AI agent execution platform that enables developers to:\n\n\u2022 Submit development tasks via messaging platforms (e.g., Telegram)\n\u2022 Automatically execute tasks using AI coding agents (Claude Code, Codex CLI, Gemini CLI)\n\u2022 Manage task pipelines, code generation, testing, and pull request creation\n\u2022 Track work across multiple projects from a single interface\n\nThe Software is provided as a self-hosted solution. We do not provide hosting, managed services, or SaaS offerings.",
+          content: "PreqStation is an open-source, self-hosted AI agent execution platform that enables developers to:\n\n\u2022 Submit development tasks via messaging platforms (e.g., Telegram)\n\u2022 Automatically execute tasks using AI coding agents (Claude Code, Codex CLI, Gemini CLI)\n\u2022 Manage task pipelines, code generation, testing, and pull request creation\n\u2022 Track work across multiple projects from a single interface\n\nThe Software is provided as a self-hosted solution. We do not provide hosting, managed services, or SaaS offerings.",
         },
         {
           heading: "3. Open Source License",
-          content: "The Preq Station Software is released under the MIT License. Subject to the terms of that license, you are free to:\n\n\u2022 Use the Software for any purpose, including commercial use\n\u2022 Modify the source code to suit your needs\n\u2022 Distribute copies of the original or modified Software\n\u2022 Include the Software in proprietary projects\n\nThe full MIT License text is available in the LICENSE file in the GitHub repository. In the event of any conflict between these Terms and the MIT License regarding the Software itself, the MIT License shall prevail.",
+          content: "The PreqStation Software is released under the MIT License. Subject to the terms of that license, you are free to:\n\n\u2022 Use the Software for any purpose, including commercial use\n\u2022 Modify the source code to suit your needs\n\u2022 Distribute copies of the original or modified Software\n\u2022 Include the Software in proprietary projects\n\nThe full MIT License text is available in the LICENSE file in the GitHub repository. In the event of any conflict between these Terms and the MIT License regarding the Software itself, the MIT License shall prevail.",
         },
         {
           heading: "4. User Responsibilities",
-          content: "When using Preq Station, you agree to:\n\n\u2022 Comply with all applicable local, national, and international laws and regulations\n\u2022 Not use the Software or website for any unlawful or prohibited purpose\n\u2022 Maintain the security of your deployment, including API keys, credentials, and access controls\n\u2022 Not attempt to gain unauthorized access to any systems or networks connected to the Software\n\u2022 Not use the Software to generate malicious code, malware, or content that violates third-party rights\n\u2022 Take responsibility for all code generated by AI agents within your instance\n\u2022 Review AI-generated code before deploying to production environments",
+          content: "When using PreqStation, you agree to:\n\n\u2022 Comply with all applicable local, national, and international laws and regulations\n\u2022 Not use the Software or website for any unlawful or prohibited purpose\n\u2022 Maintain the security of your deployment, including API keys, credentials, and access controls\n\u2022 Not attempt to gain unauthorized access to any systems or networks connected to the Software\n\u2022 Not use the Software to generate malicious code, malware, or content that violates third-party rights\n\u2022 Take responsibility for all code generated by AI agents within your instance\n\u2022 Review AI-generated code before deploying to production environments",
         },
         {
           heading: "5. Self-Hosted Deployment",
-          content: "Preq Station is designed to run on your own infrastructure. By deploying the Software, you acknowledge and agree that:\n\n\u2022 You are solely responsible for provisioning, configuring, securing, and maintaining your server environment\n\u2022 You are responsible for backing up your data and ensuring business continuity\n\u2022 You are responsible for ensuring compliance with all applicable data protection regulations (including GDPR, CCPA, and others) in your jurisdiction\n\u2022 We have no access to, control over, or responsibility for your self-hosted instance or the data it processes\n\u2022 You are responsible for monitoring resource usage and associated infrastructure costs",
+          content: "PreqStation is designed to run on your own infrastructure. By deploying the Software, you acknowledge and agree that:\n\n\u2022 You are solely responsible for provisioning, configuring, securing, and maintaining your server environment\n\u2022 You are responsible for backing up your data and ensuring business continuity\n\u2022 You are responsible for ensuring compliance with all applicable data protection regulations (including GDPR, CCPA, and others) in your jurisdiction\n\u2022 We have no access to, control over, or responsibility for your self-hosted instance or the data it processes\n\u2022 You are responsible for monitoring resource usage and associated infrastructure costs",
         },
         {
           heading: "6. Third-Party AI Services",
-          content: "Preq Station integrates with third-party AI services, including but not limited to:\n\n\u2022 Anthropic (Claude Code)\n\u2022 OpenAI (Codex CLI)\n\u2022 Google (Gemini CLI)\n\nYour use of these services is subject to their respective terms of service and privacy policies. You acknowledge that:\n\n\u2022 You are responsible for obtaining and managing your own API keys for these services\n\u2022 You are responsible for all costs incurred through your use of these AI provider APIs\n\u2022 AI-generated code may contain errors, security vulnerabilities, or inaccuracies\n\u2022 We are not responsible for the output, availability, or performance of third-party AI services\n\u2022 Changes to third-party API pricing, terms, or availability may affect the functionality of the Software",
+          content: "PreqStation integrates with third-party AI services, including but not limited to:\n\n\u2022 Anthropic (Claude Code)\n\u2022 OpenAI (Codex CLI)\n\u2022 Google (Gemini CLI)\n\nYour use of these services is subject to their respective terms of service and privacy policies. You acknowledge that:\n\n\u2022 You are responsible for obtaining and managing your own API keys for these services\n\u2022 You are responsible for all costs incurred through your use of these AI provider APIs\n\u2022 AI-generated code may contain errors, security vulnerabilities, or inaccuracies\n\u2022 We are not responsible for the output, availability, or performance of third-party AI services\n\u2022 Changes to third-party API pricing, terms, or availability may affect the functionality of the Software",
         },
         {
           heading: "7. AI-Generated Content",
@@ -442,7 +442,7 @@ export default {
         },
         {
           heading: "8. Intellectual Property",
-          content: "The Preq Station name, logo, and branding are trademarks of the project maintainers. The Software source code is licensed under the MIT License.\n\n\u2022 You may not use the Preq Station name or branding to imply official endorsement without written permission\n\u2022 Contributions to the project via pull requests are subject to the project's Contributor License Agreement (if applicable) and the MIT License\n\u2022 Your own code, data, and configurations within your self-hosted instance remain your intellectual property",
+          content: "The PreqStation name, logo, and branding are trademarks of the project maintainers. The Software source code is licensed under the MIT License.\n\n\u2022 You may not use the PreqStation name or branding to imply official endorsement without written permission\n\u2022 Contributions to the project via pull requests are subject to the project's Contributor License Agreement (if applicable) and the MIT License\n\u2022 Your own code, data, and configurations within your self-hosted instance remain your intellectual property",
         },
         {
           heading: "9. Disclaimer of Warranties",
@@ -474,7 +474,7 @@ export default {
         },
         {
           heading: "16. Contact Information",
-          content: "For questions about these Terms of Service, please contact us through:\n\n\u2022 GitHub: Open an issue on the Preq Station repository\n\u2022 Email: legal@preqstation.com",
+          content: "For questions about these Terms of Service, please contact us through:\n\n\u2022 GitHub: Open an issue on the PreqStation repository\n\u2022 Email: legal@preqstation.com",
         },
         {
           heading: "17. Changes to These Terms",

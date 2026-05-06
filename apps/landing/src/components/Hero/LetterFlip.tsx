@@ -70,7 +70,7 @@ export default function LetterFlip({ preqTagline, prepTagline }: Props) {
     <div className="flex flex-col items-center">
       {/* Preq/Prep Station heading */}
       <h2
-        aria-label="PREQSTATION"
+        aria-label="PreqStation"
         className="font-display text-4xl md:text-6xl font-bold text-white mb-4"
       >
         <span aria-hidden="true">

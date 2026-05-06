@@ -1,13 +1,13 @@
 ---
 title: 웹 앱 설정
-description: PREQSTATION 웹 애플리케이션을 설치하고 구성하는 방법을 설명합니다.
+description: PreqStation 웹 애플리케이션을 설치하고 구성하는 방법을 설명합니다.
 ---
 
 import { Aside } from '@astrojs/starlight/components';
 
 ## 대부분의 사용자에게 권장되는 경로
 
-대부분의 사용자는 웹 앱 저장소를 클론할 필요가 없습니다. 이미 PREQSTATION 배포에 접근할 수 있다면, 먼저 hosted 설정 경로를 사용하세요.
+대부분의 사용자는 웹 앱 저장소를 클론할 필요가 없습니다. 이미 PreqStation 배포에 접근할 수 있다면, 먼저 hosted 설정 경로를 사용하세요.
 
 1. 웹 앱에 로그인합니다.
 2. `/connections`를 열고 필요한 provider 설정을 완료합니다.
@@ -31,7 +31,7 @@ API 토큰은 shell-helper 모드 또는 레거시 로컬 MCP 브리지를 써�
 
 ## Self-hosted 로컬 개발 사전 준비
 
-아래 섹션은 self-hosting, migration 검증, 로컬 개발을 위해 PREQSTATION 웹 앱 체크아웃이 필요한 경우에만 사용하세요.
+아래 섹션은 self-hosting, migration 검증, 로컬 개발을 위해 PreqStation 웹 앱 체크아웃이 필요한 경우에만 사용하세요.
 
 - **Node.js 22** 이상
 - **PostgreSQL 13+** 이상
@@ -55,7 +55,7 @@ API 토큰은 shell-helper 모드 또는 레거시 로컬 MCP 브리지를 써�
 </Aside>
 
 <Aside type="note">
-표준 PostgreSQL 연결 문자열을 제공하는 관리형 서비스나 직접 운영하는 PostgreSQL이면 PREQSTATION과 함께 사용할 수 있습니다.
+표준 PostgreSQL 연결 문자열을 제공하는 관리형 서비스나 직접 운영하는 PostgreSQL이면 PreqStation과 함께 사용할 수 있습니다.
 </Aside>
 
 `PORT`는 런타임 env 스키마나 `.env.example`에는 없지만, 로컬 `npm run dev` 스크립트는 `.env.local`의 `PORT` 값을 읽어 기본 포트를 바꿀 수 있습니다.
@@ -64,7 +64,7 @@ API 토큰은 shell-helper 모드 또는 레거시 로컬 MCP 브리지를 써�
 
 ### 1. 저장소 클론 및 설치
 
-PREQSTATION 웹 앱 소스는 [github.com/sonim1/preqstation](https://github.com/sonim1/preqstation)에 있습니다.
+PreqStation 웹 앱 소스는 [github.com/sonim1/preqstation](https://github.com/sonim1/preqstation)에 있습니다.
 
 ```bash
 git clone git@github.com:sonim1/preqstation.git
@@ -107,7 +107,7 @@ npm run dev
 4. 마이그레이션이나 기존 배포를 유지하는 경우에는 관련 데이터가 같은 owner ID를 계속 사용하도록 현재 owner row를 PostgreSQL에서 직접 업데이트하세요.
 
 <Aside>
-PREQSTATION은 single-owner 구조입니다. 모든 데이터는 PostgreSQL RLS를 통해 이 계정 기준으로 격리됩니다.
+PreqStation은 single-owner 구조입니다. 모든 데이터는 PostgreSQL RLS를 통해 이 계정 기준으로 격리됩니다.
 </Aside>
 
 ## Telegram 설정 (선택 사항)

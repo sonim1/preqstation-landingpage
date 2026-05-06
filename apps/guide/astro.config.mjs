@@ -9,7 +9,7 @@ export default defineConfig({
   integrations: [
     sitemap(),
     starlight({
-      title: 'PREQSTATION Guide',
+      title: 'PreqStation Guide',
       favicon: '/favicon.png',
       customCss: ['./src/styles/custom.css'],
       defaultLocale: 'root',

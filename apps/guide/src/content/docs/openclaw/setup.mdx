@@ -5,7 +5,7 @@ description: Install and configure preqstation-dispatcher for the OpenClaw dispa
 
 import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
-`preqstation-dispatcher` is the durable public dispatcher package for PREQSTATION. OpenClaw loads it as a plugin, then the plugin resolves projects, creates worktrees, writes `.preqstation-prompt.txt`, and launches Claude Code, Codex, or Gemini CLI as a detached process.
+`preqstation-dispatcher` is the durable public dispatcher package for PreqStation. OpenClaw loads it as a plugin, then the plugin resolves projects, creates worktrees, writes `.preqstation-prompt.txt`, and launches Claude Code, Codex, or Gemini CLI as a detached process.
 
 Some package, plugin, and config identifiers may still mention `preqstation-openclaw` for compatibility. Treat that as a legacy technical identifier unless a command explicitly requires it.
 
@@ -23,7 +23,7 @@ Use OpenClaw when you want:
 You need:
 
 - OpenClaw installed on the dispatcher host
-- local checkouts for the projects PREQSTATION will dispatch
+- local checkouts for the projects PreqStation will dispatch
 - at least one worker CLI available on the OpenClaw host: `claude`, `codex`, or `gemini`
 - the matching PREQ worker setup from [Worker Installation](/guide/skill/installation)
 - Telegram settings only if the web app should send dispatch messages through Telegram

@@ -1,11 +1,11 @@
 ---
 title: Database Schema
-description: Current database tables and key columns in PREQSTATION.
+description: Current database tables and key columns in PreqStation.
 ---
 
 import { Aside } from '@astrojs/starlight/components';
 
-The PREQSTATION database stores tasks, project metadata, work logs, and audit history. The current development schema lives in `projects-manager/lib/db/schema.ts` until the web app source is moved into the canonical `preqstation` repository.
+The PreqStation database stores tasks, project metadata, work logs, and audit history. The current development schema lives in `projects-manager/lib/db/schema.ts` until the web app source is moved into the canonical `preqstation` repository.
 
 ## Core Tables
 
@@ -23,7 +23,7 @@ Single-owner account table.
 | `updatedAt` | Timestamp | Last update |
 
 <Aside type="note">
-PREQSTATION is still modeled as a single-owner system. Multi-user support would require structural changes.
+PreqStation is still modeled as a single-owner system. Multi-user support would require structural changes.
 </Aside>
 
 ### projects

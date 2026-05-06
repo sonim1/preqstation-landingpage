@@ -1,4 +1,4 @@
-/* PREQSTATION Guide — Custom Theme */
+/* PreqStation Guide — Custom Theme */
 
 /* ─── Google Fonts ─────────────────────────────────────────────────────────── */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
@@ -81,7 +81,7 @@
   --sl-color-gray-7: #ffffff;
 }
 
-/* ─── PREQSTATION Status Colors ────────────────────────────────────────────── */
+/* ─── PreqStation Status Colors ────────────────────────────────────────────── */
 :root {
   --preq-inbox: #DFE6E9;
   --preq-todo: #FDCB6E;

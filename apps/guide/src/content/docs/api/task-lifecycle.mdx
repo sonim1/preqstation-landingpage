@@ -6,7 +6,7 @@ description: Task status workflow, run-state overlay, and lifecycle actions.
 import { Aside } from '@astrojs/starlight/components';
 import Mermaid from '../../../components/Mermaid.astro';
 
-Tasks in PREQSTATION have two dimensions:
+Tasks in PreqStation have two dimensions:
 
 - **Workflow status** — where the card sits in the lifecycle
 - **Run state** — whether an agent has requested or claimed execution right now
@@ -141,7 +141,7 @@ When an agent submits `preq_complete_task()`, it uploads a result object like:
 }
 ```
 
-PREQSTATION stores the result summary as a work log entry attached to the task. Structured `artifacts` are stored separately from markdown note/report content, so agents should not append `Artifacts:` blocks to task notes.
+PreqStation stores the result summary as a work log entry attached to the task. Structured `artifacts` are stored separately from markdown note/report content, so agents should not append `Artifacts:` blocks to task notes.
 
 ## Deployment Strategy
 

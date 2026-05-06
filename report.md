@@ -67,8 +67,8 @@ Improved but still worth a future pass:
 - URL: `http://127.0.0.1:4173/`
 - Repro: Open the landing page and read the hero without prior product context.
 - Observed: The hero introduces queueing, agents, and run-state overlays, but it does not state the product category or the simplest job-to-be-done in plain language.
-- Why it matters: First-time visitors need to infer whether PREQSTATION is issue tracking, agent orchestration, or a developer workflow tool.
-- Recommendation: Add a one-line product definition directly under the headline, such as what PREQSTATION is, who it is for, and what outcome it produces.
+- Why it matters: First-time visitors need to infer whether PreqStation is issue tracking, agent orchestration, or a developer workflow tool.
+- Recommendation: Add a one-line product definition directly under the headline, such as what PreqStation is, who it is for, and what outcome it produces.
 - Evidence: `.dogfood/screenshots/landing-hero.png`
 
 #### L-02 Medium: Primary CTA is docs-first instead of activation-oriented
@@ -84,9 +84,9 @@ Improved but still worth a future pass:
 
 - URL: `http://127.0.0.1:4173/`
 - Repro: Read the “Who is it for?” and surrounding positioning sections.
-- Observed: The page explains who should use PREQSTATION, but also spends significant space explaining what it is not and what should not be done with it.
+- Observed: The page explains who should use PreqStation, but also spends significant space explaining what it is not and what should not be done with it.
 - Why it matters: The positioning is directionally correct, but it makes the value proposition feel defensive before it feels useful.
-- Recommendation: Lead with who gets value and the concrete situations where PREQSTATION fits, then keep the “not a generic issue tracker” framing as supporting guidance.
+- Recommendation: Lead with who gets value and the concrete situations where PreqStation fits, then keep the “not a generic issue tracker” framing as supporting guidance.
 - Evidence: `.dogfood/screenshots/landing-mobile-carousel.png`
 
 #### L-04 Low: Terminology shifts between AI, agents, engines, and sessions
