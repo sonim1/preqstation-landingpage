@@ -9,7 +9,7 @@ PREQSTATION exists for developers who cannot sit at the computer all day but sti
 
 Useful work does not only appear while you are at your desk. It shows up while you are commuting, in meetings, or between other responsibilities.
 
-PREQSTATION is built so you can capture the task when the idea is fresh, shape it with acceptance criteria, and dispatch it when you have the right moment. The point is not constant activity. The point is not losing momentum every time you leave the keyboard.
+PREQSTATION is built so you can capture the task when the idea is fresh, shape it with acceptance criteria, and dispatch it when you have the right moment. The point is not constant activity. The point is not losing momentum every time you leave the keyboard. A prepared task can later move through a dispatch path such as OpenClaw or Hermes, reach the right worker, and leave you with results and verification evidence to review when you return.
 
 ## Built for Solo & Small Teams
 
@@ -23,7 +23,13 @@ The first draft is cheaper than it used to be. AI can get you to an MVP quickly.
 
 PREQSTATION adds the guardrails around that transition: isolated worktrees, explicit ownership, reviewable notes, verification output, and a task record that tells you what happened instead of forcing you to reconstruct it from terminal scrollback.
 
-## How This Maps to the Technical Workflow
+## Separate Engines from Dispatchers
+
+In PREQSTATION, the engine is the model or CLI that actually performs the coding work. For example, `claude-code`, `codex`, and `gemini-cli` select whether the task should run through a Claude, Codex, or Gemini worker.
+
+OpenClaw and Hermes are separate dispatch harnesses. They receive the task, resolve the project, create the worktree, and launch the selected engine. That means a task sent through Hermes is not implemented by Hermes itself. The delivery path and the coding model are different parts of the system, and keeping them separate makes the PREQSTATION workflow easier to reason about.
+
+## Status and Execution Overlay
 
 The fast mental model is simple: queued, working, done.
 
@@ -35,6 +41,6 @@ The real workflow remains more precise:
 - `ready` for work waiting on review
 - `done` for verified completion
 
-`queued` and `working` are still run-state overlays, not replacements for those workflow states.
+`queued`, `working`, and `done` are run-state overlays. They show whether a task is waiting for dispatch, currently claimed by a worker, or finished at the execution layer, but they do not replace workflow status. For example, a `todo` task can be `queued`, then become `working` once a worker claims it. After implementation, the workflow status moves to `ready` for review, and only verified work becomes `done`.
 
 If you want the lower-level model and the kitchen metaphor, continue with [Kitchen Metaphor](/guide/getting-started/concepts).
