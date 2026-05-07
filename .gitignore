@@ -29,3 +29,4 @@ pnpm-debug.log*
 .qa-shots/
 .dogfood/
 .superpowers/
+.claude/

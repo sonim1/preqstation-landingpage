@@ -1,5 +1,6 @@
 import { motion } from "motion/react";
 import { useT } from "../../i18n/context";
+import { capture } from "../../lib/posthog";
 
 export default function Pricing() {
   const t = useT();
@@ -45,6 +46,7 @@ export default function Pricing() {
           <a
             href="https://github.com/sonim1/preqstation"
             className="inline-block bg-mint text-charcoal px-8 py-4 rounded-full mt-8 hover:bg-mint/80 transition font-display font-semibold"
+            onClick={() => capture("pricing_github_clicked")}
           >
             {t.pricing.cta}
           </a>

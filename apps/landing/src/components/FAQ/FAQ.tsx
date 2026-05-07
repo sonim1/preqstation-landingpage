@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { useT } from "../../i18n/context";
+import { capture } from "../../lib/posthog";
 
 export default function FAQ() {
   const t = useT();
@@ -35,7 +36,11 @@ export default function FAQ() {
             >
               <button
                 className="w-full flex justify-between items-center p-6 cursor-pointer hover:bg-white/5 transition text-left"
-                onClick={() => setOpenIndex(openIndex === i ? null : i)}
+                onClick={() => {
+                  const isOpening = openIndex !== i;
+                  setOpenIndex(openIndex === i ? null : i);
+                  if (isOpening) capture("faq_question_expanded", { question: item.question, question_index: i });
+                }}
               >
                 <span className="font-display font-semibold text-lg text-white">
                   {item.question}

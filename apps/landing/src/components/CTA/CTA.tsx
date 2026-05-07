@@ -1,6 +1,7 @@
 import { motion } from "motion/react";
 import { useT } from "../../i18n/context";
 import CtaProofPanel from "./CtaProofPanel";
+import { capture } from "../../lib/posthog";
 
 export default function CTA({ guideHref }: { guideHref: string }) {
   const t = useT();
@@ -29,18 +30,21 @@ export default function CTA({ guideHref }: { guideHref: string }) {
             <a
               href="#workflow"
               className="bg-mint text-charcoal px-10 py-5 rounded-full text-lg font-display font-bold hover:scale-105 transition"
+              onClick={() => capture("cta_section_clicked", { button: "workflow" })}
             >
               {t.cta.primary}
             </a>
             <a
               href={guideHref}
               className="border-2 border-white text-white px-10 py-5 rounded-full text-lg font-display font-semibold hover:bg-white hover:text-charcoal transition"
+              onClick={() => capture("setup_guide_clicked", { location: "cta" })}
             >
               {t.cta.guide}
             </a>
             <a
               href="https://github.com/sonim1/preqstation"
               className="px-6 py-5 text-lg font-display font-semibold text-white/80 underline-offset-4 hover:text-white hover:underline transition"
+              onClick={() => capture("github_link_clicked", { location: "cta" })}
             >
               {t.cta.secondary}
             </a>

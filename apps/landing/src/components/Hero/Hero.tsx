@@ -1,6 +1,7 @@
 import { motion } from "motion/react";
 import { useT } from "../../i18n/context";
 import LetterFlip from "./LetterFlip";
+import { capture } from "../../lib/posthog";
 
 export default function Hero({ guideHref }: { guideHref: string }) {
   const t = useT();
@@ -42,18 +43,21 @@ export default function Hero({ guideHref }: { guideHref: string }) {
           <a
             href="#workflow"
             className="bg-mint text-charcoal px-8 py-4 rounded-full text-lg font-semibold hover:scale-105 transition font-body"
+            onClick={() => capture("hero_cta_clicked")}
           >
             {t.hero.cta}
           </a>
           <a
             href={guideHref}
             className="border-2 border-white text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-white hover:text-charcoal transition font-body"
+            onClick={() => capture("setup_guide_clicked", { location: "hero" })}
           >
             {t.hero.guideCta}
           </a>
           <a
             href="https://github.com/sonim1/preqstation"
             className="px-4 py-4 text-lg font-semibold text-white/80 underline-offset-4 hover:text-white hover:underline transition font-body"
+            onClick={() => capture("github_link_clicked", { location: "hero" })}
           >
             {t.hero.github}
           </a>

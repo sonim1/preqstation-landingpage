@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css'
+import PostHog from '../components/PostHog.astro'
 
 interface Props {
   title?: string;
@@ -46,6 +47,7 @@ const schemaFeatures = locale === "ko"
     <meta name="description" content={description} />
     <meta name="generator" content={Astro.generator} />
     <link rel="canonical" href={canonicalUrl} />
+    <PostHog />
 
     <!-- Open Graph -->
     <meta property="og:title" content={title} />

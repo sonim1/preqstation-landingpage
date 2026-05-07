@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { type Locale } from "../../i18n";
 import { useT } from "../../i18n/context";
+import { capture } from "../../lib/posthog";
 
 const localeLabels: Record<string, string> = {
   en: "English",
@@ -174,6 +175,7 @@ export default function Nav({ locale, guideHref }: { locale: Locale; guideHref: 
             href="https://github.com/sonim1/preqstation"
             aria-label={t.nav.github}
             className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/10 text-white/70 transition hover:border-white/20 hover:bg-white/5 hover:text-white"
+            onClick={() => capture("github_link_clicked", { location: "nav" })}
           >
             <svg
               width="18"
@@ -215,7 +217,7 @@ export default function Nav({ locale, guideHref }: { locale: Locale; guideHref: 
                     key={l}
                     href={getLocalePath(l)}
                     className="block px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/5 transition flex items-center gap-2"
-                    onClick={() => setIsLocaleOpen(false)}
+                    onClick={() => { setIsLocaleOpen(false); capture("locale_changed", { from_locale: locale, to_locale: l }); }}
                   >
                     <span>{localeFlags[l]}</span>
                     <span>{localeLabels[l]}</span>
@@ -228,6 +230,7 @@ export default function Nav({ locale, guideHref }: { locale: Locale; guideHref: 
           <a
             href={guideHref}
             className="bg-mint text-charcoal rounded-full px-6 py-2 text-sm font-semibold hover:opacity-90 transition"
+            onClick={() => capture("nav_cta_clicked")}
           >
             {t.nav.cta}
           </a>
@@ -280,7 +283,7 @@ export default function Nav({ locale, guideHref }: { locale: Locale; guideHref: 
                   href="https://github.com/sonim1/preqstation"
                   aria-label={t.nav.github}
                   className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 text-white/80 transition hover:bg-white/5 hover:text-white"
-                  onClick={() => setIsMenuOpen(false)}
+                  onClick={() => { setIsMenuOpen(false); capture("github_link_clicked", { location: "nav_mobile" }); }}
                 >
                   <svg
                     width="20"
@@ -308,7 +311,7 @@ export default function Nav({ locale, guideHref }: { locale: Locale; guideHref: 
                             ? "bg-white text-charcoal"
                             : "border border-white/10 text-white/75 hover:bg-white/5 hover:text-white",
                         ].join(" ")}
-                        onClick={() => setIsMenuOpen(false)}
+                        onClick={() => { setIsMenuOpen(false); if (value !== locale) capture("locale_changed", { from_locale: locale, to_locale: value }); }}
                       >
                         {localeLabels[value]}
                       </a>
@@ -319,7 +322,7 @@ export default function Nav({ locale, guideHref }: { locale: Locale; guideHref: 
                 <a
                   href={guideHref}
                   className="rounded-full bg-mint px-5 py-3 text-center text-sm font-semibold text-charcoal transition hover:opacity-90"
-                  onClick={() => setIsMenuOpen(false)}
+                  onClick={() => { setIsMenuOpen(false); capture("nav_cta_clicked"); }}
                 >
                   {t.nav.cta}
                 </a>
