@@ -348,6 +348,7 @@ export default {
     copyright: "\u00a9 2026 PreqStation. Open Source.",
     privacy: "Privacy Policy",
     terms: "Terms of Service",
+    cookiePreferences: "Cookie preferences",
   },
   legal: {
     privacy: {
@@ -356,7 +357,7 @@ export default {
       sections: [
         {
           heading: "1. Introduction",
-          content: "PreqStation (\"we,\" \"us,\" or \"our\") is an open-source, self-hosted AI agent execution platform. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website (preqstation.com) or use our open-source software. Please read this policy carefully. By accessing our website or using the software, you consent to the practices described herein.",
+          content: "PreqStation (\"we,\" \"us,\" or \"our\") is an open-source, self-hosted AI agent execution platform. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website (preqstation.com) or use our open-source software. Please read this policy carefully. Where required, optional analytics runs only after you consent.",
         },
         {
           heading: "2. Information We Collect",
@@ -372,7 +373,7 @@ export default {
         },
         {
           heading: "5. Cookies and Tracking Technologies",
-          content: "The PreqStation website does NOT use cookies for tracking or advertising purposes. PostHog Web Analytics is configured without persistent browser storage or session recording. Cloudflare may set strictly necessary cookies for security and performance purposes (e.g., DDoS protection, bot management). These cookies do not track your browsing activity across other websites.",
+          content: "The PreqStation website does NOT use cookies for advertising purposes. Optional PostHog Web Analytics runs only after you accept analytics preferences and is configured without persistent browser storage or session recording. We store your cookie preference so the site can remember your choice. Cloudflare may set strictly necessary cookies for security and performance purposes (e.g., DDoS protection, bot management). These cookies do not track your browsing activity across other websites.",
         },
         {
           heading: "6. Third-Party Services",

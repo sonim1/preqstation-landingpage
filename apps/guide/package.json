@@ -13,6 +13,7 @@
     "@astrojs/starlight": "^0.32.5",
     "astro": "^5.17.1",
     "mermaid": "^11.12.0",
-    "sharp": "^0.33.5"
+    "sharp": "^0.33.5",
+    "vanilla-cookieconsent": "^3.1.0"
   }
 }

@@ -32,6 +32,8 @@ export default function Footer() {
           <a href="/privacy" className="hover:text-white/70 transition" onClick={() => capture("footer_privacy_clicked")}>{t.footer.privacy}</a>
           <span>·</span>
           <a href="/terms" className="hover:text-white/70 transition" onClick={() => capture("footer_terms_clicked")}>{t.footer.terms}</a>
+          <span>·</span>
+          <button type="button" className="hover:text-white/70 transition" onClick={() => (window as Window & { preqstationShowCookiePreferences?: () => void }).preqstationShowCookiePreferences?.()}>{t.footer.cookiePreferences}</button>
         </div>
       </div>
     </footer>
