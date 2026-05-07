@@ -1,5 +1,5 @@
 /**
- * Thin wrapper around the posthog-js browser snippet loaded by PostHog.astro.
+ * Thin wrapper around the PostHog browser snippet loaded by PostHog.astro.
  * Silently no-ops when PostHog is not available (e.g. during SSR or if blocked).
  */
 export function capture(event: string, properties?: Record<string, unknown>): void {

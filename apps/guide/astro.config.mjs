@@ -3,7 +3,7 @@ import sitemap from '@astrojs/sitemap';
 import starlight from '@astrojs/starlight';
 
 const posthogKey = process.env.PUBLIC_POSTHOG_KEY;
-const posthogHost = process.env.PUBLIC_POSTHOG_HOST ?? 'https://us.i.posthog.com';
+const posthogHost = process.env.PUBLIC_POSTHOG_HOST ?? 'https://t.preqstation.com';
 const posthogHead = posthogKey
   ? [
       {
