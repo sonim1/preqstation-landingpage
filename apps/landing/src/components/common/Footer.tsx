@@ -1,4 +1,5 @@
 import { useT } from "../../i18n/context";
+import { capture } from "../../lib/posthog";
 
 export default function Footer() {
   const t = useT();
@@ -28,9 +29,9 @@ export default function Footer() {
           <div className="text-sm">{t.footer.copyright}</div>
         </div>
         <div className="flex justify-center gap-4 mt-6 text-xs text-white/40">
-          <a href="/privacy" className="hover:text-white/70 transition">{t.footer.privacy}</a>
+          <a href="/privacy" className="hover:text-white/70 transition" onClick={() => capture("footer_privacy_clicked")}>{t.footer.privacy}</a>
           <span>·</span>
-          <a href="/terms" className="hover:text-white/70 transition">{t.footer.terms}</a>
+          <a href="/terms" className="hover:text-white/70 transition" onClick={() => capture("footer_terms_clicked")}>{t.footer.terms}</a>
         </div>
       </div>
     </footer>
