@@ -17,6 +17,7 @@ PreqStation은 AI 에이전트 기반 개발 워크플로우를 위한 실행 �
 ## 설정 경로 순서
 
 - **CLI 기본 설정** — 가장 빠른 CLI installer 경로는 [빠른 시작](/guide/ko/getting-started/quick-start)
+- **Direct CLI Dispatch** — operator host에서 task를 즉시 실행하려면 [Direct Dispatch](/guide/ko/getting-started/direct-dispatch)
 - **Worker-only 설정** — Claude, Codex, Gemini worker를 수동 설정하려면 [워커 설치](/guide/ko/skill/installation)
 - **디스패처 설정** — 웹 앱에서 queued dispatch가 필요할 때만 추가: [OpenClaw 설치](/guide/ko/openclaw/setup) 또는 [Telegram 연동](/guide/ko/web-app/telegram)
 - **웹 앱 설정** — self-hosting, migration, 첫 로그인 세부 정보는 [웹 앱 설정](/guide/ko/web-app/setup)
@@ -28,7 +29,7 @@ PreqStation은 AI 에이전트 기반 개발 워크플로우를 위한 실행 �
     중심 웹 앱입니다. 태스크를 관리하고, 칸반 UI를 렌더링하고, REST API를 노출하고, task engine과 필요 시 Telegram/OpenClaw dispatch 액션을 고르게 합니다.
   </Card>
   <Card title="PREQ CLI" icon="rocket">
-    사용자-facing package와 command는 `@sonim1/preqstation`, `preqstation`입니다. Dispatcher entrypoint를 설치하고 프로젝트를 찾고 worktree를 만들고 Telegram, OpenClaw, Hermes, direct runtime message에서 코딩 에이전트를 실행합니다. 일부 legacy identifier는 호환성을 위해 아직 `preqstation-dispatcher` 또는 `preqstation-openclaw`를 언급할 수 있습니다.
+    사용자-facing package와 command는 `@sonim1/preqstation`, `preqstation`입니다. Dispatcher entrypoint를 설치하고 프로젝트를 찾고 worktree를 만들고 Telegram, OpenClaw, Hermes, direct CLI dispatch에서 코딩 에이전트를 실행합니다. 일부 legacy identifier는 호환성을 위해 아직 `preqstation-dispatcher` 또는 `preqstation-openclaw`를 언급할 수 있습니다.
   </Card>
   <Card title="preqstation-skill" icon="approve">
     에이전트 클라이언트입니다. Claude Code, Codex, Gemini worker용 MCP/worker 패키지입니다.
@@ -77,6 +78,7 @@ flowchart LR
 ### Dispatcher target과 engine의 차이
 
 - `dispatch_target=telegram`은 **Send to Telegram**을 누르거나 Telegram/OpenClaw용 명령을 복사한 경우입니다.
+- Direct CLI dispatch는 [`preqstation run`](/guide/ko/getting-started/direct-dispatch)으로 operator host에서 시작하므로 Telegram, Hermes, OpenClaw relay가 필요하지 않습니다.
 - `engine=claude-code | codex | gemini-cli`는 dispatcher와 별개이며, 실제로 어떤 CLI를 실행할지 정합니다.
 
 ### OpenClaw를 통한 실행

@@ -14,12 +14,14 @@ npx -y @sonim1/preqstation@latest status
 
 For the full command reference, including global install, `update`, `doctor`, JSON output, project mapping, targeted OpenClaw/Hermes installs, Hermes sync, and uninstall, see [PREQ CLI](/guide/getting-started/preq-cli).
 
+If the host is already prepared and you want to launch a task from the terminal without a relay, see [Direct Dispatch](/guide/getting-started/direct-dispatch).
+
 ## Choose Your Path
 
 | You are... | Start with | Add later only if needed |
 |---|---|---|
 | Setting up PreqStation for the first time | [PREQ CLI](/guide/getting-started/preq-cli) | Manual worker-only setup |
-| Already using Claude Code, Codex, or Gemini directly | [Worker Installation](/guide/skill/installation) | CLI dispatcher install |
+| Already using Claude Code, Codex, or Gemini directly | [Worker Installation](/guide/skill/installation) | [Direct Dispatch](/guide/getting-started/direct-dispatch) when you want PREQ task lifecycle tracking |
 | Self-hosting the web app or validating migrations | [Web App Setup](/guide/web-app/setup) | PREQ CLI after login works |
 | Operating Telegram, Hermes, or OpenClaw dispatch | [PREQ CLI](/guide/getting-started/preq-cli), then [Telegram](/guide/web-app/telegram) or [OpenClaw](/guide/openclaw/setup) | Manual plugin fallback |
 | Maintaining an old token-based setup | [API Keys](/guide/web-app/api-keys) | Remote `/mcp` OAuth when the runtime supports it |
@@ -131,6 +133,7 @@ For the full token-based compatibility details, see [API Keys](/guide/web-app/ap
 ## Next Steps
 
 - [Worker Installation](/guide/skill/installation) — manual worker-only setup for Claude, Codex, and Gemini
+- [Direct Dispatch](/guide/getting-started/direct-dispatch) — launch a tracked task directly from the local CLI
 - [OpenClaw Installation](/guide/openclaw/setup) — OpenClaw dispatcher setup
 - [Telegram Integration](/guide/web-app/telegram) — Hermes and Telegram dispatch setup
 - [Web App Setup](/guide/web-app/setup) — hosted setup and self-hosted local development details

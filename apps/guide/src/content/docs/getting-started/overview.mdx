@@ -17,6 +17,7 @@ If you're starting PreqStation from scratch, begin with [Quick Start](/guide/get
 ## Setup Path Order
 
 - **CLI Default Setup** — [Quick Start](/guide/getting-started/quick-start) for the fastest CLI installer path
+- **Direct CLI Dispatch** — [Direct Dispatch](/guide/getting-started/direct-dispatch) when the operator host should launch the task immediately
 - **Worker-Only Setup** — [Worker Installation](/guide/skill/installation) when you want manual Claude, Codex, or Gemini worker setup
 - **Dispatcher Setup** — add queued delivery only if you need it from the web app: [OpenClaw Installation](/guide/openclaw/setup) or [Telegram Integration](/guide/web-app/telegram)
 - **Web App Setup** — [Web App Setup](/guide/web-app/setup) for self-hosting, migrations, and first-login details
@@ -30,7 +31,7 @@ PreqStation separates any queued dispatcher path from the task engine:
 		Central web app. Manages tasks, renders the Kanban UI, exposes the REST API, and lets the user choose the task engine plus any optional Telegram/OpenClaw dispatch action.
 	</Card>
 	<Card title="PREQ CLI" icon="rocket">
-		User-facing package and command: `@sonim1/preqstation` and `preqstation`. It installs dispatcher entrypoints, resolves projects, creates worktrees, and launches coding agents from Telegram, OpenClaw, Hermes, or direct runtime messages. Some legacy identifiers still mention `preqstation-dispatcher` or `preqstation-openclaw` for compatibility.
+		User-facing package and command: `@sonim1/preqstation` and `preqstation`. It installs dispatcher entrypoints, resolves projects, creates worktrees, and launches coding agents from Telegram, OpenClaw, Hermes, or direct CLI dispatch. Some legacy identifiers still mention `preqstation-dispatcher` or `preqstation-openclaw` for compatibility.
 	</Card>
 	<Card title="preqstation-skill" icon="approve">
 		Agent client. MCP access and shell helpers for Claude Code, Codex, and Gemini workers.
@@ -79,6 +80,7 @@ User creates task in the Kanban UI
 ### Dispatcher Target vs Engine
 
 - `dispatch_target=telegram` means the user chose **Send to Telegram** or copied a Telegram/OpenClaw command.
+- Direct CLI dispatch starts on the operator host with [`preqstation run`](/guide/getting-started/direct-dispatch), so it does not need a Telegram, Hermes, or OpenClaw relay.
 - `engine=claude-code | codex | gemini-cli` stays separate from the dispatcher target and decides which local CLI actually runs the task.
 
 ### Agent Trigger via OpenClaw

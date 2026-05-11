@@ -1,0 +1,95 @@
+---
+title: Direct Dispatch
+description: Operator host에서 PREQ task를 CLI로 직접 실행합니다.
+---
+
+Direct dispatch는 OpenClaw, Hermes, Telegram을 거치지 않고 `preqstation` CLI에서 worker를 바로 실행하는 경로입니다. 이미 로컬 operator host에 있고, project mapping이 준비되어 있으며, task run을 즉시 detached 실행하고 싶을 때 사용합니다.
+
+Direct dispatch가 task tracking을 대체하지는 않습니다. 태스크는 여전히 PreqStation에 속하고, worker는 PreqStation MCP/task tool을 통해 lifecycle 결과를 다시 보고합니다.
+
+## 언제 사용하나요
+
+아래 상황에서 direct dispatch를 사용하세요.
+
+- 선택한 worker CLI를 실행할 머신에 이미 접속해 있음
+- `preqstation setup auto` 또는 `preqstation setup set`으로 project mapping이 준비됨
+- 로컬 detached worker run을 바로 시작하고 싶음
+- 이번 실행에는 web, chat, Telegram, Hermes, OpenClaw relay가 필요 없음
+
+웹 앱이나 chat relay가 원격으로 작업을 트리거해야 한다면 해당 dispatcher 경로를 사용하세요.
+
+## 핵심 명령
+
+```bash
+preqstation run \
+  --project-key PROJ \
+  --task-key PROJ-327 \
+  --objective implement \
+  --engine codex \
+  --branch-name task/proj-327-example
+```
+
+각 필드는 다음 의미입니다.
+
+| 필드 | 의미 |
+|---|---|
+| `--project-key` | `PROJ` 같은 PREQ project key입니다. |
+| `--task-key` | `PROJ-327` 같은 실행 대상 task ticket입니다. |
+| `--objective` | `implement`, `review`, 또는 task source가 지원하는 ask-style objective 같은 lifecycle objective입니다. |
+| `--engine` | Worker runtime입니다. `claude-code`, `codex`, `gemini-cli` 중 하나를 사용합니다. |
+| `--branch-name` | 실행용 isolated branch/worktree 이름입니다. Private repository 이름 대신 placeholder 또는 task 기반 이름을 사용하세요. |
+
+CLI는 이 flag들을 adapter 경로와 같은 dispatch intent 형태로 바꾼 뒤, 로컬 project를 찾고 operator host에서 선택한 worker를 실행합니다.
+
+## Message와 JSON Entrypoint
+
+Integration이 보내는 message shape를 테스트하거나 전달하려면 `run-message`를 사용합니다.
+
+```bash
+preqstation run-message --message 'preqstation implement PROJ-327 using codex'
+```
+
+Webhook 또는 payload replay automation에는 `run-json`을 사용합니다.
+
+```bash
+preqstation run-json --payload /path/to/preq-webhook-payload.json
+```
+
+Replay payload는 공유하기 전에 정리하세요. 예제나 fixture에 실제 token, private project URL, chat ID, user credential을 넣지 마세요.
+
+## 다른 Dispatch 경로와의 차이
+
+| 경로 | 언제 사용하나요 | 무엇이 worker를 시작하나요 |
+|---|---|---|
+| Web app | PreqStation UI에서 task 생성, 관리, dispatch, review를 하고 싶을 때 | 선택한 dispatch action 또는 이후 operator handoff |
+| Telegram / Hermes | Tool이 켜진 host로 remote/chat-triggered delivery가 필요할 때 | Hermes가 message를 받고 요청된 worker를 실행 |
+| OpenClaw | OpenClaw gateway dispatch, 복사한 OpenClaw command, `/preqsetup` mapping support가 필요할 때 | OpenClaw가 요청을 해석하고 worker를 실행 |
+| Direct CLI | Operator host에 이미 있고 즉시 실행하고 싶을 때 | `preqstation run`, `run-message`, `run-json` |
+
+Dispatcher target과 engine은 분리되어 있습니다. Direct CLI run에서도 worker engine으로 `claude-code`, `codex`, `gemini-cli` 중 하나를 선택합니다.
+
+## 사전 준비
+
+- PREQ CLI가 global install되어 있거나 `npx -y @sonim1/preqstation@latest`로 실행 가능해야 합니다.
+- 선택한 runtime 기준으로 `preqstation doctor` 결과가 충분히 정상이야 합니다.
+- `preqstation setup auto` 또는 `preqstation setup set`으로 project mapping이 있어야 합니다.
+- 선택한 worker CLI가 설치되어 있고 host process에서 실행 가능해야 합니다.
+- 권장 MCP 경로를 쓰는 runtime은 remote `/mcp` OAuth가 완료되어 있어야 합니다.
+
+## 결과 흐름
+
+Direct dispatch run은 adapter 경로와 같은 high-level execution contract를 따릅니다.
+
+1. CLI가 project, task, objective, engine, branch/worktree 이름을 해석합니다.
+2. 필요하면 isolated worktree/branch를 만들거나 사용합니다.
+3. Operator host에서 선택한 worker runtime을 실행합니다.
+4. Worker가 생성된 PREQ prompt를 읽고 task lifecycle을 수행합니다.
+5. Worker가 notes, tests, branch 또는 PR evidence, final status를 PreqStation에 보고합니다.
+6. 사용자는 PreqStation에서 결과를 검토한 뒤 task를 다음 workflow 단계로 이동합니다.
+
+## 문제 해결
+
+- Install, mapping, `status`, `doctor` 명령은 [PREQ CLI](/guide/ko/getting-started/preq-cli)에서 시작하세요.
+- Project mapping, MCP registration, runtime detection이 불분명하면 [Troubleshooting](/guide/reference/troubleshooting)을 확인하세요.
+- OpenClaw gateway 또는 chat dispatch가 필요하다면 [OpenClaw 설치](/guide/ko/openclaw/setup)를 사용하세요.
+- Hermes 또는 Telegram이 요청을 전달해야 한다면 [Telegram 연동](/guide/ko/web-app/telegram)을 사용하세요.

@@ -14,12 +14,14 @@ npx -y @sonim1/preqstation@latest status
 
 Global install, `update`, `doctor`, JSON output, project mapping, OpenClaw/Hermes targeted install, Hermes sync, uninstall까지 전체 명령 reference는 [PREQ CLI](/guide/ko/getting-started/preq-cli)를 참고하세요.
 
+Host 준비가 끝났고 relay 없이 터미널에서 task를 실행하려면 [Direct Dispatch](/guide/ko/getting-started/direct-dispatch)를 확인하세요.
+
 ## 내 상황에 맞는 경로 선택
 
 | 상황 | 먼저 할 일 | 필요할 때만 추가 |
 |---|---|---|
 | PreqStation을 처음 설정하는 경우 | [PREQ CLI](/guide/ko/getting-started/preq-cli) | 수동 worker-only 설정 |
-| Claude Code, Codex, Gemini를 이미 직접 쓰는 경우 | [워커 설치](/guide/ko/skill/installation) | CLI dispatcher 설치 |
+| Claude Code, Codex, Gemini를 이미 직접 쓰는 경우 | [워커 설치](/guide/ko/skill/installation) | PREQ task lifecycle tracking이 필요하면 [Direct Dispatch](/guide/ko/getting-started/direct-dispatch) |
 | 웹 앱을 self-hosting하거나 migration을 검증하는 경우 | [웹 앱 설정](/guide/ko/web-app/setup) | 로그인 확인 후 PREQ CLI |
 | Telegram, Hermes, OpenClaw dispatch를 운영하는 경우 | [PREQ CLI](/guide/ko/getting-started/preq-cli) 후 [Telegram](/guide/ko/web-app/telegram) 또는 [OpenClaw](/guide/ko/openclaw/setup) | 수동 plugin fallback |
 | 예전 token 기반 설정을 유지 중인 경우 | [API Keys](/guide/ko/web-app/api-keys) | runtime이 지원하면 원격 `/mcp` OAuth |
@@ -131,6 +133,7 @@ export PREQSTATION_TOKEN=preq_your_new_token
 ## 다음 단계
 
 - [워커 설치](/guide/ko/skill/installation) — Claude, Codex, Gemini의 수동 worker-only 설정
+- [Direct Dispatch](/guide/ko/getting-started/direct-dispatch) — 로컬 CLI에서 tracked task 직접 실행
 - [OpenClaw 설치](/guide/ko/openclaw/setup) — OpenClaw dispatcher 설정
 - [Telegram 연동](/guide/ko/web-app/telegram) — Hermes와 Telegram dispatch 설정
 - [웹 앱 설정](/guide/ko/web-app/setup) — hosted 설정과 self-hosted 로컬 개발 세부 정보

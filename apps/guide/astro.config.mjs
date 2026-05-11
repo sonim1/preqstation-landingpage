@@ -187,6 +187,13 @@ export default defineConfig({
               slug: 'getting-started/preq-cli',
             },
             {
+              label: 'Direct Dispatch',
+              translations: {
+                ko: 'Direct Dispatch',
+              },
+              slug: 'getting-started/direct-dispatch',
+            },
+            {
               label: 'Concepts',
               translations: {
                 ko: '핵심 개념',
