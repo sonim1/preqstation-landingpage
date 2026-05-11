@@ -7,6 +7,14 @@ import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
 `preqstation-skill` is the core agent-side package for PreqStation. It owns the `preqstation` worker skill, documents the lifecycle rules, and provides the Claude Code helper plugin plus Codex/Gemini worker install paths.
 
+Most users should start with the CLI path in [Quick Start](/guide/getting-started/quick-start):
+
+```bash
+npx -y @sonim1/preqstation@latest install
+```
+
+That installer can set up worker runtime support and remote MCP registration together. Use this page when you intentionally need a manual worker-only install or when the CLI installer cannot complete the MCP registration for your local runtime.
+
 ## Prerequisites
 
 - Node.js 22+ installed
@@ -14,11 +22,22 @@ import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 - Access to the PreqStation web app if you want to use the recommended remote MCP login flow
 - A PreqStation API token only if you plan to use shell-helper mode or the legacy local stdio bridge
 
-## Choose a Worker Install
+## Choose a Worker-Only Install
 
-### Claude Code Plugin (Recommended)
+### CLI First, Manual Only When Needed
 
-For Claude Code, install the plugin. It includes the packaged `preqstation` worker skill and helper commands.
+If you already ran `preqstation install`, check status before adding manual worker files:
+
+```bash
+preqstation status
+preqstation doctor
+```
+
+Continue below only for worker-only setups.
+
+### Claude Code Plugin
+
+For Claude Code, the plugin is a Claude-specific helper path. It includes the packaged `preqstation` worker skill and helper commands.
 
 ```bash
 claude plugin marketplace add https://github.com/sonim1/preqstation-skill
@@ -33,7 +52,7 @@ Then open Claude Code and run:
 
 `/preqstation:setup` can add or verify the user-scoped `preqstation` MCP connection, fetch projects when `preq_list_projects` is available, and save repo mappings in `~/.preqstation-dispatch/projects.json`.
 
-### Worker-Only Installs
+### Worker-Only Skill Installs
 
 Use worker-only install when you do not want the Claude plugin helpers, or when installing for Codex or Gemini CLI:
 
@@ -55,7 +74,7 @@ gemini-cli
 
 This page is only for **worker setup**.
 
-If you also want queued dispatch from the web app, use [OpenClaw Installation](/guide/openclaw/setup) for the Telegram/OpenClaw dispatcher path.
+If you also want queued dispatch from the web app, use the PREQ CLI installer first, then [OpenClaw Installation](/guide/openclaw/setup) or [Telegram Integration](/guide/web-app/telegram) for dispatcher-specific setup.
 
 ## Recommended MCP Setup (HTTP + OAuth)
 
@@ -63,7 +82,7 @@ The recommended MCP runtime now lives in the PreqStation service itself at `/mcp
 
 ## Claude Code
 
-Register the remote PreqStation MCP endpoint:
+Register the remote PreqStation MCP endpoint manually only when the CLI installer did not do it for you:
 
 <Tabs>
 <TabItem label="Install">
@@ -90,7 +109,7 @@ claude mcp get preqstation
 
 ## Codex CLI
 
-Register the remote PreqStation MCP endpoint:
+Register the remote PreqStation MCP endpoint manually only when the CLI installer did not do it for you:
 
 <Tabs>
 <TabItem label="Install">
@@ -136,7 +155,7 @@ If you only want direct worker usage, this page is enough. If you want queued di
 
 Gemini CLI uses the same worker + remote MCP path when the local Gemini CLI supports remote HTTP MCP.
 
-Register the remote PreqStation MCP endpoint:
+Register the remote PreqStation MCP endpoint manually only when the CLI installer did not do it for you:
 
 <Tabs>
 <TabItem label="Install">

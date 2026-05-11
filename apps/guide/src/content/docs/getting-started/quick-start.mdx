@@ -5,21 +5,50 @@ description: Get PreqStation running in 5 minutes.
 
 ## Recommended Setup Path
 
-For most users, PreqStation setup now starts in the hosted web app and uses the remote MCP endpoint at `/mcp`.
+Run the PREQ CLI installer first. It installs the local dispatcher helpers, asks which request entrypoints you want, prepares worker runtime support for Claude Code, Codex, or Gemini, registers the remote `/mcp` connection when possible, and guides MCP-backed project setup.
+
+```bash
+npx -y @sonim1/preqstation@latest install
+npx -y @sonim1/preqstation@latest status
+```
+
+If you later install the CLI globally, the same flow is available as:
+
+```bash
+preqstation install
+preqstation status
+```
 
 ## Choose Your Path
 
 | You are... | Start with | Add later only if needed |
 |---|---|---|
-| Using PreqStation alone with Claude Code, Codex, or Gemini | Hosted web app + [Worker Installation](/guide/skill/installation) | Telegram/OpenClaw dispatch |
-| A developer self-hosting or validating migrations | [Web App Setup](/guide/web-app/setup) | Worker install after login works |
-| A founder or operator reviewing work from agents | Hosted web app + worker OAuth | QA queueing and project insight dispatch |
-| A vibe coder who wants the app to send tasks to local agents | Worker install first, then [OpenClaw Installation](/guide/openclaw/setup) | Hermes Telegram if OpenClaw is not the host |
+| Setting up PreqStation for the first time | `npx -y @sonim1/preqstation@latest install` + `status` | Manual worker-only setup |
+| Already using Claude Code, Codex, or Gemini directly | [Worker Installation](/guide/skill/installation) | CLI dispatcher install |
+| Self-hosting the web app or validating migrations | [Web App Setup](/guide/web-app/setup) | PREQ CLI after login works |
+| Operating Telegram, Hermes, or OpenClaw dispatch | PREQ CLI install, then [Telegram](/guide/web-app/telegram) or [OpenClaw](/guide/openclaw/setup) | Manual plugin fallback |
 | Maintaining an old token-based setup | [API Keys](/guide/web-app/api-keys) | Remote `/mcp` OAuth when the runtime supports it |
 
-1. Sign in to your PreqStation deployment.
-2. Open `/connections` and complete the provider setup you need for your worker or dispatcher path.
-3. Register the remote MCP endpoint:
+## What the CLI Handles
+
+During install, choose the pieces you need:
+
+- **Request entrypoints** — OpenClaw and Hermes dispatcher support
+- **Worker runtimes** — Claude Code, Codex, and Gemini CLI support
+- **Remote MCP registration** — user-scoped `preqstation` MCP server pointing at `https://<your-domain>/mcp`
+- **Project setup** — local checkout mapping through `preqstation setup auto` or manual setup commands
+
+After installation, use these checks:
+
+```bash
+preqstation status
+preqstation doctor
+preqstation setup auto PROJ=https://github.com/example/project
+```
+
+## Manual Worker-Only MCP Setup
+
+Use this only when the CLI installer cannot register MCP for your runtime or when you intentionally want a worker-only setup.
 
 ```bash
 # Claude Code
@@ -32,16 +61,16 @@ codex mcp add preqstation --url https://<your-domain>/mcp
 gemini mcp add --scope user --transport http preqstation https://<your-domain>/mcp
 ```
 
-4. Complete the browser OAuth flow when prompted. Codex often starts this during `add`, Claude Code commonly starts it on the first real request or `claude mcp get preqstation`, and Gemini CLI may start it during registration or the first real tool call.
-5. Continue with the worker and optional dispatcher setup docs below.
+Complete the browser OAuth flow when prompted. Codex often starts this during `add`, Claude Code commonly starts it on the first real request or `claude mcp get preqstation`, and Gemini CLI may start it during registration or the first real tool call.
 
 ## Continue with the Setup Paths
 
-- **Web App Setup** — if you are still finishing hosted setup, self-hosted local development, or compatibility details, use [Web App Setup](/guide/web-app/setup)
-- **Worker Connection** — if you just finished the web app path and have the access you need, continue now with [Worker Installation](/guide/skill/installation)
-- **Dispatcher Setup** — add queued delivery only if you need dispatch from the web app: [OpenClaw Installation](/guide/openclaw/setup)
+- **Worker-only manual setup** — use [Worker Installation](/guide/skill/installation) when you do not want the full CLI installer path
+- **Web app setup** — use [Web App Setup](/guide/web-app/setup) for hosted setup, self-hosting, migrations, and first-login details
+- **OpenClaw dispatcher** — use [OpenClaw Installation](/guide/openclaw/setup) when the web app should queue work through OpenClaw
+- **Hermes Telegram dispatcher** — use [Telegram Integration](/guide/web-app/telegram) when Hermes should receive Telegram dispatches
 
-If you do not need queued dispatch from the web app, stop after worker setup.
+If you only need direct worker access from your terminal, stop after the CLI install and MCP status checks.
 
 ## Compatibility: Local Web App Development
 
@@ -54,8 +83,6 @@ Use this branch only if you are self-hosting the web app, validating migration-e
 - **GitHub access** — the web app source lives in `sonim1/preqstation`
 
 ### 1. Clone the Repository
-
-Clone the PreqStation web app repository:
 
 ```bash
 git clone git@github.com:sonim1/preqstation.git
@@ -106,12 +133,12 @@ The app runs at `http://localhost:3000` by default. Set `PORT=` in `.env.local` 
 
 ## Compatibility: API Tokens and the Legacy Local Bridge
 
-You only need `/api-keys` and `PREQSTATION_TOKEN` when you are using shell-helper mode or the legacy local MCP bridge. The recommended remote `/mcp` + OAuth setup above does not require issuing a token first.
+You only need `/api-keys` and `PREQSTATION_TOKEN` when you are using shell-helper mode or the legacy local MCP bridge. The recommended remote `/mcp` + OAuth setup does not require issuing a token first.
 
 1. Log in, then open `http://localhost:3000/api-keys`. You can also reach the same page from the workspace sidebar by clicking **API Keys**.
 2. In the **Create API Key** form, keep the default expiration or choose one from **Expires In**.
 3. Enter a name such as `local-dev` or `codex-laptop`, then click **Create Key**.
-4. Copy the token from the green **New API key (shown once)** panel immediately. The value starts with `preq_` and the remaining characters use URL-safe letters, numbers, `_`, and `-`, for example `preq_abc123...`.
+4. Copy the token from the green **New API key (shown once)** panel immediately.
 5. Save it into your local agent environment before you close the page, because PreqStation only shows the full token once.
 
 Use the token with the app URL in your agent runtime only for those compatibility paths:
@@ -125,10 +152,10 @@ For the full token-based compatibility details, see [API Keys](/guide/web-app/ap
 
 ## Next Steps
 
-- [Web App Setup](/guide/web-app/setup) — Hosted-first setup plus self-hosted local development details
-- [Worker Installation](/guide/skill/installation) — Claude, Codex, and Gemini worker setup
-- [OpenClaw Installation](/guide/openclaw/setup) — Telegram/OpenClaw dispatcher setup
-- [Product Philosophy](/guide/getting-started/philosophy) — Why PreqStation exists and when to use it
-- [Kanban Board Guide](/guide/web-app/kanban) — Learn task management
-- [Concepts](/guide/getting-started/concepts) — Understand the kitchen metaphor
-- [API Keys](/guide/web-app/api-keys) — Shell-helper and legacy bridge token management
+- [Worker Installation](/guide/skill/installation) — manual worker-only setup for Claude, Codex, and Gemini
+- [OpenClaw Installation](/guide/openclaw/setup) — OpenClaw dispatcher setup
+- [Telegram Integration](/guide/web-app/telegram) — Hermes and Telegram dispatch setup
+- [Web App Setup](/guide/web-app/setup) — hosted setup and self-hosted local development details
+- [Product Philosophy](/guide/getting-started/philosophy) — why PreqStation exists and when to use it
+- [Kanban Board Guide](/guide/web-app/kanban) — learn task management
+- [API Keys](/guide/web-app/api-keys) — shell-helper and legacy bridge token management

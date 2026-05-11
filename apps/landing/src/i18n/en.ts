@@ -5,7 +5,7 @@ export default {
   },
   nav: {
     github: "GitHub",
-    cta: "Start Setup",
+    cta: "Run CLI Setup",
     localeLabel: "Language",
     openMenu: "Open menu",
     closeMenu: "Close menu",
@@ -32,7 +32,7 @@ export default {
     preqTagline: "Queue the task. Agents take it.",
     prepTagline: "Review the result. Then ship.",
     cta: "See the workflow",
-    guideCta: "Start Setup",
+    guideCta: "Run CLI Setup",
     github: "View on GitHub",
     socialProof: "Open Source \u00b7 Self-hosted \u00b7 Multi-engine execution queue",
     tickets: [
@@ -326,7 +326,7 @@ export default {
       checklistLabel: "Launch checklist",
       checklist: [
         "Review the execution proof first",
-        "Use the guide to wire your workflow",
+        "Use the guide to run the PREQ CLI installer",
         "Open GitHub and run the first task",
       ],
       linksLabel: "Command center",
@@ -336,10 +336,10 @@ export default {
         { label: "GitHub", value: "github.com/sonim1/preqstation" },
       ],
       summaryLabel: "Outcome",
-      summaryValue: "The next step is concrete: inspect proof, install PREQ, then ship the first reviewed task.",
+      summaryValue: "The next step is concrete: inspect proof, run the PREQ CLI installer, then ship the first reviewed task.",
     },
     primary: "See the workflow",
-    guide: "Start Setup",
+    guide: "Run CLI Setup",
     secondary: "View on GitHub",
   },
   footer: {

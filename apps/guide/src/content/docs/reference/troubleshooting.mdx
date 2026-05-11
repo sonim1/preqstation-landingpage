@@ -158,6 +158,38 @@ export PREQSTATION_TOKEN="preq_xxxxx"   # no extra spaces
 
 ## Worktree & Git Issues
 
+### CLI setup, project mapping, or dispatcher health is unclear
+
+**Symptom:** A dispatch cannot find a project, the worker runtime is not detected, or you are unsure whether OpenClaw/Hermes support was installed.
+
+**Solutions:**
+
+1. Start with the CLI diagnostics:
+```bash
+preqstation status
+preqstation doctor
+```
+
+2. Confirm project mappings:
+```bash
+preqstation setup status
+preqstation setup auto PROJ=https://github.com/example/project
+```
+
+3. Check dispatcher state paths:
+```bash
+echo $PREQSTATION_DISPATCH_HOME
+echo $PREQSTATION_PROJECTS_FILE
+echo $PREQSTATION_WORKTREE_ROOT
+```
+
+4. If the run launched but failed later, inspect the detached runtime log inside the task worktree:
+```bash
+tail -100 .preqstation-dispatch/claude-code.log
+tail -100 .preqstation-dispatch/codex.log
+tail -100 .preqstation-dispatch/gemini-cli.log
+```
+
 ### Worktree conflicts or cleanup failures
 
 **Symptom:** `fatal: invalid reference: <branch>` or stale worktree directory
@@ -271,23 +303,33 @@ echo "//npm.example.com/:_authToken=YOUR_TOKEN" >> ~/.npmrc
 
 ### "Project path not found"
 
-**Symptom:** OpenClaw asks for a project path even though you thought it was already configured.
+**Symptom:** The dispatcher asks for a project path even though you thought it was already configured.
 
 **Solutions:**
 
-1. Confirm the mapping exists in OpenClaw agent memory.
+1. Confirm the mapping exists in the PREQ CLI project mapping file:
+```bash
+preqstation setup status
+```
 
-2. If you use the sample `MEMORY.md` format as a reference, check that the row looks like:
+2. If missing, create or refresh it:
+```bash
+preqstation setup auto PROJ=https://github.com/example/project
+# or:
+preqstation setup set PROJ /absolute/path/to/project
+```
+
+3. If you use the sample `MEMORY.md` format as a legacy fallback, check that the row looks like:
 ```markdown
 | key | cwd | note |
 |-----|-----|------|
 | proj | /absolute/path | Description |
 ```
 
-3. Verify the project key matches the task prefix:
+4. Verify the project key matches the task prefix:
 - `PRJ-284` should normally map to `prj`
 
-4. Ensure paths are absolute (not relative):
+5. Ensure paths are absolute (not relative):
 ```bash
 # ❌ Bad: ./projects/example
 # ✅ Good: /Users/kendrick/projects/example
@@ -301,22 +343,33 @@ echo "//npm.example.com/:_authToken=YOUR_TOKEN" >> ~/.npmrc
 
 **Solutions:**
 
-1. Check session status:
+1. Prefer PREQ CLI diagnostics first:
+```bash
+preqstation status
+preqstation doctor
+```
+
+2. Read the detached runtime log from the task worktree:
+```bash
+tail -100 .preqstation-dispatch/<engine>.log
+```
+
+3. If you are debugging an older OpenClaw session-based run, check session status:
 ```bash
 process action:poll sessionId:<id>
 ```
 
-2. Read last 100 lines of output:
+4. Read last 100 lines of session output:
 ```bash
 process action:log sessionId:<id> | tail -100
 ```
 
-3. If truly stuck, kill the session:
+5. If truly stuck, kill the session:
 ```bash
 process action:kill sessionId:<id>
 ```
 
-4. Check for infinite loops or blocking I/O:
+6. Check for infinite loops or blocking I/O:
 ```bash
 # Common causes:
 # - npm install hung on network
@@ -352,9 +405,16 @@ rm <cwd>/.test-write
 
 ### ❌ Forgetting to update OpenClaw project mappings
 
-**Issue:** OpenClaw can't resolve project path, requires manual input each time.
+**Issue:** The dispatcher can't resolve project path, requires manual input each time.
 
-**Fix:** Update the OpenClaw mapping whenever you clone a new project or change paths. If you keep a reference `MEMORY.md`, keep that in sync too:
+**Fix:** Update the PREQ project mapping whenever you clone a new project or change paths:
+
+```bash
+preqstation setup auto PROJ=https://github.com/example/project
+preqstation setup status
+```
+
+If you keep a reference `MEMORY.md` as a legacy fallback, keep that in sync too:
 ```markdown
 | key | cwd | note |
 |-----|-----|------|
@@ -391,6 +451,13 @@ git -C <project_cwd> worktree prune
 claude mcp list | grep preqstation
 ```
 
+Or let the CLI installer set it up:
+
+```bash
+npx -y @sonim1/preqstation@latest install
+preqstation status
+```
+
 ## Getting Help
 
 If you've checked all above:
@@ -402,6 +469,8 @@ If you've checked all above:
    node --version
    git --version
    npm --version
+   preqstation status
+   preqstation doctor
    ```
 
 2. **Test basic connectivity:**
@@ -412,7 +481,8 @@ If you've checked all above:
 
 3. **Check logs:**
    - Claude Code: Settings → Logs
-   - OpenClaw: Session output via `process action:log`
+   - PREQ CLI dispatcher: `.preqstation-dispatch/<engine>.log` inside the task worktree
+   - OpenClaw legacy sessions: session output via `process action:log`
    - PreqStation web app: deployment or server logs
 
 4. **File an issue** with:

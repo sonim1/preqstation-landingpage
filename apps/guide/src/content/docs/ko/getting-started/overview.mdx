@@ -12,13 +12,14 @@ PreqStation은 AI 에이전트 기반 개발 워크플로우를 위한 실행 �
 
 ## 추천 첫 단계
 
-처음 PreqStation을 설정한다면 [빠른 시작](/guide/ko/getting-started/quick-start)부터 시작하세요. 웹 앱 실행, 로그인, 첫 API 키 발급까지 가장 짧은 경로로 안내합니다. 전체 로컬 체크리스트를 보고 싶다면 [웹 앱 설정](/guide/ko/web-app/setup)으로 이어가면 됩니다.
+처음 PreqStation을 설정한다면 [빠른 시작](/guide/ko/getting-started/quick-start)부터 시작하세요. `npx -y @sonim1/preqstation@latest install`에서 시작해 로컬 runtime, MCP, project setup을 확인합니다. 웹 앱을 self-hosting하거나 migration을 검증한다면 [웹 앱 설정](/guide/ko/web-app/setup)을 참고하세요.
 
 ## 설정 경로 순서
 
-- **웹 앱 설정** — 가장 빠른 첫 실행은 [빠른 시작](/guide/ko/getting-started/quick-start), 전체 로컬 체크리스트는 [웹 앱 설정](/guide/ko/web-app/setup)
-- **워커 연결** — 앱이 이미 실행 중이고 필요한 접근 준비가 끝났다면 [워커 설치](/guide/ko/skill/installation)로 이동
-- **디스패처 설정** — 웹 앱에서 queued dispatch가 필요할 때만 추가: [OpenClaw 설치](/guide/ko/openclaw/setup)
+- **CLI 기본 설정** — 가장 빠른 CLI installer 경로는 [빠른 시작](/guide/ko/getting-started/quick-start)
+- **Worker-only 설정** — Claude, Codex, Gemini worker를 수동 설정하려면 [워커 설치](/guide/ko/skill/installation)
+- **디스패처 설정** — 웹 앱에서 queued dispatch가 필요할 때만 추가: [OpenClaw 설치](/guide/ko/openclaw/setup) 또는 [Telegram 연동](/guide/ko/web-app/telegram)
+- **웹 앱 설정** — self-hosting, migration, 첫 로그인 세부 정보는 [웹 앱 설정](/guide/ko/web-app/setup)
 
 ## 핵심 시스템과 dispatcher 경로
 
@@ -26,8 +27,8 @@ PreqStation은 AI 에이전트 기반 개발 워크플로우를 위한 실행 �
   <Card title="PreqStation 웹 앱" icon="setting">
     중심 웹 앱입니다. 태스크를 관리하고, 칸반 UI를 렌더링하고, REST API를 노출하고, task engine과 필요 시 Telegram/OpenClaw dispatch 액션을 고르게 합니다.
   </Card>
-  <Card title="preqstation-dispatcher" icon="rocket">
-    OpenClaw-native dispatcher 경로입니다. OpenClaw가 이 패키지를 불러 프로젝트를 찾고 worktree를 만들고 코딩 에이전트를 실행합니다. 일부 runtime identifier는 호환성을 위해 아직 `preqstation-openclaw`를 사용합니다.
+  <Card title="PREQ CLI" icon="rocket">
+    사용자-facing package와 command는 `@sonim1/preqstation`, `preqstation`입니다. Dispatcher entrypoint를 설치하고 프로젝트를 찾고 worktree를 만들고 Telegram, OpenClaw, Hermes, direct runtime message에서 코딩 에이전트를 실행합니다. 일부 legacy identifier는 호환성을 위해 아직 `preqstation-dispatcher` 또는 `preqstation-openclaw`를 언급할 수 있습니다.
   </Card>
   <Card title="preqstation-skill" icon="approve">
     에이전트 클라이언트입니다. Claude Code, Codex, Gemini worker용 MCP/worker 패키지입니다.

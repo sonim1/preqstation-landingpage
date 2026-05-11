@@ -1,13 +1,13 @@
 ---
 title: Installation
-description: Install and configure preqstation-dispatcher for the OpenClaw dispatcher path.
+description: Install and configure the PREQ CLI for the OpenClaw dispatcher path.
 ---
 
 import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
-`preqstation-dispatcher` is the durable public dispatcher package for PreqStation. OpenClaw loads it as a plugin, then the plugin resolves projects, creates worktrees, writes `.preqstation-prompt.txt`, and launches Claude Code, Codex, or Gemini CLI as a detached process.
+The public npm package and user-facing command are `@sonim1/preqstation` and `preqstation`. OpenClaw loads a PREQ dispatcher plugin, then the plugin resolves projects, creates worktrees, writes `.preqstation-prompt.txt`, and launches Claude Code, Codex, or Gemini CLI as a detached process.
 
-Some package, plugin, and config identifiers may still mention `preqstation-openclaw` for compatibility. Treat that as a legacy technical identifier unless a command explicitly requires it.
+Some plugin and config identifiers may still mention `preqstation-dispatcher` or `preqstation-openclaw` for compatibility. Treat those as legacy technical identifiers unless a command explicitly requires them.
 
 Use this page when you want the **OpenClaw dispatcher** path.
 
@@ -25,31 +25,41 @@ You need:
 - OpenClaw installed on the dispatcher host
 - local checkouts for the projects PreqStation will dispatch
 - at least one worker CLI available on the OpenClaw host: `claude`, `codex`, or `gemini`
-- the matching PREQ worker setup from [Worker Installation](/guide/skill/installation)
+- the matching PREQ worker setup from the CLI installer or [Worker Installation](/guide/skill/installation)
 - Telegram settings only if the web app should send dispatch messages through Telegram
 
 If you only want an agent to work directly from its own terminal, stop at worker setup. OpenClaw is for queued dispatch from the web app or an OpenClaw chat.
 
-## Install the Plugin
+## Install with the PREQ CLI
 
-Install from npm on the machine where OpenClaw runs:
+Run the installer on the machine where OpenClaw runs:
 
 ```bash
-openclaw plugins install @sonim1/preqstation-dispatcher --dangerously-force-unsafe-install
+npx -y @sonim1/preqstation@latest install
+```
+
+If `preqstation` is already installed globally, install or refresh only the OpenClaw integration:
+
+```bash
+preqstation install openclaw
 openclaw gateway restart
 ```
 
-If the standalone dispatcher CLI is already installed, it can run the plugin install command:
+The installer invokes the OpenClaw plugin install flow for you. The npm package and binary are `@sonim1/preqstation` and `preqstation`; the OpenClaw plugin id may still be `preqstation-dispatcher`.
+
+## Manual Fallback or Local Development
+
+Use this only when the CLI installer cannot run the plugin install command, or when you are developing the plugin locally.
 
 ```bash
-preqstation-dispatcher install openclaw
+openclaw plugins install @sonim1/preqstation --dangerously-force-unsafe-install
 openclaw gateway restart
 ```
 
 For active local development, link a checkout:
 
 ```bash
-openclaw plugins install --link --dangerously-force-unsafe-install /path/to/preqstation-dispatcher
+openclaw plugins install --link --dangerously-force-unsafe-install /path/to/preqstation
 openclaw gateway restart
 ```
 
@@ -60,6 +70,7 @@ The plugin intentionally uses local process execution to create git worktrees an
 ```bash
 openclaw plugins inspect preqstation-dispatcher
 openclaw status --all
+preqstation status openclaw
 ```
 
 ## Project Path Mapping
@@ -68,6 +79,12 @@ After install, map PREQ project keys to local checkouts on the OpenClaw host.
 
 <Tabs>
 <TabItem label="Auto">
+```bash
+preqstation setup auto PROJ=https://github.com/example/project
+```
+
+OpenClaw chat commands can also call the plugin-native setup command:
+
 ```text
 /preqsetup auto PROJ=https://github.com/example/project
 ```
@@ -75,6 +92,13 @@ After install, map PREQ project keys to local checkouts on the OpenClaw host.
 `/preqsetup auto` scans local git repos under `PREQSTATION_REPO_ROOTS` when set, otherwise under `~/projects`, matches local git `origin` URLs against the provided repo URLs, and stores successful matches in OpenClaw plugin config.
 </TabItem>
 <TabItem label="Manual">
+```bash
+preqstation setup set PROJ /absolute/path/to/project
+preqstation setup status
+```
+
+OpenClaw-native equivalents:
+
 ```text
 /preqsetup set PROJ /absolute/path/to/project
 /preqsetup status
@@ -89,7 +113,16 @@ Use this when another dispatcher host already populated `~/.preqstation-dispatch
 </TabItem>
 </Tabs>
 
-Useful setup commands:
+Useful CLI setup commands:
+
+```bash
+preqstation setup auto
+preqstation setup set <PROJECT_KEY> <ABSOLUTE_PATH>
+preqstation setup status
+preqstation setup unset PROJ
+```
+
+Useful OpenClaw-native setup commands:
 
 ```text
 /preqsetup
@@ -109,18 +142,18 @@ Resolution order:
 
 ## Worktree Root
 
-OpenClaw uses `OPENCLAW_WORKTREE_ROOT` for task worktrees.
+The PREQ CLI uses `PREQSTATION_WORKTREE_ROOT` for task worktrees. OpenClaw-specific legacy installs may still read `OPENCLAW_WORKTREE_ROOT`.
 
 ```bash
-export OPENCLAW_WORKTREE_ROOT="/tmp/openclaw-worktrees"
+export PREQSTATION_WORKTREE_ROOT="$HOME/.preqstation-dispatch/worktrees"
 ```
 
-Default: `/tmp/openclaw-worktrees`
+Default: `~/.preqstation-dispatch/worktrees`
 
 Each task runs inside a dedicated worktree:
 
 ```text
-<OPENCLAW_WORKTREE_ROOT>/<project_key>/<branch_slug>/
+<PREQSTATION_WORKTREE_ROOT>/<project_key>/<branch_slug>/
 ```
 
 Detached runtime artifacts are written inside that worktree:
@@ -158,9 +191,9 @@ Telegram/OpenClaw sends from the web app use the same OpenClaw command shape.
 
 ## Next Steps
 
-1. Install or update the plugin
+1. Install or update through the PREQ CLI
 2. Restart OpenClaw
-3. Map project keys with `/preqsetup auto` or `/preqsetup set`
+3. Map project keys with `preqstation setup auto`, `preqstation setup set`, `/preqsetup auto`, or `/preqsetup set`
 4. Verify `claude`, `codex`, or `gemini` is available to the gateway process
 5. Continue to [Execution](/guide/openclaw/execution)
 

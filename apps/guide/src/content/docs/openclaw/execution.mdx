@@ -5,9 +5,9 @@ description: Worktree-first execution model for OpenClaw task runs
 
 import { Aside } from '@astrojs/starlight/components';
 
-OpenClaw uses a worktree-first execution model. `preqstation-dispatcher` prepares an isolated workspace, writes the PREQ prompt to disk, then launches the requested coding agent with a short bootstrap instruction.
+OpenClaw uses a worktree-first execution model. The PREQ CLI/dispatcher prepares an isolated workspace, writes the PREQ prompt to disk, then launches the requested coding agent with a short bootstrap instruction.
 
-Some current package, plugin, and config identifiers still use `preqstation-openclaw` for compatibility. Treat that as a technical legacy identifier, not the preferred public repo name.
+The preferred public package and command are `@sonim1/preqstation` and `preqstation`. Some current plugin and config identifiers still use `preqstation-dispatcher` or `preqstation-openclaw` for compatibility.
 
 ## Execution Flow
 
@@ -113,7 +113,7 @@ The executing agent:
 - must clean up the worktree when finished
 
 <Aside>
-The repo `preqstation-dispatcher` is the durable execution/dispatcher surface. Telegram/webhook integration still belongs to the OpenClaw runtime around it.
+Use the PREQ CLI docs for user-facing install and update commands. Treat `preqstation-dispatcher` as a legacy/internal identifier when it appears in plugin or config output.
 </Aside>
 
 ## Output Format

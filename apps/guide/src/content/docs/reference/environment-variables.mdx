@@ -5,7 +5,7 @@ description: Complete reference of all environment variables for PreqStation sys
 
 import { Tabs, TabItem } from '@astrojs/starlight/components';
 
-This reference documents all environment variables used by the PreqStation web app, preqstation-skill, and preqstation-dispatcher.
+This reference documents all environment variables used by the PreqStation web app, worker compatibility paths, and the PREQ CLI dispatcher.
 
 ## PreqStation web app
 
@@ -79,36 +79,50 @@ export PREQSTATION_ENGINE="claude-code"  # optional
 | `codex` | Codex (OpenAI) |
 | `gemini-cli` | Gemini CLI |
 
-## preqstation-dispatcher
+## PREQ CLI Dispatcher
 
-Execution layer variables for the OpenClaw-native dispatcher and worktree management.
+Execution layer variables for `preqstation install`, `preqstation setup`, `preqstation run`, OpenClaw, Hermes, and detached worktree management.
 
 | Variable | Required | Default | Purpose |
 |----------|----------|---------|---------|
-| `OPENCLAW_WORKTREE_ROOT` | No | `/tmp/openclaw-worktrees` | Root directory for isolated task worktrees |
+| `PREQSTATION_DISPATCH_HOME` | No | `~/.preqstation-dispatch` | Base directory for dispatcher state, logs, project mappings, and worktrees |
+| `PREQSTATION_PROJECTS_FILE` | No | `<dispatch-home>/projects.json` | Project key to local checkout mapping file |
+| `PREQSTATION_WORKTREE_ROOT` | No | `<dispatch-home>/worktrees` | Root directory for isolated task worktrees |
+| `PREQSTATION_WORKER_HOME` | No | `<dispatch-home>/workers` | Base directory for worker support files |
+| `PREQSTATION_CLAUDE_HOME` | No | runtime default | Claude-specific worker home override |
+| `PREQSTATION_CODEX_HOME` | No | runtime default | Codex-specific worker home override |
+| `PREQSTATION_GEMINI_HOME` | No | runtime default | Gemini-specific worker home override |
+| `PREQSTATION_MEMORY_PATH` | No | — | Optional legacy memory file used as a project mapping fallback |
+| `PREQSTATION_REPO_ROOTS` | No | `~/projects` | Colon-separated roots scanned by `preqstation setup auto` |
+| `PREQSTATION_SERVER_URL` | No | — | PreqStation web app URL used by setup helpers |
+| `PREQSTATION_API_URL` | No | — | API base URL for shell-helper mode or legacy token compatibility |
+| `PREQSTATION_TOKEN` | No | — | Bearer token for shell-helper mode or legacy token compatibility |
+| `OPENCLAW_WORKTREE_ROOT` | No | — | OpenClaw-specific legacy worktree root; prefer `PREQSTATION_WORKTREE_ROOT` for new CLI setup |
 
 ### Setup Example
 
 ```bash
 # ~/.zshrc or ~/.bashrc
-export OPENCLAW_WORKTREE_ROOT="/home/user/openclaw-worktrees"
+export PREQSTATION_DISPATCH_HOME="$HOME/.preqstation-dispatch"
+export PREQSTATION_WORKTREE_ROOT="$HOME/.preqstation-dispatch/worktrees"
+export PREQSTATION_REPO_ROOTS="$HOME/projects:$HOME/work"
 ```
 
 ### Worktree Root Considerations
 
-**Default:** `/tmp/openclaw-worktrees`
-- Temporary directory, cleaned on system reboot
-- Fine for transient task execution
-- Works with most CI/CD systems
+**Default:** `~/.preqstation-dispatch/worktrees`
+- Persistent under the dispatcher home
+- Keeps detached task worktrees together with dispatcher state
+- Works for OpenClaw and Hermes hosts using the PREQ CLI
 
-**Custom:** `/home/user/openclaw-worktrees`
+**Custom:** `/home/user/preq-worktrees`
 - Persistent across reboots
 - Useful for debugging and inspection
 - Requires manual cleanup of old worktrees
 
 **In CI/CD:**
 ```bash
-export OPENCLAW_WORKTREE_ROOT="/workspace/openclaw-worktrees"
+export PREQSTATION_WORKTREE_ROOT="/workspace/preq-worktrees"
 ```
 
 ## Complete Setup Checklist
@@ -116,34 +130,24 @@ export OPENCLAW_WORKTREE_ROOT="/workspace/openclaw-worktrees"
 <Tabs>
 <TabItem label="Local Development">
 ```bash
-# 1. Install the skill for the agent you actually use
-npx skills add sonim1/preqstation-skill -g -a claude-code
-# or:
-npx skills add sonim1/preqstation-skill -g -a codex
-# or:
-npx skills add sonim1/preqstation-skill -g -a gemini-cli
+# 1. Run the default CLI installer
+npx -y @sonim1/preqstation@latest install
 
-# 2. Register the remote MCP endpoint
-claude mcp add -s user --transport http preqstation https://preqstation.example.com/mcp
-# or:
-codex mcp add preqstation --url https://preqstation.example.com/mcp
-# or:
-gemini mcp add --scope user --transport http preqstation https://preqstation.example.com/mcp
+# 2. Verify local setup and MCP/runtime health
+preqstation status
+preqstation doctor
 
-# 3. If you need shell-helper mode, set token-based vars
+# 3. Map local project checkouts
+preqstation setup auto PROJ=https://github.com/example/project
+
+# 4. If you need shell-helper mode, set token-based vars
 export PREQSTATION_API_URL="https://preqstation.example.com"
 export PREQSTATION_TOKEN="preq_xxxxx"  # from /api-keys page
 export PREQSTATION_ENGINE="claude-code"
 
-# 4. Set preqstation-dispatcher variables (optional)
-export OPENCLAW_WORKTREE_ROOT="$HOME/openclaw-worktrees"
-
-# 5. Verify MCP registration
-claude mcp get preqstation
-# or:
-codex mcp get preqstation
-# or:
-gemini mcp list
+# 5. Override dispatcher locations only when needed
+export PREQSTATION_DISPATCH_HOME="$HOME/.preqstation-dispatch"
+export PREQSTATION_WORKTREE_ROOT="$HOME/.preqstation-dispatch/worktrees"
 ```
 </TabItem>
 <TabItem label="CI/CD Pipeline">
@@ -153,11 +157,11 @@ env:
   PREQSTATION_API_URL: https://preqstation.example.com
   PREQSTATION_TOKEN: ${{ secrets.PREQSTATION_TOKEN }}
   PREQSTATION_ENGINE: claude-code
-  OPENCLAW_WORKTREE_ROOT: /workspace/openclaw-worktrees
+  PREQSTATION_WORKTREE_ROOT: /workspace/preq-worktrees
 
 steps:
-  - name: Install preqstation-skill for Codex
-    run: npx skills add sonim1/preqstation-skill -g -a codex
+  - name: Install PREQ CLI
+    run: npx -y @sonim1/preqstation@latest install
 ```
 </TabItem>
 <TabItem label="Docker">
@@ -176,11 +180,13 @@ ENV PREQSTATION_API_URL=https://preqstation.example.com
 ENV PREQSTATION_TOKEN=preq_xxxxx
 ENV PREQSTATION_ENGINE=claude-code
 
-# preqstation-dispatcher
-ENV OPENCLAW_WORKTREE_ROOT=/app/worktrees
+# PREQ CLI dispatcher
+ENV PREQSTATION_DISPATCH_HOME=/app/.preqstation-dispatch
+ENV PREQSTATION_WORKTREE_ROOT=/app/worktrees
+ENV PREQSTATION_REPO_ROOTS=/workspace
 
 WORKDIR /app
-RUN npx skills add sonim1/preqstation-skill -g -a codex
+RUN npx -y @sonim1/preqstation@latest install
 ```
 </TabItem>
 </Tabs>
@@ -192,7 +198,8 @@ RUN npx skills add sonim1/preqstation-skill -g -a codex
 | **Web Service** | `AUTH_SECRET`, `DATABASE_URL`, `ALLOWED_ORIGINS`, `UNSPLASH_ACCESS_KEY`, `CRON_SECRET`, `EVENT_OUTBOX_RETENTION_DAYS` | Server-side only, set during deployment |
 | **Local Development** | `PORT` | Read by `npm run dev` to override the local web-app port |
 | **Shell Helper / Legacy Bridge** | `PREQSTATION_API_URL`, `PREQSTATION_TOKEN`, `PREQSTATION_ENGINE` | Available to the token-based shell helper flow and legacy local MCP bridge |
-| **Execution** | `OPENCLAW_WORKTREE_ROOT` | Affects where worktrees are created during task execution |
+| **CLI Dispatcher** | `PREQSTATION_DISPATCH_HOME`, `PREQSTATION_PROJECTS_FILE`, `PREQSTATION_WORKTREE_ROOT`, `PREQSTATION_WORKER_HOME`, `PREQSTATION_CLAUDE_HOME`, `PREQSTATION_CODEX_HOME`, `PREQSTATION_GEMINI_HOME`, `PREQSTATION_MEMORY_PATH`, `PREQSTATION_REPO_ROOTS`, `PREQSTATION_SERVER_URL` | Controls CLI installer state, project mapping, worker homes, repo scans, and detached worktree execution |
+| **OpenClaw Legacy** | `OPENCLAW_WORKTREE_ROOT` | Compatibility override for older OpenClaw-specific dispatcher installs; prefer `PREQSTATION_WORKTREE_ROOT` |
 
 ## Secrets Best Practices
 

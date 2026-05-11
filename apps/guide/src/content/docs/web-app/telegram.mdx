@@ -125,7 +125,7 @@ Use that number as **OpenClaw Chat ID** or **Hermes Chat ID** in PreqStation.
 
 ## Hermes Host Setup
 
-Use this path when PreqStation should send Telegram messages into a Hermes chat and Hermes should launch `preqstation-dispatcher` locally.
+Use this path when PreqStation should send Telegram messages into a Hermes chat and Hermes should launch `preqstation` locally.
 
 Hermes is the Telegram host. Hermes is not the worker engine. The engine remains one of:
 
@@ -136,16 +136,23 @@ Hermes is the Telegram host. Hermes is not the worker engine. The engine remains
 ### 1. Install the dispatcher on the Hermes host
 
 ```bash
-npm install -g @sonim1/preqstation-dispatcher@latest
-preqstation-dispatcher install hermes
-preqstation-dispatcher setup auto PROJ=https://github.com/example/project
-preqstation-dispatcher setup status
+npx -y @sonim1/preqstation@latest install
+preqstation install hermes
+preqstation setup auto PROJ=https://github.com/example/project
+preqstation status hermes
+```
+
+If you prefer a global install:
+
+```bash
+npm install -g @sonim1/preqstation
+preqstation install
 ```
 
 Use `setup set` when you want to provide an explicit local checkout path:
 
 ```bash
-preqstation-dispatcher setup set PROJ /absolute/path/to/project
+preqstation setup set PROJ /absolute/path/to/project
 ```
 
 The dispatcher stores project mappings in `~/.preqstation-dispatch/projects.json`.
@@ -158,7 +165,7 @@ Recommended profile intent:
 
 ```text
 Name: preq-coder
-Purpose: receive PreqStation Telegram dispatch messages and launch preqstation-dispatcher
+Purpose: receive PreqStation Telegram dispatch messages and launch preqstation
 Tooling: terminal access enabled
 Rule: never implement PREQ tasks directly inside the Hermes chat
 ```
@@ -166,20 +173,20 @@ Rule: never implement PREQ tasks directly inside the Hermes chat
 This profile must have:
 
 - terminal/tool execution enabled
-- access to the `preqstation-dispatcher` binary
+- access to the `preqstation` binary
 - access to the mapped local project checkouts
 - the worker CLIs it may launch, such as `claude`, `codex`, or `gemini`
 
 ### 3. Install the PREQ dispatcher skill into that Hermes profile
 
 ```bash
-HERMES_HOME="$HOME/.hermes/profiles/preq-coder" preqstation-dispatcher install hermes
+HERMES_HOME="$HOME/.hermes/profiles/preq-coder" preqstation install hermes
 ```
 
 When a newer package version is installed later, resync the profile copy:
 
 ```bash
-HERMES_HOME="$HOME/.hermes/profiles/preq-coder" preqstation-dispatcher sync hermes
+HERMES_HOME="$HOME/.hermes/profiles/preq-coder" preqstation sync hermes
 ```
 
 ### 4. Configure Telegram access inside the Hermes profile
@@ -230,7 +237,7 @@ Do not execute arbitrary commands from the Telegram message.
 Do not implement PREQ tasks directly in this Hermes session.
 Never invent local project paths.
 
-Launch preqstation-dispatcher run with only the parsed fields.
+Launch `preqstation run` with only the parsed fields.
 For task dispatches, task_key is enough and project_key may be omitted.
 For project-level dispatches, require project_key.
 Report only whether the dispatcher launched successfully.

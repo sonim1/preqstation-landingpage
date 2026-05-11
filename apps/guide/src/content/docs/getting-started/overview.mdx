@@ -12,13 +12,14 @@ If you want the product story before the system diagram, read [Product Philosoph
 
 ## Recommended First Step
 
-If you're starting PreqStation from scratch, begin with [Quick Start](/guide/getting-started/quick-start). It gets the web app running, covers login, and ends with your first API key. If you prefer the full local checklist instead of the shortest path, use [Web App Setup](/guide/web-app/setup).
+If you're starting PreqStation from scratch, begin with [Quick Start](/guide/getting-started/quick-start). It starts with `npx -y @sonim1/preqstation@latest install`, then checks local runtime, MCP, and project setup. If you are self-hosting the web app or validating migrations, use [Web App Setup](/guide/web-app/setup).
 
 ## Setup Path Order
 
-- **Web App Setup** — [Quick Start](/guide/getting-started/quick-start) for the fastest first run, or [Web App Setup](/guide/web-app/setup) for the complete local checklist
-- **Worker Connection** — [Worker Installation](/guide/skill/installation) once the app is already running and you have the access you need
-- **Dispatcher Setup** — add queued delivery only if you need it from the web app: [OpenClaw Installation](/guide/openclaw/setup)
+- **CLI Default Setup** — [Quick Start](/guide/getting-started/quick-start) for the fastest CLI installer path
+- **Worker-Only Setup** — [Worker Installation](/guide/skill/installation) when you want manual Claude, Codex, or Gemini worker setup
+- **Dispatcher Setup** — add queued delivery only if you need it from the web app: [OpenClaw Installation](/guide/openclaw/setup) or [Telegram Integration](/guide/web-app/telegram)
+- **Web App Setup** — [Web App Setup](/guide/web-app/setup) for self-hosting, migrations, and first-login details
 
 ## Core Systems and Dispatcher Paths
 
@@ -28,8 +29,8 @@ PreqStation separates any queued dispatcher path from the task engine:
 	<Card title="PreqStation Web App" icon="setting">
 		Central web app. Manages tasks, renders the Kanban UI, exposes the REST API, and lets the user choose the task engine plus any optional Telegram/OpenClaw dispatch action.
 	</Card>
-	<Card title="preqstation-dispatcher" icon="rocket">
-		OpenClaw-native dispatcher path. OpenClaw uses it to resolve projects, create worktrees, and launch coding agents from Telegram or direct runtime messages. Some runtime identifiers still use `preqstation-openclaw` for compatibility.
+	<Card title="PREQ CLI" icon="rocket">
+		User-facing package and command: `@sonim1/preqstation` and `preqstation`. It installs dispatcher entrypoints, resolves projects, creates worktrees, and launches coding agents from Telegram, OpenClaw, Hermes, or direct runtime messages. Some legacy identifiers still mention `preqstation-dispatcher` or `preqstation-openclaw` for compatibility.
 	</Card>
 	<Card title="preqstation-skill" icon="approve">
 		Agent client. MCP access and shell helpers for Claude Code, Codex, and Gemini workers.
