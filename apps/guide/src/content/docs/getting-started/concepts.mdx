@@ -17,7 +17,7 @@ PreqStation is named after a kitchen prep station — a place where a chef direc
 | **Queue** | Task Queue | Waiting tasks in status order |
 | **Station** | Agent Instance | An AI working on a specific task |
 | **Prep List** | Acceptance Criteria | Instructions for completing the task |
-| **Mise en Place** | Setup | Configuring API tokens and environment |
+| **Mise en Place** | Setup | Configuring CLI, MCP, project mappings, and compatibility environment |
 | **Fire** | Execute | Launch a task for an agent to work on |
 | **Pass** | Ready | Work is complete and waiting for verification |
 | **Order Up** | Done | Task verified and finished |
@@ -86,7 +86,7 @@ Agents run independently. You don't watch them work. You check results periodica
 | **Run State** | Live execution overlay: `queued`, `working`, or `null` |
 | **Acceptance Criteria** | Checklist of what must be true for task completion |
 | **Work Log** | Result of agent execution: summary, tests, PR URL, timestamp |
-| **API Token** | Bearer token for agents to authenticate to REST API (prefix: `preq_`) |
+| **API Token** | Compatibility bearer token for shell-helper mode or direct REST automation (prefix: `preq_`) |
 
 ## When to Use PreqStation
 

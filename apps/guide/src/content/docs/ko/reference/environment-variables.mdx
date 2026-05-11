@@ -1,0 +1,26 @@
+---
+title: 환경 변수
+description: PreqStation web app, PREQ CLI dispatcher, compatibility path에서 쓰는 환경 변수입니다.
+---
+
+한국어 상세 번역은 아직 준비 중입니다. 최신 전체 reference는 [영어 Environment Variables](/guide/reference/environment-variables)를 기준으로 유지됩니다.
+
+## 핵심 구분
+
+- **Web app**: `AUTH_SECRET`, `DATABASE_URL`, `ALLOWED_ORIGINS`, `UNSPLASH_ACCESS_KEY`, `CRON_SECRET`, `EVENT_OUTBOX_RETENTION_DAYS`
+- **PREQ CLI dispatcher**: `PREQSTATION_DISPATCH_HOME`, `PREQSTATION_PROJECTS_FILE`, `PREQSTATION_WORKTREE_ROOT`, `PREQSTATION_REPO_ROOTS`, `PREQSTATION_SERVER_URL`
+- **Worker homes**: `PREQSTATION_WORKER_HOME`, `PREQSTATION_CLAUDE_HOME`, `PREQSTATION_CODEX_HOME`, `PREQSTATION_GEMINI_HOME`
+- **Compatibility only**: `PREQSTATION_API_URL`, `PREQSTATION_TOKEN`, `PREQSTATION_ENGINE`
+
+## Token/API key compatibility
+
+일반적인 현대 설정은 remote `/mcp` endpoint와 browser OAuth를 사용합니다. `PREQSTATION_TOKEN`과 `/api-keys`는 shell-helper mode, direct REST automation, 예전 local bridge flow가 아직 필요할 때만 사용하는 compatibility path입니다.
+
+```bash
+export PREQSTATION_API_URL="https://preqstation.example.com"
+export PREQSTATION_TOKEN="preq_xxxxxxxxxxxxxxxxx"
+export PREQSTATION_ENGINE="claude-code"  # optional
+```
+
+처음 설치라면 token부터 만들지 말고 [빠른 시작](/guide/ko/getting-started/quick-start)의 PREQ CLI installer 경로를 사용하세요.
+

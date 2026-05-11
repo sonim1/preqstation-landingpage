@@ -50,11 +50,11 @@ Agent-side variables for shell-helper mode and the legacy local stdio bridge. Th
 
 | Variable | Required | Default | Purpose |
 |----------|----------|---------|---------|
-| `PREQSTATION_API_URL` | Yes | — | PreqStation web app API base URL (e.g., `https://preqstation.example.com`) |
-| `PREQSTATION_TOKEN` | Yes | — | Bearer token (format: `preq_` prefix, from `/api-keys` page) |
+| `PREQSTATION_API_URL` | Compatibility only | — | PreqStation web app API base URL (e.g., `https://preqstation.example.com`) for shell-helper mode or legacy local bridge flows |
+| `PREQSTATION_TOKEN` | Compatibility only | — | Bearer token (format: `preq_` prefix, from `/api-keys` page) for shell-helper mode or legacy local bridge flows |
 | `PREQSTATION_ENGINE` | No | `codex` | Fallback engine when client auto-detection unavailable |
 
-### Setup Example
+### Compatibility Setup Example
 
 ```bash
 # ~/.zshrc or ~/.bashrc
@@ -63,11 +63,13 @@ export PREQSTATION_TOKEN="preq_xxxxxxxxxxxxxxxxx"
 export PREQSTATION_ENGINE="claude-code"  # optional
 ```
 
-### Getting a Token
+### Getting a Compatibility Token
+
+Use this only when shell-helper mode, direct REST automation, or an older local bridge still depends on bearer-token authentication:
 
 1. Deploy the PreqStation web app
 2. Log into web UI
-3. Go to Settings → API Keys
+3. Go to Settings → API Keys or `/connections?legacy=1`
 4. Click "New Token"
 5. Copy the generated token (starts with `preq_`)
 
@@ -175,7 +177,7 @@ ENV ALLOWED_ORIGINS=https://your-app.vercel.app
 ENV CRON_SECRET=replace-me
 ENV EVENT_OUTBOX_RETENTION_DAYS=30
 
-# preqstation-skill
+# Shell-helper / legacy bridge compatibility only
 ENV PREQSTATION_API_URL=https://preqstation.example.com
 ENV PREQSTATION_TOKEN=preq_xxxxx
 ENV PREQSTATION_ENGINE=claude-code

@@ -6,7 +6,7 @@ description: Architecture, components, and data flow of PreqStation.
 import { Aside, Card, CardGrid } from '@astrojs/starlight/components';
 import Mermaid from '../../../components/Mermaid.astro';
 
-PreqStation is an execution platform for AI-agent-driven development workflows. It bridges developers and coding agents through a task queue, a web app, and agent-facing APIs.
+PreqStation is an execution platform for AI-agent-driven development workflows. It bridges developers and coding agents through a web control plane, the PREQ CLI, optional dispatch integrations, and agent-facing APIs.
 
 If you want the product story before the system diagram, read [Product Philosophy](/guide/getting-started/philosophy) first.
 
@@ -22,21 +22,29 @@ If you're starting PreqStation from scratch, begin with [Quick Start](/guide/get
 - **Dispatcher Setup** — add queued delivery only if you need it from the web app: [OpenClaw Installation](/guide/openclaw/setup) or [Telegram Integration](/guide/web-app/telegram)
 - **Web App Setup** — [Web App Setup](/guide/web-app/setup) for self-hosting, migrations, and first-login details
 
-## Core Systems and Dispatcher Paths
+## Core Systems and Dispatch Paths
 
-PreqStation separates any queued dispatcher path from the task engine:
+PreqStation separates the trigger path from the task engine:
 
 <CardGrid>
 	<Card title="PreqStation Web App" icon="setting">
-		Central web app. Manages tasks, renders the Kanban UI, exposes the REST API, and lets the user choose the task engine plus any optional Telegram/OpenClaw dispatch action.
+		Task and control plane. It manages tasks, renders the Kanban UI, tracks workflow state and review evidence, exposes REST/MCP-backed APIs, and lets users choose a dispatch target when they want one.
 	</Card>
 	<Card title="PREQ CLI" icon="rocket">
-		User-facing package and command: `@sonim1/preqstation` and `preqstation`. It installs dispatcher entrypoints, resolves projects, creates worktrees, and launches coding agents from Telegram, OpenClaw, Hermes, or direct CLI dispatch. Some legacy identifiers still mention `preqstation-dispatcher` or `preqstation-openclaw` for compatibility.
+		User-facing package and command: `@sonim1/preqstation` and `preqstation`. It installs and updates operator-host support, checks `status` and `doctor`, maps projects, creates worktrees, and can launch direct CLI dispatch with `preqstation run`.
 	</Card>
-	<Card title="preqstation-skill" icon="approve">
-		Agent client. MCP access and shell helpers for Claude Code, Codex, and Gemini workers.
+	<Card title="Worker Runtimes" icon="approve">
+		Claude Code, Codex CLI, and Gemini CLI perform the task work. The task `engine` decides which worker runtime starts, independent of whether the run was triggered directly, through OpenClaw, or through Hermes/Telegram.
+	</Card>
+	<Card title="Integrations" icon="puzzle">
+		OpenClaw, Hermes Agent, and Telegram are entrypoints for queued or chat-driven delivery. They hand work to the PREQ CLI on an operator host instead of replacing the worker runtime.
+	</Card>
+	<Card title="MCP" icon="link">
+		Agent-facing API bridge. Modern setup normally uses the remote `/mcp` endpoint with browser OAuth. Token/API-key setup remains available for shell-helper mode and older local bridge flows.
 	</Card>
 </CardGrid>
+
+Some legacy identifiers still mention `preqstation-dispatcher` or `preqstation-openclaw` for compatibility.
 
 <Aside>
 The public canonical repository is `sonim1/preqstation`. The web app source used for local development is still being migrated there, so setup instructions may reference the current development repository until that move is complete.
@@ -48,22 +56,27 @@ The public canonical repository is `sonim1/preqstation`. The web app source used
   chart={`
 flowchart LR
   DEV[Developer]
-  UI[Kanban UI]
-  API[REST API]
-  TG[Telegram relay]
-  OC[OpenClaw runtime]
-  AGENT[Coding agent]
-  MCP[preqstation-skill MCP]
-  DEV --> UI
-  UI --> API
-  DEV --> TG
-  TG --> OC
-  DEV --> OC
-  OC --> AGENT
+  WEB[PreqStation Web App]
+  API[REST / MCP API]
+  CLI[PREQ CLI]
+  DISPATCH[Dispatch target]
+  HERMES[Hermes / Telegram]
+  OC[OpenClaw]
+  AGENT[Claude / Codex / Gemini]
+  MCP[Remote MCP + OAuth]
+  DEV --> WEB
+  WEB --> API
+  DEV --> CLI
+  CLI --> AGENT
+  WEB --> DISPATCH
+  DISPATCH --> HERMES
+  DISPATCH --> OC
+  HERMES --> CLI
+  OC --> CLI
   AGENT --> MCP
   MCP --> API
 `}
-  caption="Users choose which dispatcher picks the task up. The engine remains a separate field on the task."
+  caption="Direct PREQ CLI dispatch and queued integration dispatch both launch a selected worker engine."
 />
 
 ## Data Flow
@@ -74,21 +87,28 @@ flowchart LR
 User creates task in the Kanban UI
   -> PreqStation stores it in PostgreSQL
   -> user optionally chooses a dispatch target
-  -> PREQ queues Telegram/OpenClaw relay only when that path is needed
+  -> PREQ queues Hermes/Telegram/OpenClaw relay only when that path is needed
 ```
 
 ### Dispatcher Target vs Engine
 
-- `dispatch_target=telegram` means the user chose **Send to Telegram** or copied a Telegram/OpenClaw command.
+- A dispatch target decides how the task is triggered: direct CLI, OpenClaw, Hermes, or Telegram relay.
 - Direct CLI dispatch starts on the operator host with [`preqstation run`](/guide/getting-started/direct-dispatch), so it does not need a Telegram, Hermes, or OpenClaw relay.
 - `engine=claude-code | codex | gemini-cli` stays separate from the dispatcher target and decides which local CLI actually runs the task.
 
-### Agent Trigger via OpenClaw
+### Agent Trigger Paths
 
 ```text
-Telegram / OpenClaw path:
-  developer chooses Send to Telegram or hands the copied command to OpenClaw
-    -> OpenClaw resolves project + task + engine
+Direct CLI path:
+  developer runs preqstation run on the operator host
+    -> PREQ CLI resolves project + task + engine
+    -> creates an isolated git worktree
+    -> launches the requested coding agent
+
+Integration path:
+  developer chooses a web app dispatch action or hands off through Hermes/Telegram/OpenClaw
+    -> integration delivers the request to the operator host
+    -> PREQ CLI resolves project + task + engine
     -> creates an isolated git worktree
     -> launches the requested coding agent
 ```

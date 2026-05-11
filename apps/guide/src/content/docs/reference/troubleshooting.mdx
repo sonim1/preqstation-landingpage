@@ -5,9 +5,50 @@ description: Common issues and solutions for PreqStation task execution
 
 import { Tabs, TabItem } from '@astrojs/starlight/components';
 
-The standard PreqStation setup path uses the hosted `/mcp` endpoint plus browser OAuth. Use the token-based steps below only if you are troubleshooting shell-helper mode or the legacy local stdio bridge.
+The standard PreqStation setup path starts with the PREQ CLI and uses the hosted `/mcp` endpoint plus browser OAuth. Use the token-based steps below only if you are troubleshooting shell-helper mode or the legacy local stdio bridge.
+
+## Start with Doctor and Status
+
+Run the read-only CLI checks before manual runtime debugging:
+
+```bash
+preqstation doctor
+preqstation status
+preqstation doctor --json
+preqstation status --json
+```
+
+Use the normal output when you are debugging interactively. Use the JSON output when you need to paste structured diagnostics into a report, script, or monitoring system.
+
+Common next steps from the checks:
+
+- Fix server URL or `/mcp` endpoint warnings before re-registering worker runtimes.
+- Finish OAuth if the runtime is registered but unauthenticated.
+- Refresh project mappings with `preqstation setup status`, `preqstation setup auto`, or `preqstation setup set`.
+- Fix missing worker executables such as `claude`, `codex`, or `gemini` on the host process `PATH`.
+- Restart OpenClaw or Hermes after changing environment variables, because long-running host processes inherit their environment at launch.
 
 ## Remote MCP & OAuth Issues
+
+### Server URL or remote `/mcp` endpoint looks wrong
+
+**Symptom:** `doctor` reports a missing server URL, MCP registration points to the app root, or runtime setup succeeds but no PREQ tools appear.
+
+**Solutions:**
+
+1. Confirm the web app URL is the deployed PreqStation service URL:
+```bash
+preqstation status
+```
+
+2. Register the MCP endpoint with the `/mcp` suffix:
+```bash
+claude mcp add -s user --transport http preqstation https://<your-domain>/mcp
+codex mcp add preqstation --url https://<your-domain>/mcp
+gemini mcp add --scope user --transport http preqstation https://<your-domain>/mcp
+```
+
+3. If an old app-root URL was registered, remove and re-add the runtime MCP server.
 
 ### Remote MCP stays unauthenticated or tools do not appear
 
@@ -166,14 +207,15 @@ export PREQSTATION_TOKEN="preq_xxxxx"   # no extra spaces
 
 1. Start with the CLI diagnostics:
 ```bash
-preqstation status
 preqstation doctor
+preqstation status
 ```
 
 2. Confirm project mappings:
 ```bash
 preqstation setup status
 preqstation setup auto PROJ=https://github.com/example/project
+preqstation setup set PROJ /absolute/path/to/project
 ```
 
 3. Check dispatcher state paths:
@@ -188,6 +230,60 @@ echo $PREQSTATION_WORKTREE_ROOT
 tail -100 .preqstation-dispatch/claude-code.log
 tail -100 .preqstation-dispatch/codex.log
 tail -100 .preqstation-dispatch/gemini-cli.log
+```
+
+### Worker CLI executable is missing
+
+**Symptom:** `doctor` reports that `claude`, `codex`, or `gemini` cannot be found, or a dispatch starts but the worker process fails immediately.
+
+**Solutions:**
+
+1. Check the executable from the same shell or host process that runs dispatch:
+```bash
+command -v claude
+command -v codex
+command -v gemini
+```
+
+2. Install or update the missing runtime, then rerun:
+```bash
+preqstation doctor
+preqstation status
+```
+
+3. If the command exists in your interactive shell but not in OpenClaw or Hermes, fix the host process environment and restart that host.
+
+### PATH or session-scoped Node setup is not inherited
+
+**Symptom:** The runtime works in a terminal, but OpenClaw, Hermes, or a detached PREQ run cannot find `node`, `npm`, `preqstation`, `claude`, `codex`, or `gemini`.
+
+**Solutions:**
+
+1. Prefer globally available executables for operator-host dispatch.
+2. Avoid relying only on session-scoped version manager state, such as an interactive `fnm use` that was not exported to the host process.
+3. Restart OpenClaw or Hermes after changing shell profile files, PATH, Node versions, or globally installed CLIs.
+4. Rerun:
+```bash
+preqstation doctor
+```
+
+### Hermes tools or terminal execution are unavailable
+
+**Symptom:** Hermes receives the message, but cannot create worktrees or launch the selected worker.
+
+**Solutions:**
+
+1. Use a Hermes profile with terminal/tool execution enabled. A chat-only profile cannot run PREQ tasks.
+2. Sync Hermes support after changing profiles or upgrading the CLI:
+```bash
+preqstation sync hermes
+preqstation status hermes
+```
+
+3. Confirm project mapping and runtime health:
+```bash
+preqstation setup status
+preqstation doctor
 ```
 
 ### Worktree conflicts or cleanup failures
