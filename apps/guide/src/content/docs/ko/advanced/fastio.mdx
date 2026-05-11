@@ -1,0 +1,101 @@
+---
+title: Fast.io로 리뷰 아티팩트 공유하기
+description: 생성된 prototype, screenshot, image, file을 private Fast.io workspace에 올려 reviewer link로 전달합니다.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Fast.io는 PreqStation agent가 local worktree 밖에서 리뷰해야 하는 generated artifact를 올려둘 수 있는 공간입니다. HTML prototype, screenshot, image, document, report처럼 사람이 열어 보고 확인해야 하는 파일에 사용하세요.
+
+PreqStation은 계속 lifecycle의 source of truth입니다. Fast.io는 reviewable artifact를 저장하고 공유하는 layer로만 사용합니다.
+
+<Aside type="caution">
+artifact publish를 요청하기 전에 Fast.io 인증을 먼저 설정하세요. 인증된 provider가 없다면 agent는 artifact를 local에 남기고, publish를 건너뛴 이유를 기록해야 합니다.
+</Aside>
+
+## 언제 Fast.io를 쓰나요
+
+reviewer가 열어 보고, 검사하고, 필요하면 comment를 남겨야 하는 결과물에 Fast.io를 사용합니다.
+
+- 생성된 HTML prototype 또는 mockup
+- local prototype에서 캡처한 screenshot PNG
+- image, PDF, spreadsheet, document
+- QA report, design review file, handoff asset
+- source repository에 commit하면 안 되는 큰 임시 파일
+
+Fast.io를 PreqStation task note, acceptance criteria, work log의 대체재로 쓰지 마세요. canonical task context는 PreqStation에 두고, artifact link는 structured artifact metadata로 연결합니다.
+
+## Agent 설정
+
+artifact를 publish할 수 있는 run을 시작하기 전에 Fast.io MCP server를 등록합니다.
+
+```bash
+codex mcp add fast-io --url https://mcp.fast.io/mcp
+```
+
+Fast.io는 아직 필요한 client를 위해 legacy SSE endpoint인 `https://mcp.fast.io/sse`도 문서화합니다. agent가 지원한다면 Streamable HTTP endpoint를 우선 사용하세요.
+
+등록 후 client에서 Fast.io login flow를 완료합니다. agent는 이미 인증된 Fast.io session이나 다른 인증된 artifact provider가 있을 때만 artifact를 publish해야 합니다.
+
+## 권장 Workflow
+
+1. PreqStation task 안에서 agent에게 artifact 생성을 요청합니다.
+2. HTML prototype이나 mockup이라면 screenshot PNG를 최소 하나 생성하게 합니다.
+3. source artifact와 screenshot을 Fast.io workspace 또는 share에 upload합니다.
+4. 가능한 경우 private workspace access, member-restricted share, expiring reviewer link를 사용합니다.
+5. artifact link는 PreqStation의 structured `artifacts` array에 기록합니다.
+
+task note는 durable task context에 집중해야 합니다. structured artifact metadata를 사용할 수 있다면 note에 `Artifacts:` markdown block을 붙이지 마세요.
+
+## 안전한 공유 규칙
+
+private-or-skip 원칙을 사용하세요.
+
+- 인증된 workspace 또는 member-restricted share target을 먼저 사용합니다.
+- 외부 reviewer access가 필요하면 expiration이 있는 link를 사용합니다.
+- product context가 민감하면 password protection을 추가합니다.
+- 만료되지 않는 public `anyone with the link` URL은 피합니다.
+- secret, token, API key, customer data, private environment file은 upload하지 않습니다.
+- publish할 수 없다면 PreqStation에 local path와 skip reason을 포함해 local-only artifact로 기록합니다.
+
+Fast.io는 workspace, file storage, share, comment, annotation, preview, expiration, password 같은 reviewer access control을 제공합니다. 그래서 agent가 만든 asset을 repository에 commit하지 않고도 사람에게 전달하기 좋습니다.
+
+## PreqStation에 기록할 내용
+
+agent가 artifact를 publish하거나 publish를 건너뛰면 structured artifact metadata로 결과를 기록합니다.
+
+```json
+{
+  "type": "html",
+  "title": "Prototype source",
+  "url": "https://...",
+  "provider": "fast.io",
+  "access": "quickshare",
+  "expires": "2026-05-18T00:00:00Z"
+}
+```
+
+local-only artifact는 URL 대신 path와 reason을 포함합니다.
+
+```json
+{
+  "type": "screenshot",
+  "title": "Prototype screenshot",
+  "provider": "local",
+  "access": "local-only",
+  "localPath": "artifacts/prototype.png",
+  "reason": "Fast.io MCP was not authenticated"
+}
+```
+
+이 방식은 reviewer link를 PreqStation에서 확인 가능하게 유지하면서도 repository와 task note를 깨끗하게 유지합니다.
+
+## 검증
+
+Fast.io artifact를 사용한 task를 넘기기 전에 다음을 확인하세요.
+
+1. local artifact가 실제로 존재합니다.
+2. upload된 Fast.io artifact가 intended reviewer에게 열립니다.
+3. 외부 access를 사용했다면 temporary link에 expiration date가 있습니다.
+4. secret이나 private local file이 upload되지 않았습니다.
+5. 각 published 또는 local-only artifact가 PreqStation structured artifact metadata에 기록됐습니다.

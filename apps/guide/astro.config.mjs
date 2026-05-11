@@ -323,6 +323,13 @@ export default defineConfig({
               },
               slug: 'advanced/gbrain',
             },
+            {
+              label: 'Fast.io Review Artifacts',
+              translations: {
+                ko: 'Fast.io 리뷰 아티팩트',
+              },
+              slug: 'advanced/fastio',
+            },
           ],
         },
         {

@@ -1,0 +1,101 @@
+---
+title: Using Fast.io for Review Artifacts
+description: Upload generated prototypes, screenshots, images, and files to private Fast.io workspaces for reviewer handoff.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Fast.io gives PreqStation agents a place to put generated artifacts that should be reviewed outside the local worktree. Use it for HTML prototypes, screenshots, images, documents, reports, and other files that need a stable human review link.
+
+PreqStation remains the lifecycle source of truth. Fast.io is only the storage and sharing layer for reviewable artifacts.
+
+<Aside type="caution">
+Set up Fast.io authentication before asking an agent to publish artifacts. If no authenticated provider is available, the agent should keep artifacts local and record that publication was skipped.
+</Aside>
+
+## When to Use Fast.io
+
+Use Fast.io when a task asks an agent to create something a reviewer needs to open, inspect, or annotate:
+
+- Generated HTML prototypes or mockups
+- Screenshot PNGs captured from local prototypes
+- Images, PDFs, spreadsheets, or documents
+- QA reports, design review files, or other handoff assets
+- Larger files that should not be committed to the source repository
+
+Do not use Fast.io as a replacement for PreqStation task notes, acceptance criteria, or work logs. Keep canonical task context in PreqStation and attach artifact links through structured artifact metadata.
+
+## Agent Setup
+
+Register the Fast.io MCP server before starting a run that may publish artifacts:
+
+```bash
+codex mcp add fast-io --url https://mcp.fast.io/mcp
+```
+
+Fast.io also documents a legacy SSE endpoint at `https://mcp.fast.io/sse` for clients that still need it. Prefer the Streamable HTTP endpoint when your agent supports it.
+
+After registration, complete the Fast.io login flow in the client. The agent should only publish artifacts when it already has an authenticated Fast.io session or another authenticated artifact provider.
+
+## Recommended Workflow
+
+1. Ask the agent to create the artifact as part of a PreqStation task.
+2. For HTML prototypes or mockups, have the agent generate at least one screenshot PNG.
+3. Let the agent upload the source artifact and screenshot to a Fast.io workspace or share.
+4. Use private workspace access, member-restricted shares, or expiring reviewer links where possible.
+5. Record the artifact links in PreqStation through the structured `artifacts` array.
+
+The task note should stay focused on durable task context. Do not paste an `Artifacts:` markdown block into the note when structured artifact metadata is available.
+
+## Safe Sharing Rules
+
+Prefer private-or-skip behavior:
+
+- Use authenticated workspace or member-restricted share targets first.
+- Use expiring reviewer links when temporary external access is needed.
+- Add password protection when the artifact contains sensitive product context.
+- Avoid non-expiring public `anyone with the link` URLs.
+- Do not upload secrets, tokens, API keys, customer data, or private environment files.
+- If publication is unavailable, mark the artifact as local-only in PreqStation with the local path and skip reason.
+
+Fast.io supports workspaces, file storage, shares, comments, annotations, previews, and reviewer access controls such as expiration and passwords. These capabilities make it useful for handing generated assets from an agent to a human without committing temporary output to the repository.
+
+## What to Record in PreqStation
+
+When an agent publishes or skips publication, record the result as structured artifact metadata:
+
+```json
+{
+  "type": "html",
+  "title": "Prototype source",
+  "url": "https://...",
+  "provider": "fast.io",
+  "access": "quickshare",
+  "expires": "2026-05-18T00:00:00Z"
+}
+```
+
+For local-only artifacts, include the path and reason instead of a URL:
+
+```json
+{
+  "type": "screenshot",
+  "title": "Prototype screenshot",
+  "provider": "local",
+  "access": "local-only",
+  "localPath": "artifacts/prototype.png",
+  "reason": "Fast.io MCP was not authenticated"
+}
+```
+
+This keeps reviewer links visible in PreqStation while preserving a clean repository and a clean task note.
+
+## Verification
+
+Before handing off a task that used Fast.io artifacts:
+
+1. Confirm the local artifact exists.
+2. Confirm the uploaded Fast.io artifact opens for the intended reviewer.
+3. Confirm temporary links have an expiration date when external access is used.
+4. Confirm no secrets or private local files were uploaded.
+5. Confirm PreqStation contains structured artifact metadata for each published or local-only artifact.
