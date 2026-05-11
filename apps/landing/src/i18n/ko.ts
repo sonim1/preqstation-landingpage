@@ -7,7 +7,7 @@ const ko: typeof en = {
   },
   nav: {
     github: "GitHub",
-    cta: "CLI 설정 실행",
+    cta: "빠른 시작",
     localeLabel: "\uc5b8\uc5b4",
     openMenu: "\uba54\ub274 \uc5f4\uae30",
     closeMenu: "\uba54\ub274 \ub2eb\uae30",
@@ -34,7 +34,7 @@ const ko: typeof en = {
     preqTagline: "\ud0dc\uc2a4\ud06c\ub97c \ud050\uc5d0 \ub123\uc73c\uc138\uc694. \uc5d0\uc774\uc804\ud2b8\uac00 \uac00\uc838\uac11\ub2c8\ub2e4.",
     prepTagline: "\uacb0\uacfc\ub97c \uac80\ud1a0\ud558\uace0 \ubc30\ud3ec\ud558\uc138\uc694.",
     cta: "워크플로우 보기",
-    guideCta: "CLI 설정 실행",
+    guideCta: "빠른 시작",
     github: "GitHub에서 보기",
     socialProof: "\uc624\ud508\uc18c\uc2a4 \u00b7 Self-hosted \u00b7 \uba40\ud2f0 \uc5d4\uc9c4 \uc2e4\ud589 \ud050",
     tickets: [
@@ -321,27 +321,27 @@ const ko: typeof en = {
   },
   cta: {
     title: "\uc9c0\uae08 \ub2f9\uc2e0\uc758 \uc8fc\ubc29\uc744 \uc5f4\uc5b4\ubcf4\uc138\uc694",
-    subtitle: "\uba3c\uc800 \uc2e4\ud589 \uc99d\uac70\ub97c \ubcf4\uace0, \uadf8 \ub2e4\uc74c \uac00\uc774\ub4dc\ub85c PREQ\ub97c \uc790\uc2e0\uc758 \uc6cc\ud06c\ud50c\ub85c\uc6b0\uc5d0 \uc5f0\uacb0\ud558\uc138\uc694.",
+    subtitle: "\uba3c\uc800 \uc2e4\ud589 \uc99d\uac70\ub97c \ubcf4\uace0, \ube60\ub978 \uc2dc\uc791 \ubb38\uc11c\ub85c PREQ\ub97c \uc790\uc2e0\uc758 \uc6cc\ud06c\ud50c\ub85c\uc6b0\uc5d0 \uc5f0\uacb0\ud558\uc138\uc694.",
     proof: {
       eyebrow: "\uc2dc\uc791 \uc9c0\uc810",
-      title: "\uc99d\uac70 \uacbd\ub85c, \uac00\uc774\ub4dc, \uc800\uc7a5\uc18c\ub97c \ud568\uaed8 \uc5ec\uc138\uc694",
+      title: "\uc99d\uac70 \uacbd\ub85c, \ube60\ub978 \uc2dc\uc791, \uc800\uc7a5\uc18c\ub97c \ud568\uaed8 \uc5ec\uc138\uc694",
       checklistLabel: "\uc2dc\uc791 \uccb4\ud06c\ub9ac\uc2a4\ud2b8",
       checklist: [
         "\uba3c\uc800 \uc2e4\ud589 \uc99d\uac70\ub97c \ud655\uc778",
-        "가이드에서 PREQ CLI installer 실행",
+        "빠른 시작에서 PREQ CLI installer 실행",
         "GitHub\ub97c \uc5f4\uace0 \uccab \ud0dc\uc2a4\ud06c\ub97c \uc2e4\ud589",
       ],
       linksLabel: "\ucee4\ub9e8\ub4dc \uc13c\ud130",
       links: [
         { label: "\uc2e4\ud589 \uc99d\uac70", value: "#execution-proof" },
-        { label: "\uac00\uc774\ub4dc", value: "/guide/getting-started/overview" },
+        { label: "\ube60\ub978 \uc2dc\uc791", value: "/guide/ko/getting-started/quick-start" },
         { label: "GitHub", value: "github.com/sonim1/preqstation" },
       ],
       summaryLabel: "\uacb0\uacfc",
-      summaryValue: "다음 단계는 분명합니다. 증거를 확인하고 PREQ CLI installer를 실행한 뒤 첫 리뷰 완료 태스크를 배포하세요.",
+      summaryValue: "다음 단계는 분명합니다. 증거를 확인하고 빠른 시작을 따라간 뒤 첫 리뷰 완료 태스크를 배포하세요.",
     },
     primary: "워크플로우 보기",
-    guide: "CLI 설정 실행",
+    guide: "빠른 시작",
     secondary: "GitHub에서 보기",
   },
   footer: {

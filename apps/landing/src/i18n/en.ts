@@ -5,7 +5,7 @@ export default {
   },
   nav: {
     github: "GitHub",
-    cta: "Run CLI Setup",
+    cta: "Quick Start",
     localeLabel: "Language",
     openMenu: "Open menu",
     closeMenu: "Close menu",
@@ -32,7 +32,7 @@ export default {
     preqTagline: "Queue the task. Agents take it.",
     prepTagline: "Review the result. Then ship.",
     cta: "See the workflow",
-    guideCta: "Run CLI Setup",
+    guideCta: "Quick Start",
     github: "View on GitHub",
     socialProof: "Open Source \u00b7 Self-hosted \u00b7 Multi-engine execution queue",
     tickets: [
@@ -319,27 +319,27 @@ export default {
   },
   cta: {
     title: "Open your kitchen today",
-    subtitle: "Start with the execution proof, then use the guide to wire PREQ into your own workflow.",
+    subtitle: "Start with the execution proof, then use Quick Start to wire PREQ into your own workflow.",
     proof: {
       eyebrow: "Start here",
-      title: "Open the proof path, guide, and repo together",
+      title: "Open the proof path, Quick Start, and repo together",
       checklistLabel: "Launch checklist",
       checklist: [
         "Review the execution proof first",
-        "Use the guide to run the PREQ CLI installer",
+        "Use Quick Start to run the PREQ CLI installer",
         "Open GitHub and run the first task",
       ],
       linksLabel: "Command center",
       links: [
         { label: "Execution proof", value: "#execution-proof" },
-        { label: "Guide", value: "/guide/getting-started/overview" },
+        { label: "Quick Start", value: "/guide/getting-started/quick-start" },
         { label: "GitHub", value: "github.com/sonim1/preqstation" },
       ],
       summaryLabel: "Outcome",
-      summaryValue: "The next step is concrete: inspect proof, run the PREQ CLI installer, then ship the first reviewed task.",
+      summaryValue: "The next step is concrete: inspect proof, follow Quick Start, then ship the first reviewed task.",
     },
     primary: "See the workflow",
-    guide: "Run CLI Setup",
+    guide: "Quick Start",
     secondary: "View on GitHub",
   },
   footer: {
