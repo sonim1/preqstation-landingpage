@@ -1,0 +1,103 @@
+---
+title: PREQ CLI
+description: Install and operate the @sonim1/preqstation CLI for local operator-host setup.
+---
+
+The PREQ CLI is the public npm package `@sonim1/preqstation` and the user-facing command `preqstation`.
+
+Use it on the local machine or host that will execute or dispatch PREQ tasks. It prepares operator-host setup for the pieces you choose: OpenClaw and Hermes entrypoints, Claude Code/Codex/Gemini worker runtime support, PREQSTATION MCP registration, and project mappings.
+
+The CLI does not replace the web app. The web app remains the task and control plane for creating tasks, dispatching work, and reviewing results.
+
+## Recommended First Run
+
+For a temporary first run, use `npx`:
+
+```bash
+npx -y @sonim1/preqstation@latest install
+npx -y @sonim1/preqstation@latest status
+```
+
+`install` is idempotent. Run it again when you want the guided installer to check what is already present and offer missing setup steps.
+
+## Global Install
+
+If this host will operate PREQ regularly, install the command globally:
+
+```bash
+npm install -g @sonim1/preqstation
+preqstation install
+preqstation status
+```
+
+## Lifecycle Commands
+
+Use these commands to keep the operator host current and inspectable:
+
+```bash
+preqstation update
+preqstation status
+preqstation doctor
+preqstation status --json
+preqstation doctor --json
+preqstation uninstall
+preqstation uninstall openclaw
+preqstation uninstall hermes
+```
+
+`update` refreshes installed CLI surfaces and reruns MCP-backed setup automation where supported. `status` and `doctor` are read-only checks; use the JSON variants when another script or monitoring process needs structured output.
+
+`uninstall` removes selected installed surfaces. Project mappings and OAuth cache are intentionally separate from those installed surfaces, so do not rely on uninstall as a credential or mapping reset.
+
+## Project Mapping
+
+Project mapping tells the dispatcher where each PREQ project checkout lives on the operator host.
+
+```bash
+preqstation setup auto
+preqstation setup auto PROJ=https://github.com/example/project
+preqstation setup set PROJ /absolute/path/to/project
+preqstation setup status
+preqstation setup unset PROJ
+```
+
+`setup auto` scans `PREQSTATION_REPO_ROOTS` when set, otherwise `~/projects`. It matches local git origins against PREQ project repository URLs. Shared mappings are stored in `~/.preqstation-dispatch/projects.json`.
+
+Use `setup set` when the checkout is outside the scanned roots or when you want to pin a project key to an exact path.
+
+## Integration Installs
+
+Install only the dispatch entrypoints this host should operate:
+
+```bash
+preqstation install openclaw
+preqstation install hermes
+preqstation status openclaw
+preqstation status hermes
+```
+
+OpenClaw and Hermes are dispatch hosts. They receive work, resolve the project, create the worktree, and launch the selected worker runtime. They are separate from the task engine, which is still Claude Code, Codex, or Gemini CLI.
+
+For Hermes profile maintenance, sync the installed Hermes support after changing the target profile or after upgrading the CLI:
+
+```bash
+preqstation sync hermes
+preqstation sync hermes --force
+```
+
+Hermes must have terminal/tool execution enabled. A chat-only Hermes profile cannot create worktrees or launch local worker CLIs.
+
+## Manual Worker Setup
+
+Use the CLI first for normal local setup. Manual MCP registration and worker-only setup remain available when the CLI cannot register a runtime or when you intentionally want direct worker access without dispatcher setup.
+
+Token and API key paths are compatibility paths for shell helpers and older local bridges. The recommended remote `/mcp` flow uses OAuth where the runtime supports it.
+
+## Next Steps
+
+- [Quick Start](/guide/getting-started/quick-start) — choose the shortest setup path for your situation
+- [OpenClaw Installation](/guide/openclaw/setup) — configure OpenClaw dispatch on an operator host
+- [Telegram Integration](/guide/web-app/telegram) — configure Hermes and Telegram delivery
+- [Worker Installation](/guide/skill/installation) — manual worker-only fallback for Claude Code, Codex, and Gemini
+- [Troubleshooting](/guide/reference/troubleshooting) — diagnose runtime, MCP, and project mapping issues
+- [Web App Setup](/guide/web-app/setup) — configure the task and control plane

@@ -1,0 +1,103 @@
+---
+title: PREQ CLI
+description: 로컬 operator-host 설정을 위한 @sonim1/preqstation CLI 설치와 운영 방법입니다.
+---
+
+PREQ CLI는 public npm package `@sonim1/preqstation`과 사용자-facing command `preqstation`을 뜻합니다.
+
+이 CLI는 PREQ 작업을 실행하거나 dispatch할 로컬 머신 또는 host를 준비합니다. 선택한 항목에 따라 OpenClaw와 Hermes entrypoint, Claude Code/Codex/Gemini worker runtime support, PREQSTATION MCP registration, project mapping을 설정합니다.
+
+CLI가 웹 앱을 대체하지는 않습니다. 웹 앱은 여전히 task/control plane으로 남아 태스크 생성, dispatch, 결과 검토를 담당합니다.
+
+## 권장 첫 실행
+
+처음에는 `npx`로 바로 실행할 수 있습니다.
+
+```bash
+npx -y @sonim1/preqstation@latest install
+npx -y @sonim1/preqstation@latest status
+```
+
+`install`은 반복 실행해도 됩니다. 이미 설치된 항목을 확인하고 빠진 설정을 안내받고 싶을 때 다시 실행하세요.
+
+## 전역 설치
+
+이 host에서 PREQ를 계속 운영한다면 command를 전역으로 설치합니다.
+
+```bash
+npm install -g @sonim1/preqstation
+preqstation install
+preqstation status
+```
+
+## Lifecycle 명령
+
+Operator host를 최신 상태로 유지하고 점검할 때 아래 명령을 사용합니다.
+
+```bash
+preqstation update
+preqstation status
+preqstation doctor
+preqstation status --json
+preqstation doctor --json
+preqstation uninstall
+preqstation uninstall openclaw
+preqstation uninstall hermes
+```
+
+`update`는 설치된 CLI surface를 갱신하고, 지원되는 경우 MCP 기반 setup automation을 다시 실행합니다. `status`와 `doctor`는 read-only 점검 명령입니다. 다른 script나 monitoring process가 구조화된 출력이 필요할 때 JSON variant를 사용하세요.
+
+`uninstall`은 선택한 installed surface를 제거합니다. Project mapping과 OAuth cache는 installed surface와 분리되어 있으므로, uninstall을 credential 또는 mapping reset으로 기대하지 마세요.
+
+## Project Mapping
+
+Project mapping은 operator host에서 각 PREQ project checkout이 어디에 있는지 dispatcher에게 알려줍니다.
+
+```bash
+preqstation setup auto
+preqstation setup auto PROJ=https://github.com/example/project
+preqstation setup set PROJ /absolute/path/to/project
+preqstation setup status
+preqstation setup unset PROJ
+```
+
+`setup auto`는 `PREQSTATION_REPO_ROOTS`가 있으면 그 경로들을, 없으면 `~/projects`를 스캔합니다. 로컬 git origin과 PREQ project repository URL을 비교해 매칭합니다. Shared mapping은 `~/.preqstation-dispatch/projects.json`에 저장됩니다.
+
+Checkout이 scan root 밖에 있거나 project key를 정확한 path에 고정하고 싶다면 `setup set`을 사용하세요.
+
+## Integration 설치
+
+이 host가 운영할 dispatch entrypoint만 설치하세요.
+
+```bash
+preqstation install openclaw
+preqstation install hermes
+preqstation status openclaw
+preqstation status hermes
+```
+
+OpenClaw와 Hermes는 dispatch host입니다. 작업을 받고, project를 찾고, worktree를 만들고, 선택된 worker runtime을 실행합니다. Task engine은 여전히 Claude Code, Codex, Gemini CLI 중 하나입니다.
+
+Hermes profile을 바꾸었거나 CLI upgrade 후 Hermes support를 다시 맞춰야 한다면 sync 명령을 사용합니다.
+
+```bash
+preqstation sync hermes
+preqstation sync hermes --force
+```
+
+Hermes에는 terminal/tool execution이 켜져 있어야 합니다. Chat-only Hermes profile은 worktree를 만들거나 local worker CLI를 실행할 수 없습니다.
+
+## 수동 Worker 설정과의 관계
+
+일반적인 로컬 설정은 CLI를 먼저 사용하세요. CLI가 특정 runtime의 MCP 등록을 처리하지 못하거나, 의도적으로 dispatcher 없이 direct worker access만 원할 때는 수동 MCP registration과 worker-only setup을 사용할 수 있습니다.
+
+Token과 API key 경로는 shell helper 또는 예전 local bridge를 위한 compatibility path입니다. 권장 remote `/mcp` 경로는 runtime이 지원하는 경우 OAuth를 사용합니다.
+
+## 다음 단계
+
+- [빠른 시작](/guide/ko/getting-started/quick-start) — 상황별 가장 짧은 설정 경로 선택
+- [OpenClaw 설치](/guide/ko/openclaw/setup) — operator host에 OpenClaw dispatch 설정
+- [Telegram 연동](/guide/ko/web-app/telegram) — Hermes와 Telegram delivery 설정
+- [워커 설치](/guide/ko/skill/installation) — Claude Code, Codex, Gemini의 수동 worker-only fallback
+- [문제 해결](/guide/ko/reference/troubleshooting) — runtime, MCP, project mapping 문제 진단
+- [웹 앱 설정](/guide/ko/web-app/setup) — task/control plane 설정

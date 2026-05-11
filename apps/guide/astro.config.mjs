@@ -180,6 +180,13 @@ export default defineConfig({
               slug: 'getting-started/quick-start',
             },
             {
+              label: 'PREQ CLI',
+              translations: {
+                ko: 'PREQ CLI',
+              },
+              slug: 'getting-started/preq-cli',
+            },
+            {
               label: 'Concepts',
               translations: {
                 ko: '핵심 개념',
