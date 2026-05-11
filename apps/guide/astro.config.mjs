@@ -143,6 +143,10 @@ export default defineConfig({
           tag: 'script',
           content: `(function(){if(!localStorage.getItem('starlight-theme')){localStorage.setItem('starlight-theme','dark');document.documentElement.setAttribute('data-theme','dark');}})();`,
         },
+        {
+          tag: 'script',
+          content: `(function(){if('scrollRestoration'in history){history.scrollRestoration='manual';}function resetGuideScroll(){if(window.location.hash)return;window.requestAnimationFrame(function(){window.scrollTo(0,0);});}window.addEventListener('pageshow',resetGuideScroll);document.addEventListener('astro:page-load',resetGuideScroll);})();`,
+        },
       ],
       social: {
         github: 'https://github.com/sonim1/preqstation',
