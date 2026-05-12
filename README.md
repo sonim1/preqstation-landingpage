@@ -34,85 +34,20 @@ This repository contains the public PreqStation website monorepo:
 
 The repo uses `pnpm` workspaces and `turbo`.
 
-## Requirements
-
-- Node.js `22`
-- `pnpm` `10.6.5`
-
-## Local Development
-
-Install dependencies from the repository root:
+## Quick Start
 
 ```bash
 pnpm install
-```
-
-Run both apps in development:
-
-```bash
 pnpm dev
 ```
 
-Typical local URLs:
+Typical local URLs are `http://localhost:4321/` for the landing page and `http://localhost:4322/guide` for the guide.
 
-- landing: `http://localhost:4321/`
-- guide: `http://localhost:4322/guide`
+## Documentation
 
-Run a single app:
-
-```bash
-pnpm --filter @preqstation/landing dev
-pnpm --filter @preqstation/guide dev
-```
-
-## Build
-
-Build both apps:
-
-```bash
-pnpm build
-```
-
-Build the Cloudflare Pages artifact:
-
-```bash
-pnpm run build:pages
-```
-
-That command creates a merged static output in `.cf-pages-dist`:
-
-- `.cf-pages-dist/` for the landing page
-- `.cf-pages-dist/guide/` for the guide
-
-## Deployment
-
-The default deployment target is a single Cloudflare Pages project:
-
-- site root: `https://preqstation.com/`
-- guide: `https://preqstation.com/guide`
-
-Recommended Pages settings:
-
-- Root directory: `/`
-- Build command: `pnpm run build:pages`
-- Build output directory: `.cf-pages-dist`
-
-See [DEPLOY.md](./DEPLOY.md) for the full deployment notes.
-
-## Repository Layout
-
-```text
-.
-├── apps/
-│   ├── guide/
-│   └── landing/
-├── scripts/
-│   └── build-pages.sh
-├── DEPLOY.md
-├── package.json
-├── pnpm-workspace.yaml
-└── turbo.json
-```
+- [Development](DEVELOPMENT.md) — requirements, local dev commands, and build commands
+- [Deployment](DEPLOY.md) — Cloudflare Pages target and full deployment notes
+- [Repository Layout](REPOSITORY_LAYOUT.md) — workspace structure
 
 ## License
 
