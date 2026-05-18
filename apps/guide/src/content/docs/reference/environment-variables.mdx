@@ -83,7 +83,7 @@ Use this only when shell-helper mode, direct REST automation, or an older local 
 
 ## PREQ CLI Dispatcher
 
-Execution layer variables for `preqstation install`, `preqstation setup`, `preqstation run`, OpenClaw, Hermes, and detached worktree management.
+Execution layer variables for `preqstation install`, `preqstation setup`, Hermes, and detached worktree management.
 
 | Variable | Required | Default | Purpose |
 |----------|----------|---------|---------|
@@ -99,7 +99,6 @@ Execution layer variables for `preqstation install`, `preqstation setup`, `preqs
 | `PREQSTATION_SERVER_URL` | No | — | PreqStation web app URL used by setup helpers |
 | `PREQSTATION_API_URL` | No | — | API base URL for shell-helper mode or legacy token compatibility |
 | `PREQSTATION_TOKEN` | No | — | Bearer token for shell-helper mode or legacy token compatibility |
-| `OPENCLAW_WORKTREE_ROOT` | No | — | OpenClaw-specific legacy worktree root; prefer `PREQSTATION_WORKTREE_ROOT` for new CLI setup |
 
 ### Setup Example
 
@@ -115,7 +114,7 @@ export PREQSTATION_REPO_ROOTS="$HOME/projects:$HOME/work"
 **Default:** `~/.preqstation-dispatch/worktrees`
 - Persistent under the dispatcher home
 - Keeps detached task worktrees together with dispatcher state
-- Works for OpenClaw and Hermes hosts using the PREQ CLI
+- Works for Hermes hosts using the PREQ CLI
 
 **Custom:** `/home/user/preq-worktrees`
 - Persistent across reboots
@@ -201,7 +200,6 @@ RUN npx -y @sonim1/preqstation@latest install
 | **Local Development** | `PORT` | Read by `npm run dev` to override the local web-app port |
 | **Shell Helper / Legacy Bridge** | `PREQSTATION_API_URL`, `PREQSTATION_TOKEN`, `PREQSTATION_ENGINE` | Available to the token-based shell helper flow and legacy local MCP bridge |
 | **CLI Dispatcher** | `PREQSTATION_DISPATCH_HOME`, `PREQSTATION_PROJECTS_FILE`, `PREQSTATION_WORKTREE_ROOT`, `PREQSTATION_WORKER_HOME`, `PREQSTATION_CLAUDE_HOME`, `PREQSTATION_CODEX_HOME`, `PREQSTATION_GEMINI_HOME`, `PREQSTATION_MEMORY_PATH`, `PREQSTATION_REPO_ROOTS`, `PREQSTATION_SERVER_URL` | Controls CLI installer state, project mapping, worker homes, repo scans, and detached worktree execution |
-| **OpenClaw Legacy** | `OPENCLAW_WORKTREE_ROOT` | Compatibility override for older OpenClaw-specific dispatcher installs; prefer `PREQSTATION_WORKTREE_ROOT` |
 
 ## Secrets Best Practices
 

@@ -7,7 +7,7 @@ import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
 `preqstation-skill` is the core agent-side package for PreqStation. It owns the `preqstation` worker skill, documents the lifecycle rules, and provides the Claude Code helper plugin plus Codex/Gemini worker install paths.
 
-Most users should start with the CLI path in [Quick Start](/guide/getting-started/quick-start):
+Most users should start with the CLI path in [Quick Start](/guide/getting-started/quick-start/):
 
 ```bash
 npx -y @sonim1/preqstation@latest install
@@ -74,7 +74,7 @@ gemini-cli
 
 This page is only for **worker setup**.
 
-If you also want queued dispatch from the web app, use the PREQ CLI installer first, then [OpenClaw Installation](/guide/openclaw/setup) or [Telegram Integration](/guide/web-app/telegram) for dispatcher-specific setup.
+If you also want queued dispatch from the web app, use the PREQ CLI installer first, then [Telegram Integration](/guide/web-app/telegram/) for Hermes-specific setup.
 
 ## Recommended MCP Setup (HTTP + OAuth)
 
@@ -149,7 +149,7 @@ Codex does not use a Claude-style local plugin or channel runtime. Keep it on th
 - **Dispatcher setup** means the web app can queue a task to another runtime.
 - **Engine** still remains separate and can be `claude-code`, `codex`, or `gemini-cli`.
 
-If you only want direct worker usage, this page is enough. If you want queued dispatch from the web app, continue with [OpenClaw Installation](/guide/openclaw/setup).
+If you only want direct worker usage, this page is enough. If you want queued dispatch from the web app, continue with [Telegram Integration](/guide/web-app/telegram/).
 
 ## Gemini CLI
 

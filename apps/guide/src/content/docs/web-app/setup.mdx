@@ -25,9 +25,9 @@ gemini mcp add --scope user --transport http preqstation https://<your-domain>/m
 ```
 
 4. Complete the browser OAuth flow when prompted.
-5. Continue with [Worker Installation](/guide/skill/installation) or [OpenClaw Installation](/guide/openclaw/setup), depending on the runtime you need.
+5. Continue with [Worker Installation](/guide/skill/installation/) or [Telegram Integration](/guide/web-app/telegram/), depending on the runtime you need.
 
-API tokens are only needed later if you must use shell-helper mode or the legacy local MCP bridge. For that compatibility path, see [API Keys](/guide/web-app/api-keys) and [Environment Variables](/guide/reference/environment-variables).
+API tokens are only needed later if you must use shell-helper mode or the legacy local MCP bridge. For that compatibility path, see [API Keys](/guide/web-app/api-keys/) and [Environment Variables](/guide/reference/environment-variables/).
 
 ## Self-Hosted Local Development Prerequisites
 
@@ -88,7 +88,7 @@ npm run db:migrate
 This applies the checked-in Drizzle migrations to your database.
 
 <Aside type="tip">
-If you later move to a new PostgreSQL provider, follow the [database migration guide](/guide/web-app/database-migration).
+If you later move to a new PostgreSQL provider, follow the [database migration guide](/guide/web-app/database-migration/).
 </Aside>
 
 ### 4. Start Development Server
@@ -112,15 +112,14 @@ PreqStation is single-owner. All data is scoped to this account at the database 
 
 ## Configure Telegram (Optional)
 
-Use [Telegram Integration](/guide/web-app/telegram) for the full OpenClaw and Hermes setup, including separate chat IDs, Hermes profile setup, and bot-to-bot group delivery.
+Use [Telegram Integration](/guide/web-app/telegram/) for the full Hermes setup, including chat IDs, Hermes profile setup, and bot-to-bot group delivery.
 
 At minimum, from **Settings > Telegram**:
 
 1. Go to **Settings > Telegram**
 2. Enter your shared sender **Bot Token**
-3. Save **OpenClaw Chat ID** if you want standard Telegram/OpenClaw delivery
-4. Save **Hermes Chat ID** if you want the **H Telegram** Hermes dispatch target
-5. Run the test actions for the channels you enabled
+3. Save **Hermes Chat ID** if you want the **H Telegram** Hermes dispatch target
+4. Run the test actions for the channels you enabled
 
 The bot token is encrypted at rest with AES-GCM.
 
@@ -140,4 +139,4 @@ export PREQSTATION_API_URL=http://localhost:3000
 export PREQSTATION_TOKEN=preq_your_new_token
 ```
 
-For the full compatibility details, see [API Keys](/guide/web-app/api-keys) and [Environment Variables](/guide/reference/environment-variables).
+For the full compatibility details, see [API Keys](/guide/web-app/api-keys/) and [Environment Variables](/guide/reference/environment-variables/).

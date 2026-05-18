@@ -29,9 +29,9 @@ export default function Footer() {
           <div className="text-sm">{t.footer.copyright}</div>
         </div>
         <div className="flex justify-center gap-4 mt-6 text-xs text-white/40">
-          <a href="/privacy" className="hover:text-white/70 transition" onClick={() => capture("footer_privacy_clicked")}>{t.footer.privacy}</a>
+          <a href="/privacy/" className="hover:text-white/70 transition" onClick={() => capture("footer_privacy_clicked")}>{t.footer.privacy}</a>
           <span>·</span>
-          <a href="/terms" className="hover:text-white/70 transition" onClick={() => capture("footer_terms_clicked")}>{t.footer.terms}</a>
+          <a href="/terms/" className="hover:text-white/70 transition" onClick={() => capture("footer_terms_clicked")}>{t.footer.terms}</a>
           <span>·</span>
           <button type="button" className="hover:text-white/70 transition" onClick={() => (window as Window & { preqstationShowCookiePreferences?: () => void }).preqstationShowCookiePreferences?.()}>{t.footer.cookiePreferences}</button>
         </div>

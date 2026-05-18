@@ -25,9 +25,9 @@ gemini mcp add --scope user --transport http preqstation https://<your-domain>/m
 ```
 
 4. 브라우저 OAuth 흐름이 뜨면 완료합니다.
-5. 필요한 런타임에 맞춰 [워커 설치](/guide/ko/skill/installation) 또는 [OpenClaw 설치](/guide/ko/openclaw/setup)로 이어서 진행합니다.
+5. 필요한 런타임에 맞춰 [워커 설치](/guide/ko/skill/installation/) 또는 [Telegram 연동](/guide/ko/web-app/telegram/)으로 이어서 진행합니다.
 
-API 토큰은 shell-helper 모드 또는 레거시 로컬 MCP 브리지를 써야 할 때만 나중에 필요합니다. 그 호환성 경로는 [API Keys](/guide/ko/web-app/api-keys)와 [Environment Variables](/guide/ko/reference/environment-variables)에서 확인하세요.
+API 토큰은 shell-helper 모드 또는 레거시 로컬 MCP 브리지를 써야 할 때만 나중에 필요합니다. 그 호환성 경로는 [API Keys](/guide/ko/web-app/api-keys/)와 [Environment Variables](/guide/ko/reference/environment-variables/)에서 확인하세요.
 
 ## Self-hosted 로컬 개발 사전 준비
 
@@ -88,7 +88,7 @@ npm run db:migrate
 이 명령은 저장소에 포함된 Drizzle 마이그레이션을 현재 데이터베이스에 적용합니다.
 
 <Aside type="tip">
-나중에 다른 PostgreSQL 서비스로 옮겨야 한다면 [데이터베이스 마이그레이션 가이드](/guide/ko/web-app/database-migration)를 참고하세요.
+나중에 다른 PostgreSQL 서비스로 옮겨야 한다면 [데이터베이스 마이그레이션 가이드](/guide/ko/web-app/database-migration/)를 참고하세요.
 </Aside>
 
 ### 4. 개발 서버 시작
@@ -112,14 +112,13 @@ PreqStation은 single-owner 구조입니다. 모든 데이터는 PostgreSQL RLS�
 
 ## Telegram 설정 (선택 사항)
 
-OpenClaw와 Hermes를 모두 포함한 전체 흐름은 [Telegram 연동](/guide/ko/web-app/telegram) 문서를 보세요. 별도 chat ID, Hermes profile 설정, bot-to-bot 그룹 전달까지 그 문서에서 설명합니다.
+Hermes 전체 흐름은 [Telegram 연동](/guide/ko/web-app/telegram/) 문서를 보세요. Chat ID, Hermes profile 설정, bot-to-bot 그룹 전달까지 그 문서에서 설명합니다.
 
 최소한 **Settings > Telegram**에서는 아래를 저장하세요.
 
 1. **Settings > Telegram**으로 이동합니다.
 2. 공용 sender **Bot Token**을 입력합니다.
-3. 일반 Telegram/OpenClaw 전달이 필요하면 **OpenClaw Chat ID**를 저장합니다.
-4. **H Telegram** Hermes dispatch target을 쓰려면 **Hermes Chat ID**를 저장합니다.
+3. **H Telegram** Hermes dispatch target을 쓰려면 **Hermes Chat ID**를 저장합니다.
 5. 활성화한 채널에 대해 테스트 액션을 실행합니다.
 
 토큰은 AES-GCM으로 암호화되어 저장됩니다.
@@ -139,4 +138,4 @@ export PREQSTATION_API_URL=http://localhost:3000
 export PREQSTATION_TOKEN=preq_your_new_token
 ```
 
-전체 호환성 설정은 [API Keys](/guide/ko/web-app/api-keys)와 [Environment Variables](/guide/ko/reference/environment-variables)에서 확인하세요.
+전체 호환성 설정은 [API Keys](/guide/ko/web-app/api-keys/)와 [Environment Variables](/guide/ko/reference/environment-variables/)에서 확인하세요.
