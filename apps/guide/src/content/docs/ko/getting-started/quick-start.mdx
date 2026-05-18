@@ -12,19 +12,17 @@ npx -y @sonim1/preqstation@latest install
 npx -y @sonim1/preqstation@latest status
 ```
 
-Global install, `update`, `doctor`, JSON output, project mapping, OpenClaw/Hermes targeted install, Hermes sync, uninstall까지 전체 명령 reference는 [PREQ CLI](/guide/ko/getting-started/preq-cli)를 참고하세요.
-
-Host 준비가 끝났고 relay 없이 터미널에서 task를 실행하려면 [Direct Dispatch](/guide/ko/getting-started/direct-dispatch)를 확인하세요.
+Global install, `update`, `doctor`, JSON output, project mapping, Hermes targeted install, Hermes sync, uninstall까지 전체 명령 reference는 [PREQ CLI](/guide/ko/getting-started/preq-cli/)를 참고하세요.
 
 ## 내 상황에 맞는 경로 선택
 
 | 상황 | 먼저 할 일 | 필요할 때만 추가 |
 |---|---|---|
-| PreqStation을 처음 설정하는 경우 | [PREQ CLI](/guide/ko/getting-started/preq-cli) | 수동 worker-only 설정 |
-| Claude Code, Codex, Gemini를 이미 직접 쓰는 경우 | [워커 설치](/guide/ko/skill/installation) | PREQ task lifecycle tracking이 필요하면 [Direct Dispatch](/guide/ko/getting-started/direct-dispatch) |
-| 웹 앱을 self-hosting하거나 migration을 검증하는 경우 | [웹 앱 설정](/guide/ko/web-app/setup) | 로그인 확인 후 PREQ CLI |
-| Telegram, Hermes, OpenClaw dispatch를 운영하는 경우 | [PREQ CLI](/guide/ko/getting-started/preq-cli) 후 [Telegram](/guide/ko/web-app/telegram) 또는 [OpenClaw](/guide/ko/openclaw/setup) | 수동 plugin fallback |
-| 예전 token 기반 설정을 유지 중인 경우 | [API Keys](/guide/ko/web-app/api-keys) | runtime이 지원하면 원격 `/mcp` OAuth |
+| PreqStation을 처음 설정하는 경우 | [PREQ CLI](/guide/ko/getting-started/preq-cli/) | 수동 worker-only 설정 |
+| Claude Code, Codex, Gemini를 이미 직접 쓰는 경우 | [워커 설치](/guide/ko/skill/installation/) | hosted dispatch support가 필요하면 PREQ CLI |
+| 웹 앱을 self-hosting하거나 migration을 검증하는 경우 | [웹 앱 설정](/guide/ko/web-app/setup/) | 로그인 확인 후 PREQ CLI |
+| Telegram 또는 Hermes dispatch를 운영하는 경우 | [PREQ CLI](/guide/ko/getting-started/preq-cli/) 후 [Telegram](/guide/ko/web-app/telegram/) | 수동 profile fallback |
+| 예전 token 기반 설정을 유지 중인 경우 | [API Keys](/guide/ko/web-app/api-keys/) | runtime이 지원하면 원격 `/mcp` OAuth |
 
 ## 수동 Worker-only MCP 설정
 
@@ -45,10 +43,9 @@ gemini mcp add --scope user --transport http preqstation https://<your-domain>/m
 
 ## 같은 설정 경로로 이어가기
 
-- **Worker-only 수동 설정** — 전체 CLI installer 경로를 쓰지 않을 때 [워커 설치](/guide/ko/skill/installation)를 참고하세요
-- **웹 앱 설정** — hosted 설정, self-hosting, migration, 첫 로그인 세부 정보는 [웹 앱 설정](/guide/ko/web-app/setup)을 참고하세요
-- **OpenClaw dispatcher** — 웹 앱에서 OpenClaw로 작업을 큐잉하려면 [OpenClaw 설치](/guide/ko/openclaw/setup)를 참고하세요
-- **Hermes Telegram dispatcher** — Hermes가 Telegram dispatch를 받아야 한다면 [Telegram 연동](/guide/ko/web-app/telegram)을 참고하세요
+- **Worker-only 수동 설정** — 전체 CLI installer 경로를 쓰지 않을 때 [워커 설치](/guide/ko/skill/installation/)를 참고하세요
+- **웹 앱 설정** — hosted 설정, self-hosting, migration, 첫 로그인 세부 정보는 [웹 앱 설정](/guide/ko/web-app/setup/)을 참고하세요
+- **Hermes Telegram dispatcher** — Hermes가 Telegram dispatch를 받아야 한다면 [Telegram 연동](/guide/ko/web-app/telegram/)을 참고하세요
 
 터미널에서 직접 worker access만 필요하다면 CLI 설치와 MCP 상태 확인까지만 하고 멈추면 됩니다.
 
@@ -128,15 +125,13 @@ export PREQSTATION_API_URL=http://localhost:3000
 export PREQSTATION_TOKEN=preq_your_new_token
 ```
 
-토큰 기반 호환성 설정 전체는 [API Keys](/guide/ko/web-app/api-keys)와 [Environment Variables](/guide/ko/reference/environment-variables)에서 확인하세요.
+토큰 기반 호환성 설정 전체는 [API Keys](/guide/ko/web-app/api-keys/)와 [Environment Variables](/guide/ko/reference/environment-variables/)에서 확인하세요.
 
 ## 다음 단계
 
-- [워커 설치](/guide/ko/skill/installation) — Claude, Codex, Gemini의 수동 worker-only 설정
-- [Direct Dispatch](/guide/ko/getting-started/direct-dispatch) — 로컬 CLI에서 tracked task 직접 실행
-- [OpenClaw 설치](/guide/ko/openclaw/setup) — OpenClaw dispatcher 설정
-- [Telegram 연동](/guide/ko/web-app/telegram) — Hermes와 Telegram dispatch 설정
-- [웹 앱 설정](/guide/ko/web-app/setup) — hosted 설정과 self-hosted 로컬 개발 세부 정보
-- [철학](/guide/ko/getting-started/philosophy) — PreqStation이 왜 존재하는지와 언제 쓰면 좋은지
-- [칸반 보드 가이드](/guide/ko/web-app/kanban) — 태스크 보드 사용법
-- [API Keys](/guide/ko/web-app/api-keys) — shell-helper 및 레거시 브리지 토큰 관리
+- [워커 설치](/guide/ko/skill/installation/) — Claude, Codex, Gemini의 수동 worker-only 설정
+- [Telegram 연동](/guide/ko/web-app/telegram/) — Hermes와 Telegram dispatch 설정
+- [웹 앱 설정](/guide/ko/web-app/setup/) — hosted 설정과 self-hosted 로컬 개발 세부 정보
+- [철학](/guide/ko/getting-started/philosophy/) — PreqStation이 왜 존재하는지와 언제 쓰면 좋은지
+- [칸반 보드 가이드](/guide/ko/web-app/kanban/) — 태스크 보드 사용법
+- [API Keys](/guide/ko/web-app/api-keys/) — shell-helper 및 레거시 브리지 토큰 관리

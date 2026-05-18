@@ -7,7 +7,7 @@ import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
 `preqstation-skill`은 PreqStation의 핵심 에이전트 측 패키지입니다. `preqstation` worker skill, 작업 수명 주기 규칙, Claude Code helper plugin, Codex/Gemini worker 설치 경로를 제공합니다.
 
-대부분의 사용자는 [빠른 시작](/guide/ko/getting-started/quick-start)의 CLI 경로부터 시작하면 됩니다.
+대부분의 사용자는 [빠른 시작](/guide/ko/getting-started/quick-start/)의 CLI 경로부터 시작하면 됩니다.
 
 ```bash
 npx -y @sonim1/preqstation@latest install
@@ -74,7 +74,7 @@ gemini-cli
 
 이 페이지는 **worker 설정 전용**입니다.
 
-웹 앱에서 queued dispatch도 쓰고 싶다면 먼저 PREQ CLI installer를 사용한 뒤, [OpenClaw 설치](/guide/ko/openclaw/setup) 또는 [Telegram 연동](/guide/ko/web-app/telegram)에서 dispatcher-specific 설정을 확인하세요.
+웹 앱에서 queued dispatch도 쓰고 싶다면 먼저 PREQ CLI installer를 사용한 뒤, [Telegram 연동](/guide/ko/web-app/telegram/)에서 Hermes-specific 설정을 확인하세요.
 
 ## 권장 MCP 설정 (HTTP + OAuth)
 
@@ -149,7 +149,7 @@ Codex는 Claude 스타일의 로컬 plugin이나 channel runtime이 필요하지
 - **dispatcher 설정**은 웹 앱이 다른 runtime에 작업을 큐잉하는 경로입니다.
 - **engine**은 별도이며 `claude-code`, `codex`, `gemini-cli` 중 실제 실행 CLI를 결정합니다.
 
-직접 worker만 쓸 거라면 이 페이지로 충분합니다. 웹 앱 queued dispatch가 필요하면 [OpenClaw 설치](/guide/ko/openclaw/setup)로 넘어가세요.
+직접 worker만 쓸 거라면 이 페이지로 충분합니다. 웹 앱 queued dispatch가 필요하면 [Telegram 연동](/guide/ko/web-app/telegram/)으로 넘어가세요.
 
 ## Gemini CLI
 

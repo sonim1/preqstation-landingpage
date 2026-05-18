@@ -7,11 +7,11 @@ hero:
   tagline: "Queue the task. Agents execute. You verify before marking it done."
   actions:
     - text: Start with Quick Start
-      link: /guide/getting-started/quick-start
+      link: /guide/getting-started/quick-start/
       icon: right-arrow
       variant: primary
     - text: API Reference
-      link: /guide/api/rest-api
+      link: /guide/api/rest-api/
       icon: open-book
       variant: secondary
 ---
@@ -20,48 +20,47 @@ PreqStation is an execution system for developers using Claude, Codex, and Gemin
 
 ## Recommended First Step
 
-If you're setting up PreqStation for the first time, start with [Quick Start](/guide/getting-started/quick-start). The shortest path now starts with the PREQ CLI installer:
+If you're setting up PreqStation for the first time, start with [Quick Start](/guide/getting-started/quick-start/). The shortest path now starts with the PREQ CLI installer:
 
 ```bash
 npx -y @sonim1/preqstation@latest install
 ```
 
-The installer covers the default CLI path, worker runtime support, remote MCP registration, and optional dispatcher setup. Use [PREQ CLI](/guide/getting-started/preq-cli) for the full operator-host command guide. If you are self-hosting the web app or validating migrations, continue with [Web App Setup](/guide/web-app/setup).
+The installer covers the default CLI path, worker runtime support, remote MCP registration, and optional dispatcher setup. Use [PREQ CLI](/guide/getting-started/preq-cli/) for the full operator-host command guide. If you are self-hosting the web app or validating migrations, continue with [Web App Setup](/guide/web-app/setup/).
 
 ## Choose Your Setup Path
 
 ### 1. CLI Default Setup
 
-- [Quick Start](/guide/getting-started/quick-start) — fastest path through `npx -y @sonim1/preqstation@latest install`, `status`, MCP registration, and project mapping
-- [PREQ CLI](/guide/getting-started/preq-cli) — operator-host install, lifecycle checks, integration installs, and project mapping
-- [Environment Variables](/guide/reference/environment-variables) — dispatcher home, worker homes, project mapping, and token compatibility variables
+- [Quick Start](/guide/getting-started/quick-start/) — fastest path through `npx -y @sonim1/preqstation@latest install`, `status`, MCP registration, and project mapping
+- [PREQ CLI](/guide/getting-started/preq-cli/) — operator-host install, lifecycle checks, integration installs, and project mapping
+- [Environment Variables](/guide/reference/environment-variables/) — dispatcher home, worker homes, project mapping, and token compatibility variables
 
 ### 2. Worker-Only Setup
 
-- [Worker Installation](/guide/skill/installation) — manual Claude, Codex, or Gemini worker setup when you do not want the full CLI installer path
+- [Worker Installation](/guide/skill/installation/) — manual Claude, Codex, or Gemini worker setup when you do not want the full CLI installer path
 
 ### 3. Dispatcher Setup
 
 Choose a dispatcher only if you want queued delivery from the web app.
 
-- [OpenClaw Installation](/guide/openclaw/setup) — Telegram/OpenClaw delivery from the web app
-- [Telegram Integration](/guide/web-app/telegram) — Hermes Telegram delivery and QA queueing
+- [Telegram Integration](/guide/web-app/telegram/) — Hermes Telegram delivery and QA queueing
 
 ### 4. Web App and Legacy Compatibility
 
-- [Web App Setup](/guide/web-app/setup) — full web app setup details, environment variables, migrations, and first-login flow
-- [API Keys](/guide/web-app/api-keys) — token setup for shell-helper mode and legacy local bridge paths
+- [Web App Setup](/guide/web-app/setup/) — full web app setup details, environment variables, migrations, and first-login flow
+- [API Keys](/guide/web-app/api-keys/) — token setup for shell-helper mode and legacy local bridge paths
 
 ## How PreqStation Fits Together
 
 - **PreqStation web app** — Central web app with the Kanban board, REST API, dispatch action UI, Telegram delivery, and execution overlays
 - **preqstation-skill** — Agent-side package for worker MCP access across Claude Code, Codex, and Gemini CLI
 - **PREQ CLI** — User-facing npm package and command: `@sonim1/preqstation` and `preqstation`
-- **preqstation-dispatcher** — Historical/internal dispatcher surface behind OpenClaw and Hermes execution. Some plugin/config identifiers still mention `preqstation-dispatcher` or `preqstation-openclaw` for compatibility.
+- **preqstation-dispatcher** — Historical/internal dispatcher surface behind Hermes execution. Some plugin/config identifiers still mention `preqstation-dispatcher` for compatibility.
 
 The task **engine** decides whether the run launches `claude-code`, `codex`, or `gemini-cli`. Any queued dispatcher path is separate from that engine choice.
 
-Fresh install: run the PREQ CLI installer. Already using a worker directly: use worker-only setup. Need queued delivery: add OpenClaw or Hermes. Maintaining an old token setup: use the API key compatibility docs.
+Fresh install: run the PREQ CLI installer. Already using a worker directly: use worker-only setup. Need queued delivery: add Hermes. Maintaining an old token setup: use the API key compatibility docs.
 
 Use it when a task is already scoped and you want reliable execution, not when you need a generic issue backlog.
 

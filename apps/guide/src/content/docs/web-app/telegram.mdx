@@ -1,25 +1,21 @@
 ---
 title: Telegram Integration
-description: Configure Telegram for OpenClaw delivery, Hermes dispatch, and QA queueing.
+description: Configure Telegram for Hermes dispatch and QA queueing.
 ---
 
 import { Aside } from '@astrojs/starlight/components';
 
-Telegram is optional for normal task work, but it becomes important once you want queued delivery from the web app. PreqStation uses Telegram for the OpenClaw path, Hermes task sends, and Ready-lane QA queueing.
+Telegram is optional for normal task work, but it becomes important once you want queued delivery from the web app. PreqStation uses Telegram for Hermes task sends and Ready-lane QA queueing.
 
-The web app uses one shared Telegram sender bot token, then routes messages to separate OpenClaw and Hermes chats.
+The web app uses one shared Telegram sender bot token, then routes messages to the Hermes chat.
 
 ## Which Telegram Setup Do You Need?
 
 | Need | Configure |
 |---|---|
-| Send tasks to OpenClaw only | Sender bot token + OpenClaw Chat ID |
-| Queue Ready-lane QA through OpenClaw | Sender bot token + OpenClaw Chat ID |
-| Send project insights through OpenClaw | Sender bot token + OpenClaw Chat ID |
 | Send tasks, QA, or insights to Hermes | Sender bot token + Hermes Chat ID + Hermes receiver bot |
-| Test whether OpenClaw is alive | OpenClaw Chat ID; `/status` is OpenClaw-only |
 
-The sender bot belongs to PreqStation. A Hermes receiver bot belongs to the Hermes host. OpenClaw and Hermes can share a Telegram group, but they are different dispatcher hosts.
+The sender bot belongs to PreqStation. A Hermes receiver bot belongs to the Hermes host.
 
 ## What Telegram Is Used For
 
@@ -27,7 +23,6 @@ The sender bot belongs to PreqStation. A Hermes receiver bot belongs to the Herm
 - Hermes-targeted task sends from the **H Telegram** dispatch target
 - Ready-lane QA queueing
 - project insight sends
-- OpenClaw `/status` checks
 
 The Telegram dispatcher target is separate from the task `engine`. A Telegram send can still launch `claude-code`, `codex`, or `gemini-cli` on the receiver host.
 
@@ -36,20 +31,16 @@ The Telegram dispatcher target is separate from the task `engine`. A Telegram se
 Open **Settings > Telegram** and save the values for the channels you want to use.
 
 - **Bot Token**: shared sender bot token for all Telegram messages that PreqStation sends
-- **OpenClaw Chat ID** + **Enable OpenClaw Telegram messaging**: used for default task sends, OpenClaw `/status`, QA dispatches, and project insight sends
 - **Hermes Chat ID** + **Enable Hermes Telegram messaging**: used for Hermes-targeted task sends, QA queueing, and project insight sends
 
 Operational notes:
 
-- If you save only the OpenClaw channel, standard Telegram sends still work.
-- If you enable Hermes, task sends, QA runs, and project insight actions that target `hermes-telegram` go to the Hermes chat instead of the OpenClaw chat.
+- If you enable Hermes, task sends, QA runs, and project insight actions that target `hermes-telegram` go to the Hermes chat.
 - The current task picker label for Hermes is **H Telegram**.
 - QA and project insight modals show only the Telegram targets that are enabled. There is no in-app `Channels` or `claude-code-channel` fallback for those flows.
 
 Recommended validation from the settings screen:
 
-- **Send OpenClaw Test**
-- **Send OpenClaw /status**
 - **Send Hermes Test** when the Hermes channel is enabled
 
 ## Telegram Bots and Chats
@@ -75,10 +66,7 @@ That means the safest setup is to give the Hermes receiver bot the username `Pre
 
 ### 3. Create the chats
 
-You can use one shared group or separate groups.
-
-- **OpenClaw chat**: add the PreqStation sender bot and the OpenClaw receiver/runtime if you use that path
-- **Hermes chat**: add the PreqStation sender bot and the Hermes receiver bot
+Create a Hermes chat and add the PreqStation sender bot plus the Hermes receiver bot.
 
 If you use a Telegram group for Hermes, both bots must be members of that same group.
 
@@ -121,7 +109,7 @@ Look for:
 }
 ```
 
-Use that number as **OpenClaw Chat ID** or **Hermes Chat ID** in PreqStation.
+Use that number as **Hermes Chat ID** in PreqStation.
 
 ## Hermes Host Setup
 
@@ -283,8 +271,8 @@ insight_prompt_b64=BASE64URL_PROMPT
 
 ## Validation Checklist
 
-1. Save **Bot Token**, **OpenClaw Chat ID**, and optional **Hermes Chat ID** in **Settings > Telegram**
-2. Run **Send OpenClaw Test** and **Send Hermes Test**
+1. Save **Bot Token** and **Hermes Chat ID** in **Settings > Telegram**
+2. Run **Send Hermes Test**
 3. Confirm the Hermes bot responds to your own Telegram user in DM or in the group
 4. Confirm Hermes accepts bot-to-bot messages from the PreqStation sender bot
 5. Dispatch a real task with **H Telegram**

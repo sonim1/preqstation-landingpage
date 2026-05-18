@@ -1,25 +1,21 @@
 ---
 title: Telegram 연동
-description: OpenClaw 전달, Hermes dispatch, QA 큐잉을 위한 Telegram 설정 방법입니다.
+description: Hermes dispatch와 QA 큐잉을 위한 Telegram 설정 방법입니다.
 ---
 
 import { Aside } from '@astrojs/starlight/components';
 
-Telegram은 일반적인 태스크 작업에는 필수가 아니지만, 웹 앱에서 queued delivery를 쓰기 시작하면 중요해집니다. PreqStation은 Telegram을 OpenClaw 경로, Hermes task send, Ready-lane QA 큐잉에 사용합니다.
+Telegram은 일반적인 태스크 작업에는 필수가 아니지만, 웹 앱에서 queued delivery를 쓰기 시작하면 중요해집니다. PreqStation은 Telegram을 Hermes task send와 Ready-lane QA 큐잉에 사용합니다.
 
-웹 앱은 하나의 공용 Telegram sender bot token을 저장한 뒤, OpenClaw와 Hermes에 대해 별도 chat ID로 라우팅합니다.
+웹 앱은 하나의 공용 Telegram sender bot token을 저장한 뒤, Hermes chat으로 메시지를 라우팅합니다.
 
 ## 어떤 Telegram 설정이 필요한가
 
 | 필요 | 설정 |
 |---|---|
-| OpenClaw로 task만 보내기 | sender bot token + OpenClaw Chat ID |
-| Ready-lane QA를 OpenClaw로 큐잉 | sender bot token + OpenClaw Chat ID |
-| project insight를 OpenClaw로 보내기 | sender bot token + OpenClaw Chat ID |
 | task, QA, insight를 Hermes로 보내기 | sender bot token + Hermes Chat ID + Hermes receiver bot |
-| OpenClaw가 살아 있는지 테스트 | OpenClaw Chat ID. `/status`는 OpenClaw 전용입니다 |
 
-Sender bot은 PreqStation 쪽 bot입니다. Hermes receiver bot은 Hermes host 쪽 bot입니다. OpenClaw와 Hermes가 같은 Telegram group을 공유할 수는 있지만, 둘은 서로 다른 dispatcher host입니다.
+Sender bot은 PreqStation 쪽 bot입니다. Hermes receiver bot은 Hermes host 쪽 bot입니다.
 
 ## Telegram을 어디에 쓰는가
 
@@ -27,7 +23,6 @@ Sender bot은 PreqStation 쪽 bot입니다. Hermes receiver bot은 Hermes host �
 - **H Telegram** dispatch target을 통한 Hermes task send
 - Ready-lane QA 큐잉
 - project insight send
-- OpenClaw `/status` 확인
 
 Telegram dispatcher target은 task `engine`과 별개입니다. Telegram으로 보냈더라도 실제 실행 엔진은 `claude-code`, `codex`, `gemini-cli` 중 하나입니다.
 
@@ -36,20 +31,16 @@ Telegram dispatcher target은 task `engine`과 별개입니다. Telegram으로 �
 **Settings > Telegram**을 열고 사용할 채널 값을 저장하세요.
 
 - **Bot Token**: PreqStation이 보내는 모든 Telegram 메시지에 공용으로 쓰는 sender bot token
-- **OpenClaw Chat ID** + **Enable OpenClaw Telegram messaging**: 기본 task send, OpenClaw `/status`, QA dispatch, project insight send에 사용
 - **Hermes Chat ID** + **Enable Hermes Telegram messaging**: Hermes-targeted task send, QA 큐잉, project insight send에 사용
 
 운영 메모:
 
-- OpenClaw 채널만 저장해도 일반 Telegram send는 계속 동작합니다.
-- Hermes를 켜면 `hermes-telegram` target의 task send, QA run, project insight action은 OpenClaw chat 대신 Hermes chat으로 갑니다.
+- Hermes를 켜면 `hermes-telegram` target의 task send, QA run, project insight action은 Hermes chat으로 갑니다.
 - 현재 Hermes용 task picker 라벨은 **H Telegram**입니다.
 - QA와 project insight modal은 활성화된 Telegram target만 보여줍니다. 이 흐름에는 in-app `Channels` 또는 `claude-code-channel` fallback이 없습니다.
 
 Settings 화면에서 권장하는 검증:
 
-- **Send OpenClaw Test**
-- **Send OpenClaw /status**
 - Hermes 채널을 켰다면 **Send Hermes Test**
 
 ## Telegram 봇과 채팅방 준비
@@ -75,10 +66,7 @@ Hermes용 receiver bot은 별도로 하나 더 만드세요. 이 bot이 structur
 
 ### 3. 채팅방 만들기
 
-하나의 공용 그룹을 써도 되고, OpenClaw와 Hermes를 분리한 그룹을 써도 됩니다.
-
-- **OpenClaw chat**: PreqStation sender bot과 OpenClaw receiver/runtime을 추가
-- **Hermes chat**: PreqStation sender bot과 Hermes receiver bot을 추가
+Hermes chat을 만들고 PreqStation sender bot과 Hermes receiver bot을 추가합니다.
 
 Hermes에 그룹 기반 bot-to-bot relay를 쓸 거라면 두 bot이 같은 그룹에 모두 들어가 있어야 합니다.
 
@@ -121,7 +109,7 @@ curl "https://api.telegram.org/bot<PREQSTATION_BOT_TOKEN>/getUpdates"
 }
 ```
 
-이 숫자를 PreqStation의 **OpenClaw Chat ID** 또는 **Hermes Chat ID**에 넣으면 됩니다.
+이 숫자를 PreqStation의 **Hermes Chat ID**에 넣으면 됩니다.
 
 ## Hermes 호스트 설정
 
@@ -283,8 +271,8 @@ insight_prompt_b64=BASE64URL_PROMPT
 
 ## 검증 체크리스트
 
-1. **Settings > Telegram**에 **Bot Token**, **OpenClaw Chat ID**, 선택적으로 **Hermes Chat ID**를 저장합니다
-2. **Send OpenClaw Test**와 **Send Hermes Test**를 실행합니다
+1. **Settings > Telegram**에 **Bot Token**과 **Hermes Chat ID**를 저장합니다
+2. **Send Hermes Test**를 실행합니다
 3. Hermes bot이 자신의 Telegram user에는 응답하는지 확인합니다
 4. PreqStation sender bot이 보낸 메시지에도 Hermes가 반응하는지 확인합니다
 5. 실제 task를 **H Telegram**으로 dispatch해 봅니다

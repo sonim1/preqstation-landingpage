@@ -5,11 +5,9 @@ description: Install and operate the @sonim1/preqstation CLI for local operator-
 
 The PREQ CLI is the public npm package `@sonim1/preqstation` and the user-facing command `preqstation`.
 
-Use it on the local machine or host that will execute or dispatch PREQ tasks. It prepares operator-host setup for the pieces you choose: OpenClaw and Hermes entrypoints, Claude Code/Codex/Gemini worker runtime support, PREQSTATION MCP registration, and project mappings.
+Use it on the local machine or host that will execute or dispatch PREQ tasks. It prepares operator-host setup for the pieces you choose: Hermes entrypoints, Claude Code/Codex/Gemini worker runtime support, PREQSTATION MCP registration, and project mappings.
 
 The CLI does not replace the web app. The web app remains the task and control plane for creating tasks, dispatching work, and reviewing results.
-
-When you are already on the operator host and want to launch a task without OpenClaw, Hermes, or Telegram relay, use [Direct Dispatch](/guide/getting-started/direct-dispatch).
 
 ## Recommended First Run
 
@@ -43,7 +41,6 @@ preqstation doctor
 preqstation status --json
 preqstation doctor --json
 preqstation uninstall
-preqstation uninstall openclaw
 preqstation uninstall hermes
 ```
 
@@ -69,16 +66,14 @@ Use `setup set` when the checkout is outside the scanned roots or when you want 
 
 ## Integration Installs
 
-Install only the dispatch entrypoints this host should operate:
+Install the Hermes dispatch entrypoint only on hosts that should receive Telegram dispatches:
 
 ```bash
-preqstation install openclaw
 preqstation install hermes
-preqstation status openclaw
 preqstation status hermes
 ```
 
-OpenClaw and Hermes are dispatch hosts. They receive work, resolve the project, create the worktree, and launch the selected worker runtime. They are separate from the task engine, which is still Claude Code, Codex, or Gemini CLI.
+Hermes is a dispatch host. It receives work, resolves the project, creates the worktree, and launches the selected worker runtime. It is separate from the task engine, which is still Claude Code, Codex, or Gemini CLI.
 
 For Hermes profile maintenance, sync the installed Hermes support after changing the target profile or after upgrading the CLI:
 
@@ -97,10 +92,8 @@ Token and API key paths are compatibility paths for shell helpers and older loca
 
 ## Next Steps
 
-- [Quick Start](/guide/getting-started/quick-start) — choose the shortest setup path for your situation
-- [Direct Dispatch](/guide/getting-started/direct-dispatch) — run a task directly from the local operator host
-- [OpenClaw Installation](/guide/openclaw/setup) — configure OpenClaw dispatch on an operator host
-- [Telegram Integration](/guide/web-app/telegram) — configure Hermes and Telegram delivery
-- [Worker Installation](/guide/skill/installation) — manual worker-only fallback for Claude Code, Codex, and Gemini
-- [Troubleshooting](/guide/reference/troubleshooting) — diagnose runtime, MCP, and project mapping issues
-- [Web App Setup](/guide/web-app/setup) — configure the task and control plane
+- [Quick Start](/guide/getting-started/quick-start/) — choose the shortest setup path for your situation
+- [Telegram Integration](/guide/web-app/telegram/) — configure Hermes and Telegram delivery
+- [Worker Installation](/guide/skill/installation/) — manual worker-only fallback for Claude Code, Codex, and Gemini
+- [Troubleshooting](/guide/reference/troubleshooting/) — diagnose runtime, MCP, and project mapping issues
+- [Web App Setup](/guide/web-app/setup/) — configure the task and control plane

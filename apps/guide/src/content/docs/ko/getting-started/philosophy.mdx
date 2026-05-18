@@ -9,7 +9,7 @@ PreqStation은 하루 종일 컴퓨터 앞에 앉아 있을 수 없는 개발자
 
 쓸모 있는 작업은 책상 앞에서만 떠오르지 않습니다. 이동 중에도, 미팅 사이에도, 다른 일을 하다가도 나타납니다.
 
-PreqStation은 그 순간 태스크를 잡고 acceptance criteria까지 정리한 뒤, 적절한 때에 실행할 수 있도록 설계되었습니다. 핵심은 계속 키보드 앞에 붙어 있는 것이 아니라, 자리를 비울 때마다 실행 흐름이 끊기지 않게 만드는 것입니다. 미리 준비된 작업은 나중에 OpenClaw나 Hermes 같은 dispatch 경로를 통해 worker에게 전달될 수 있고, 개발자는 돌아와서 결과와 검증 기록을 확인하면 됩니다.
+PreqStation은 그 순간 태스크를 잡고 acceptance criteria까지 정리한 뒤, 적절한 때에 실행할 수 있도록 설계되었습니다. 핵심은 계속 키보드 앞에 붙어 있는 것이 아니라, 자리를 비울 때마다 실행 흐름이 끊기지 않게 만드는 것입니다. 미리 준비된 작업은 나중에 Hermes dispatch 경로를 통해 worker에게 전달될 수 있고, 개발자는 돌아와서 결과와 검증 기록을 확인하면 됩니다.
 
 ## 1인 개발자와 작은 팀을 위한 도구
 
@@ -27,7 +27,7 @@ PreqStation은 그 전환에 필요한 가드레일을 더합니다. 격리된 w
 
 PreqStation에서 engine은 실제로 코드를 실행하는 모델/CLI를 뜻합니다. 예를 들어 `claude-code`, `codex`, `gemini-cli`는 Claude, Codex, Gemini worker 중 무엇을 띄울지 정합니다.
 
-OpenClaw와 Hermes는 별도의 dispatch 하네스입니다. 이들은 태스크를 받아 프로젝트를 찾고, worktree를 만들고, 알맞은 engine을 실행하는 경로를 제공합니다. 즉 Hermes가 태스크를 받았다고 해서 Hermes가 구현 엔진이라는 뜻은 아닙니다. 어떤 채널로 보냈는지와 어떤 모델이 코드를 썼는지를 분리해서 보면 PreqStation의 흐름이 훨씬 단순해집니다.
+Hermes는 별도의 dispatch 하네스입니다. 태스크를 받아 프로젝트를 찾고, worktree를 만들고, 알맞은 engine을 실행하는 경로를 제공합니다. 즉 Hermes가 태스크를 받았다고 해서 Hermes가 구현 엔진이라는 뜻은 아닙니다. 어떤 채널로 보냈는지와 어떤 모델이 코드를 썼는지를 분리해서 보면 PreqStation의 흐름이 훨씬 단순해집니다.
 
 ## 상태와 실행 오버레이
 
@@ -42,5 +42,3 @@ OpenClaw와 Hermes는 별도의 dispatch 하네스입니다. 이들은 태스크
 - `done`: 검증까지 끝난 작업
 
 `queued`, `working`, `done`은 run-state overlay입니다. 이 값들은 태스크가 지금 dispatch 대기 중인지, worker가 실행 중인지, 실행이 종료되었는지를 보여주지만 workflow status를 대체하지 않습니다. 예를 들어 `todo` 태스크가 `queued`일 수 있고, 같은 `todo` 태스크가 worker에게 claim되면 `working`으로 보일 수 있습니다. 구현이 끝나면 workflow status는 `ready`로 이동해 리뷰를 기다리고, 검증이 끝났을 때 `done`이 됩니다.
-
-더 기술적인 모델과 주방 비유를 보고 싶다면 [핵심 개념](/guide/ko/getting-started/concepts)으로 이어서 읽으세요.

@@ -335,8 +335,8 @@ const ko: typeof en = {
       linksLabel: "\ucee4\ub9e8\ub4dc \uc13c\ud130",
       links: [
         { label: "Direct CLI 예시", value: "preqstation run --project-key PROJ --task-key PROJ-123 --engine codex" },
-        { label: "\ube60\ub978 \uc2dc\uc791", value: "/guide/ko/getting-started/quick-start" },
-        { label: "Direct Dispatch", value: "/guide/ko/getting-started/direct-dispatch" },
+        { label: "\ube60\ub978 \uc2dc\uc791", value: "/guide/ko/getting-started/quick-start/" },
+        { label: "Telegram \uc5f0\ub3d9", value: "/guide/ko/web-app/telegram/" },
       ],
       summaryLabel: "\uacb0\uacfc",
       summaryValue: "PreqStation은 태스크 큐와 리뷰 컨트롤 플레인으로 남고, PREQ CLI는 로컬 호스트를 준비하며 필요할 때 direct run도 실행합니다.",

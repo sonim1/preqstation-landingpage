@@ -8,19 +8,18 @@ import Mermaid from '../../../components/Mermaid.astro';
 
 PreqStation is an execution platform for AI-agent-driven development workflows. It bridges developers and coding agents through a web control plane, the PREQ CLI, optional dispatch integrations, and agent-facing APIs.
 
-If you want the product story before the system diagram, read [Product Philosophy](/guide/getting-started/philosophy) first.
+If you want the product story before the system diagram, read [Product Philosophy](/guide/getting-started/philosophy/) first.
 
 ## Recommended First Step
 
-If you're starting PreqStation from scratch, begin with [Quick Start](/guide/getting-started/quick-start). It starts with `npx -y @sonim1/preqstation@latest install`, then checks local runtime, MCP, and project setup. If you are self-hosting the web app or validating migrations, use [Web App Setup](/guide/web-app/setup).
+If you're starting PreqStation from scratch, begin with [Quick Start](/guide/getting-started/quick-start/). It starts with `npx -y @sonim1/preqstation@latest install`, then checks local runtime, MCP, and project setup. If you are self-hosting the web app or validating migrations, use [Web App Setup](/guide/web-app/setup/).
 
 ## Setup Path Order
 
-- **CLI Default Setup** — [Quick Start](/guide/getting-started/quick-start) for the fastest CLI installer path
-- **Direct CLI Dispatch** — [Direct Dispatch](/guide/getting-started/direct-dispatch) when the operator host should launch the task immediately
-- **Worker-Only Setup** — [Worker Installation](/guide/skill/installation) when you want manual Claude, Codex, or Gemini worker setup
-- **Dispatcher Setup** — add queued delivery only if you need it from the web app: [OpenClaw Installation](/guide/openclaw/setup) or [Telegram Integration](/guide/web-app/telegram)
-- **Web App Setup** — [Web App Setup](/guide/web-app/setup) for self-hosting, migrations, and first-login details
+- **CLI Default Setup** — [Quick Start](/guide/getting-started/quick-start/) for the fastest CLI installer path
+- **Worker-Only Setup** — [Worker Installation](/guide/skill/installation/) when you want manual Claude, Codex, or Gemini worker setup
+- **Dispatcher Setup** — add queued delivery only if you need it from the web app: [Telegram Integration](/guide/web-app/telegram/)
+- **Web App Setup** — [Web App Setup](/guide/web-app/setup/) for self-hosting, migrations, and first-login details
 
 ## Core Systems and Dispatch Paths
 
@@ -31,20 +30,20 @@ PreqStation separates the trigger path from the task engine:
 		Task and control plane. It manages tasks, renders the Kanban UI, tracks workflow state and review evidence, exposes REST/MCP-backed APIs, and lets users choose a dispatch target when they want one.
 	</Card>
 	<Card title="PREQ CLI" icon="rocket">
-		User-facing package and command: `@sonim1/preqstation` and `preqstation`. It installs and updates operator-host support, checks `status` and `doctor`, maps projects, creates worktrees, and can launch direct CLI dispatch with `preqstation run`.
+		User-facing package and command: `@sonim1/preqstation` and `preqstation`. It installs and updates operator-host support, checks `status` and `doctor`, maps projects, and prepares worker runtime support.
 	</Card>
 	<Card title="Worker Runtimes" icon="approve">
-		Claude Code, Codex CLI, and Gemini CLI perform the task work. The task `engine` decides which worker runtime starts, independent of whether the run was triggered directly, through OpenClaw, or through Hermes/Telegram.
+		Claude Code, Codex CLI, and Gemini CLI perform the task work. The task `engine` decides which worker runtime starts, independent of the Hermes/Telegram dispatch path.
 	</Card>
 	<Card title="Integrations" icon="puzzle">
-		OpenClaw, Hermes Agent, and Telegram are entrypoints for queued or chat-driven delivery. They hand work to the PREQ CLI on an operator host instead of replacing the worker runtime.
+		Hermes Agent and Telegram are entrypoints for queued or chat-driven delivery. They hand work to the PREQ CLI on an operator host instead of replacing the worker runtime.
 	</Card>
 	<Card title="MCP" icon="link">
 		Agent-facing API bridge. Modern setup normally uses the remote `/mcp` endpoint with browser OAuth. Token/API-key setup remains available for shell-helper mode and older local bridge flows.
 	</Card>
 </CardGrid>
 
-Some legacy identifiers still mention `preqstation-dispatcher` or `preqstation-openclaw` for compatibility.
+Some legacy identifiers still mention `preqstation-dispatcher` for compatibility.
 
 <Aside>
 The public canonical repository is `sonim1/preqstation`. The web app source used for local development is still being migrated there, so setup instructions may reference the current development repository until that move is complete.
@@ -61,22 +60,19 @@ flowchart LR
   CLI[PREQ CLI]
   DISPATCH[Dispatch target]
   HERMES[Hermes / Telegram]
-  OC[OpenClaw]
   AGENT[Claude / Codex / Gemini]
   MCP[Remote MCP + OAuth]
   DEV --> WEB
   WEB --> API
   DEV --> CLI
-  CLI --> AGENT
   WEB --> DISPATCH
   DISPATCH --> HERMES
-  DISPATCH --> OC
   HERMES --> CLI
-  OC --> CLI
+  CLI --> AGENT
   AGENT --> MCP
   MCP --> API
 `}
-  caption="Direct PREQ CLI dispatch and queued integration dispatch both launch a selected worker engine."
+  caption="Hermes/Telegram dispatch launches a selected worker engine through the PREQ CLI."
 />
 
 ## Data Flow
@@ -87,26 +83,19 @@ flowchart LR
 User creates task in the Kanban UI
   -> PreqStation stores it in PostgreSQL
   -> user optionally chooses a dispatch target
-  -> PREQ queues Hermes/Telegram/OpenClaw relay only when that path is needed
+  -> PREQ queues Hermes/Telegram relay only when that path is needed
 ```
 
 ### Dispatcher Target vs Engine
 
-- A dispatch target decides how the task is triggered: direct CLI, OpenClaw, Hermes, or Telegram relay.
-- Direct CLI dispatch starts on the operator host with [`preqstation run`](/guide/getting-started/direct-dispatch), so it does not need a Telegram, Hermes, or OpenClaw relay.
+- A dispatch target decides how the task is triggered through Hermes or Telegram relay.
 - `engine=claude-code | codex | gemini-cli` stays separate from the dispatcher target and decides which local CLI actually runs the task.
 
 ### Agent Trigger Paths
 
 ```text
-Direct CLI path:
-  developer runs preqstation run on the operator host
-    -> PREQ CLI resolves project + task + engine
-    -> creates an isolated git worktree
-    -> launches the requested coding agent
-
-Integration path:
-  developer chooses a web app dispatch action or hands off through Hermes/Telegram/OpenClaw
+Hermes/Telegram path:
+  developer chooses a web app dispatch action or hands off through Hermes/Telegram
     -> integration delivers the request to the operator host
     -> PREQ CLI resolves project + task + engine
     -> creates an isolated git worktree

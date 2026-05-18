@@ -333,8 +333,8 @@ export default {
       linksLabel: "Command center",
       links: [
         { label: "Direct CLI example", value: "preqstation run --project-key PROJ --task-key PROJ-123 --engine codex" },
-        { label: "Quick Start", value: "/guide/getting-started/quick-start" },
-        { label: "Direct Dispatch", value: "/guide/getting-started/direct-dispatch" },
+        { label: "Quick Start", value: "/guide/getting-started/quick-start/" },
+        { label: "Telegram Integration", value: "/guide/web-app/telegram/" },
       ],
       summaryLabel: "Outcome",
       summaryValue: "PreqStation stays the task queue and review control plane. The PREQ CLI prepares the local host and can launch direct runs when that is the right path.",

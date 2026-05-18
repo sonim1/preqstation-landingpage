@@ -26,7 +26,7 @@ Common next steps from the checks:
 - Finish OAuth if the runtime is registered but unauthenticated.
 - Refresh project mappings with `preqstation setup status`, `preqstation setup auto`, or `preqstation setup set`.
 - Fix missing worker executables such as `claude`, `codex`, or `gemini` on the host process `PATH`.
-- Restart OpenClaw or Hermes after changing environment variables, because long-running host processes inherit their environment at launch.
+- Restart Hermes after changing environment variables, because long-running host processes inherit their environment at launch.
 
 ## Remote MCP & OAuth Issues
 
@@ -160,7 +160,7 @@ curl -H "Authorization: Bearer $PREQSTATION_TOKEN" \
 # ✅ Good: "https://preqstation-lp.vercel.app"
 ```
 
-5. If you still need the token-based setup reference, see [API Keys](/guide/web-app/api-keys) and [Environment Variables](/guide/reference/environment-variables).
+5. If you still need the token-based setup reference, see [API Keys](/guide/web-app/api-keys/) and [Environment Variables](/guide/reference/environment-variables/).
 
 ### "Invalid token" error on every MCP call in shell-helper mode or the legacy local bridge
 
@@ -201,7 +201,7 @@ export PREQSTATION_TOKEN="preq_xxxxx"   # no extra spaces
 
 ### CLI setup, project mapping, or dispatcher health is unclear
 
-**Symptom:** A dispatch cannot find a project, the worker runtime is not detected, or you are unsure whether OpenClaw/Hermes support was installed.
+**Symptom:** A dispatch cannot find a project, the worker runtime is not detected, or you are unsure whether Hermes support was installed.
 
 **Solutions:**
 
@@ -251,17 +251,17 @@ preqstation doctor
 preqstation status
 ```
 
-3. If the command exists in your interactive shell but not in OpenClaw or Hermes, fix the host process environment and restart that host.
+3. If the command exists in your interactive shell but not in Hermes, fix the host process environment and restart that host.
 
 ### PATH or session-scoped Node setup is not inherited
 
-**Symptom:** The runtime works in a terminal, but OpenClaw, Hermes, or a detached PREQ run cannot find `node`, `npm`, `preqstation`, `claude`, `codex`, or `gemini`.
+**Symptom:** The runtime works in a terminal, but Hermes or a detached PREQ run cannot find `node`, `npm`, `preqstation`, `claude`, `codex`, or `gemini`.
 
 **Solutions:**
 
 1. Prefer globally available executables for operator-host dispatch.
 2. Avoid relying only on session-scoped version manager state, such as an interactive `fnm use` that was not exported to the host process.
-3. Restart OpenClaw or Hermes after changing shell profile files, PATH, Node versions, or globally installed CLIs.
+3. Restart Hermes after changing shell profile files, PATH, Node versions, or globally installed CLIs.
 4. Rerun:
 ```bash
 preqstation doctor
@@ -431,7 +431,7 @@ preqstation setup set PROJ /absolute/path/to/project
 # ✅ Good: /Users/kendrick/projects/example
 ```
 
-## OpenClaw Execution Issues
+## Dispatcher Execution Issues
 
 ### Session never completes or seems stuck
 
@@ -450,22 +450,7 @@ preqstation doctor
 tail -100 .preqstation-dispatch/<engine>.log
 ```
 
-3. If you are debugging an older OpenClaw session-based run, check session status:
-```bash
-process action:poll sessionId:<id>
-```
-
-4. Read last 100 lines of session output:
-```bash
-process action:log sessionId:<id> | tail -100
-```
-
-5. If truly stuck, kill the session:
-```bash
-process action:kill sessionId:<id>
-```
-
-6. Check for infinite loops or blocking I/O:
+3. Check for infinite loops or blocking I/O:
 ```bash
 # Common causes:
 # - npm install hung on network
@@ -499,7 +484,7 @@ rm <cwd>/.test-write
 
 ## Common Mistakes
 
-### ❌ Forgetting to update OpenClaw project mappings
+### ❌ Forgetting to update project mappings
 
 **Issue:** The dispatcher can't resolve project path, requires manual input each time.
 
@@ -578,7 +563,6 @@ If you've checked all above:
 3. **Check logs:**
    - Claude Code: Settings → Logs
    - PREQ CLI dispatcher: `.preqstation-dispatch/<engine>.log` inside the task worktree
-   - OpenClaw legacy sessions: session output via `process action:log`
    - PreqStation web app: deployment or server logs
 
 4. **File an issue** with:

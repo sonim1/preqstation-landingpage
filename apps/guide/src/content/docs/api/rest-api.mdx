@@ -21,7 +21,7 @@ https://your-domain.com/api
 - **Bearer token**: `Authorization: Bearer <preq_xxxxx>` for agent-facing task, project, and QA APIs
 - **Session cookie**: used by the web UI after login
 
-See [Authentication](/guide/api/authentication) for setup details.
+See [Authentication](/guide/api/authentication/) for setup details.
 
 ## Bearer-Token Endpoints
 
@@ -321,8 +321,8 @@ These endpoints are used by the PreqStation web app.
 
 | Method | Endpoint | Purpose |
 |---|---|---|
-| `POST` | `/telegram/send` | Send task Telegram message to OpenClaw or Hermes |
-| `POST` | `/telegram/send/insight` | Send project insight to OpenClaw or Hermes |
+| `POST` | `/telegram/send` | Send task Telegram message to Hermes |
+| `POST` | `/telegram/send/insight` | Send project insight to Hermes |
 | `POST` | `/projects/:id/qa-runs/trigger` | Queue a QA run through `telegram` or `hermes-telegram` |
 
 ### Todos and Labels
@@ -357,8 +357,7 @@ These endpoints are used by the PreqStation web app.
 |---|---|---|
 | `GET` | `/settings` | Read settings page data |
 | `POST` | `/telegram/send` | Send task Telegram message |
-| `POST` | `/telegram/test` | Send OpenClaw or Hermes Telegram test message |
-| `POST` | `/send-to-openclaw` | Legacy OpenClaw relay |
+| `POST` | `/telegram/test` | Send Hermes Telegram test message |
 
 ## Response Format
 

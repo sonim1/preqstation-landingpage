@@ -78,7 +78,7 @@ CookieConsent.run({
           acceptAllBtn: 'Accept analytics',
           acceptNecessaryBtn: 'Reject',
           showPreferencesBtn: 'Manage preferences',
-          footer: '<a href="/privacy">Privacy Policy</a>'
+          footer: '<a href="/privacy/">Privacy Policy</a>'
         },
         preferencesModal: {
           title: 'Cookie preferences',
@@ -186,20 +186,6 @@ export default defineConfig({
               },
               slug: 'getting-started/preq-cli',
             },
-            {
-              label: 'Direct Dispatch',
-              translations: {
-                ko: 'Direct Dispatch',
-              },
-              slug: 'getting-started/direct-dispatch',
-            },
-            {
-              label: 'Concepts',
-              translations: {
-                ko: '핵심 개념',
-              },
-              slug: 'getting-started/concepts',
-            },
           ],
         },
         {
@@ -285,42 +271,6 @@ export default defineConfig({
                 ko: '배포 전략',
               },
               slug: 'skill/deploy-strategy',
-            },
-          ],
-        },
-        {
-          label: 'OpenClaw',
-          translations: {
-            ko: 'OpenClaw',
-          },
-          items: [
-            {
-              label: 'Installation',
-              translations: {
-                ko: '설치',
-              },
-              slug: 'openclaw/setup',
-            },
-            {
-              label: 'Execution',
-              translations: {
-                ko: '실행',
-              },
-              slug: 'openclaw/execution',
-            },
-            {
-              label: 'Progress Modes',
-              translations: {
-                ko: '진행 모드',
-              },
-              slug: 'openclaw/progress-modes',
-            },
-            {
-              label: 'Examples',
-              translations: {
-                ko: '예시',
-              },
-              slug: 'openclaw/examples',
             },
           ],
         },

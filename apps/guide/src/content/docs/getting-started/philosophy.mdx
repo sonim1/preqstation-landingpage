@@ -9,7 +9,7 @@ PreqStation exists for developers who cannot sit at the computer all day but sti
 
 Useful work does not only appear while you are at your desk. It shows up while you are commuting, in meetings, or between other responsibilities.
 
-PreqStation is built so you can capture the task when the idea is fresh, shape it with acceptance criteria, and dispatch it when you have the right moment. The point is not constant activity. The point is not losing momentum every time you leave the keyboard. A prepared task can later move through a dispatch path such as OpenClaw or Hermes, reach the right worker, and leave you with results and verification evidence to review when you return.
+PreqStation is built so you can capture the task when the idea is fresh, shape it with acceptance criteria, and dispatch it when you have the right moment. The point is not constant activity. The point is not losing momentum every time you leave the keyboard. A prepared task can later move through a Hermes dispatch path, reach the right worker, and leave you with results and verification evidence to review when you return.
 
 ## Built for Solo & Small Teams
 
@@ -27,7 +27,7 @@ PreqStation adds the guardrails around that transition: isolated worktrees, expl
 
 In PreqStation, the engine is the model or CLI that actually performs the coding work. For example, `claude-code`, `codex`, and `gemini-cli` select whether the task should run through a Claude, Codex, or Gemini worker.
 
-OpenClaw and Hermes are separate dispatch harnesses. They receive the task, resolve the project, create the worktree, and launch the selected engine. That means a task sent through Hermes is not implemented by Hermes itself. The delivery path and the coding model are different parts of the system, and keeping them separate makes the PreqStation workflow easier to reason about.
+Hermes is a dispatch harness. It receives the task, resolves the project, creates the worktree, and launches the selected engine. That means a task sent through Hermes is not implemented by Hermes itself. The delivery path and the coding model are different parts of the system, and keeping them separate makes the PreqStation workflow easier to reason about.
 
 ## Status and Execution Overlay
 
@@ -42,5 +42,3 @@ The real workflow remains more precise:
 - `done` for verified completion
 
 `queued`, `working`, and `done` are run-state overlays. They show whether a task is waiting for dispatch, currently claimed by a worker, or finished at the execution layer, but they do not replace workflow status. For example, a `todo` task can be `queued`, then become `working` once a worker claims it. After implementation, the workflow status moves to `ready` for review, and only verified work becomes `done`.
-
-If you want the lower-level model and the kitchen metaphor, continue with [Kitchen Metaphor](/guide/getting-started/concepts).
