@@ -59,10 +59,10 @@ Hermes용 receiver bot은 별도로 하나 더 만드세요. 이 bot이 structur
 현재 PreqStation의 Hermes task send는 아래 명령 형식을 기본으로 씁니다.
 
 ```text
-/preqstation_dispatch@PreqHermesBot
+/preqstation dispatch
 ```
 
-그래서 가장 안전한 설정은 Hermes receiver bot username을 `PreqHermesBot`으로 맞추는 것입니다. 다른 username을 쓰면, Hermes task send를 안정적으로 쓰기 전에 웹 앱 command builder를 함께 수정해야 합니다.
+따라서 Hermes receiver는 canonical `/preqstation dispatch` command를 PREQSTATION profile로 라우팅해야 합니다.
 
 ### 3. 채팅방 만들기
 
@@ -207,7 +207,7 @@ curl "https://api.telegram.org/bot<PREQSTATION_BOT_TOKEN>/getMe"
 ```text
 You are a PreqStation dispatch bridge.
 
-When a Telegram message starts with /preqstation_dispatch@PreqHermesBot, parse only:
+When a Telegram message starts with /preqstation dispatch, parse only:
 - project_key
 - task_key
 - objective
@@ -215,6 +215,7 @@ When a Telegram message starts with /preqstation_dispatch@PreqHermesBot, parse o
 - branch_name
 - ask_hint
 - insight_prompt_b64
+- comment_id
 
 Only allow engines:
 - claude-code
@@ -249,7 +250,8 @@ preq-coder gateway restart
 PreqStation의 Hermes task send는 대략 이런 structured Telegram message를 사용합니다.
 
 ```text
-/preqstation_dispatch@PreqHermesBot
+/preqstation dispatch
+project_key=PROJ
 task_key=PROJ-123
 objective=implement
 engine=codex
@@ -261,7 +263,7 @@ task dispatch에서는 `task_key`만으로 `project_key`를 추론할 수 있으
 반면 `insight` 같은 project-level dispatch는 `project_key`가 필요합니다.
 
 ```text
-/preqstation_dispatch@PreqHermesBot
+/preqstation dispatch
 project_key=PROJ
 objective=insight
 engine=codex
