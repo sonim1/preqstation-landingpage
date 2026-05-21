@@ -59,10 +59,10 @@ Create a second bot for Hermes. This bot receives the structured dispatch messag
 Current PreqStation Hermes task sends target this command format:
 
 ```text
-/preqstation_dispatch@PreqHermesBot
+/preqstation dispatch
 ```
 
-That means the safest setup is to give the Hermes receiver bot the username `PreqHermesBot`. If you use a different bot username, update the web app command builder before relying on Hermes task sends.
+That means the Hermes receiver should route the canonical `/preqstation dispatch` command to its PREQSTATION profile.
 
 ### 3. Create the chats
 
@@ -207,7 +207,7 @@ Use an instruction similar to this:
 ```text
 You are a PreqStation dispatch bridge.
 
-When a Telegram message starts with /preqstation_dispatch@PreqHermesBot, parse only:
+When a Telegram message starts with /preqstation dispatch, parse only:
 - project_key
 - task_key
 - objective
@@ -215,6 +215,7 @@ When a Telegram message starts with /preqstation_dispatch@PreqHermesBot, parse o
 - branch_name
 - ask_hint
 - insight_prompt_b64
+- comment_id
 
 Only allow engines:
 - claude-code
@@ -249,7 +250,8 @@ preq-coder gateway restart
 Hermes task sends from PreqStation use a structured Telegram message like this:
 
 ```text
-/preqstation_dispatch@PreqHermesBot
+/preqstation dispatch
+project_key=PROJ
 task_key=PROJ-123
 objective=implement
 engine=codex
@@ -261,7 +263,7 @@ For task dispatches, `project_key` is optional because the dispatcher can infer 
 Project-level dispatches such as `insight` still require `project_key`:
 
 ```text
-/preqstation_dispatch@PreqHermesBot
+/preqstation dispatch
 project_key=PROJ
 objective=insight
 engine=codex

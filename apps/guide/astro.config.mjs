@@ -281,13 +281,6 @@ export default defineConfig({
           },
           items: [
             {
-              label: 'GBrain Memory Sync',
-              translations: {
-                ko: 'GBrain 메모리 동기화',
-              },
-              slug: 'advanced/gbrain',
-            },
-            {
               label: 'Fast.io Review Artifacts',
               translations: {
                 ko: 'Fast.io 리뷰 아티팩트',
