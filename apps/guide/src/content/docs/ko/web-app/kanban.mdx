@@ -33,6 +33,29 @@ flowchart LR
 
 Archived는 활성 보드에 보이지 않으며 수동 archive 흐름으로 다뤄집니다.
 
+## 첫 태스크 데모 흐름
+
+설정 후에는 작은 태스크 하나로 아래 흐름을 확인하세요.
+
+1. **+ New Task**를 눌러 title, description, engine, acceptance criteria를 채웁니다.
+2. 계획 전에는 **Inbox**에 둡니다.
+3. 구현 경로가 명확해지면 **Todo**로 이동합니다.
+4. Dispatch 또는 start 후 카드에 `Queued` 또는 `Working` overlay가 표시될 수 있습니다.
+5. 결과가 올라오면 **Ready**에서 검토하고, 필요하면 QA를 실행한 뒤 검증 후 **Done**으로 이동합니다.
+
+성공한 상태는 컬럼이 review state를 보여주고, overlay가 실행 상태를 별도로 보여주는 상태입니다.
+
+## Ready Lane QA
+
+Ready lane에서는 project branch별 QA run을 확인할 수 있습니다. Ready task의 QA action으로:
+
+- queue 전에 engine을 선택합니다
+- 해당 project/branch의 run history를 확인합니다
+- `queued`, `running`, `passed`, `failed` 상태를 구분합니다
+- task workflow state와 QA run state를 분리해 봅니다
+
+QA queueing은 Telegram을 통해 Hermes dispatch command를 보내므로 Telegram 설정이 먼저 필요합니다.
+
 ## 태스크 생성
 
 `+ New Task`를 눌러 생성합니다.
@@ -62,4 +85,14 @@ Archived는 활성 보드에 보이지 않으며 수동 archive 흐름으로 다
 - **Engine** — 어떤 에이전트가 작업하는지
 - **Status indicator** — 현재 워크플로우 상태
 - **Execution overlay** — 필요 시 `Queued` 또는 `Working`
+- **QA run history** — Ready card에서는 branch별 queued/running/passed/failed 기록
 - **Labels** — 사용자 태그
+
+## Done으로 보내기 전 확인
+
+Ready card를 Done으로 옮기기 전에 확인하세요.
+
+- branch 또는 PR link가 제출된 변경을 가리키는지
+- task result에 구현 요약과 검증 근거가 있는지
+- QA run을 실행했다면 통과했거나 실패 원인을 이해했는지
+- acceptance criteria가 실제로 충족됐는지

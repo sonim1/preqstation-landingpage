@@ -5,6 +5,8 @@ description: Event outbox structure and `/api/events` response format.
 
 PreqStation writes mutation events to `events_outbox`. The web app reads those events through `/api/events` for audit and integration workflows.
 
+Use this page when you are building an internal activity view, notification process, or audit integration. It is not part of the first-install path.
+
 ## Event Types
 
 Common event types include:
@@ -93,6 +95,13 @@ Response shape:
 2. Process returned events in order
 3. Save `nextCursor`
 4. Poll again with `?after=<nextCursor>`
+
+Recommended polling behavior:
+
+- keep the last processed cursor outside the PreqStation database
+- process events in ascending `id` order
+- retry with the same cursor if your downstream processing fails
+- use `limit=100` for catch-up jobs, then lower the interval once caught up
 
 ## Work Logs and Events
 

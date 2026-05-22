@@ -1,0 +1,54 @@
+---
+title: REST API
+description: PreqStation REST endpoint surface와 인증 방식을 요약합니다.
+---
+
+PreqStation REST API는 두 surface로 나뉩니다.
+
+| Surface | 인증 | 주 사용자 | 용도 |
+|---|---|---|---|
+| Bearer-token endpoints | `Authorization: Bearer preq_...` | agent, direct REST automation | task/project/QA 실행 API |
+| Session-cookie endpoints | web UI session cookie | browser UI | settings, labels, dispatch, event polling |
+
+새 설치라면 REST token부터 만들지 말고 remote `/mcp` + OAuth 경로를 먼저 사용하세요. Bearer token은 shell-helper mode, direct REST script, 예전 local bridge가 필요할 때만 쓰는 compatibility path입니다.
+
+## Base URL
+
+```text
+https://your-domain.com/api
+```
+
+## 자주 쓰는 Bearer-token endpoints
+
+| Method | Endpoint | 용도 |
+|---|---|---|
+| `GET` | `/tasks` | task list 조회 |
+| `POST` | `/tasks` | inbox task 생성 |
+| `GET` | `/tasks/:id` | task key 또는 UUID로 한 task 조회 |
+| `PATCH` | `/tasks/:id` | lifecycle action 또는 field update |
+| `PATCH` | `/tasks/:id/status` | workflow status만 수동 변경 |
+| `GET` | `/projects` | project list 조회 |
+| `GET` | `/projects/:id/settings` | project key 기준 resolved settings 조회 |
+| `PATCH` | `/qa-runs/:id` | Ready-lane QA 결과 업데이트 |
+
+## 예시
+
+```bash
+curl -H "Authorization: Bearer preq_xxxxx" \
+  "https://your-domain.com/api/tasks?status=todo&engine=codex"
+```
+
+## Response와 error format
+
+성공 response는 top-level `data` wrapper 없이 plain JSON object를 반환합니다. Error response는 보통 아래 형태입니다.
+
+```json
+{
+  "error": {
+    "code": "UNAUTHORIZED",
+    "message": "Missing or invalid authorization header"
+  }
+}
+```
+
+전체 request/response shape와 session-cookie endpoint 목록은 [영어 REST API reference](/guide/api/rest-api/)를 기준으로 확인하세요.

@@ -3,14 +3,23 @@ title: 환경 변수
 description: PreqStation web app, PREQ CLI dispatcher, compatibility path에서 쓰는 환경 변수입니다.
 ---
 
-한국어 상세 번역은 아직 준비 중입니다. 최신 전체 reference는 [영어 Environment Variables](/guide/reference/environment-variables/)를 기준으로 유지됩니다.
-
 ## 핵심 구분
 
 - **Web app**: `AUTH_SECRET`, `DATABASE_URL`, `ALLOWED_ORIGINS`, `UNSPLASH_ACCESS_KEY`, `CRON_SECRET`, `EVENT_OUTBOX_RETENTION_DAYS`
 - **PREQ CLI dispatcher**: `PREQSTATION_DISPATCH_HOME`, `PREQSTATION_PROJECTS_FILE`, `PREQSTATION_WORKTREE_ROOT`, `PREQSTATION_REPO_ROOTS`, `PREQSTATION_SERVER_URL`
 - **Worker homes**: `PREQSTATION_WORKER_HOME`, `PREQSTATION_CLAUDE_HOME`, `PREQSTATION_CODEX_HOME`, `PREQSTATION_GEMINI_HOME`
 - **Compatibility only**: `PREQSTATION_API_URL`, `PREQSTATION_TOKEN`, `PREQSTATION_ENGINE`
+
+## 최소 첫 설정
+
+일반적인 hosted 또는 self-hosted web app은 먼저 아래 두 값만 준비하면 됩니다.
+
+```bash
+AUTH_SECRET="<openssl rand -base64 48 로 생성>"
+DATABASE_URL="postgresql://user:pass@host/dbname"
+```
+
+`ALLOWED_ORIGINS`는 추가 first-party origin을 신뢰해야 할 때만 넣으세요. `PREQSTATION_TOKEN`은 shell-helper mode, direct REST automation, 예전 local bridge가 아직 필요할 때만 사용합니다.
 
 ## Token/API key compatibility
 
@@ -24,3 +33,9 @@ export PREQSTATION_ENGINE="claude-code"  # optional
 
 처음 설치라면 token부터 만들지 말고 [빠른 시작](/guide/ko/getting-started/quick-start/)의 PREQ CLI installer 경로를 사용하세요.
 
+## 변경 후 재시작 기준
+
+- Web service 변수(`AUTH_SECRET`, `DATABASE_URL`, `ALLOWED_ORIGINS`)를 바꾸면 web app을 restart 또는 redeploy하세요.
+- Dispatcher 변수(`PREQSTATION_DISPATCH_HOME`, `PREQSTATION_REPO_ROOTS`, worker home 변수)를 바꾸면 Hermes 또는 장기 실행 host process를 재시작하세요.
+
+전체 변수 표와 Docker/CI 예시는 [영어 Environment Variables](/guide/reference/environment-variables/)를 기준으로 유지됩니다.

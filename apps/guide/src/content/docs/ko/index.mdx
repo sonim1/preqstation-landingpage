@@ -24,9 +24,10 @@ PreqStation은 Claude, Codex, Gemini를 실제 프로젝트에 연결하기 위�
 
 ```bash
 npx -y @sonim1/preqstation@latest install
+npx -y @sonim1/preqstation@latest status
 ```
 
-Installer는 기본 CLI 경로, worker runtime support, 원격 MCP 등록, 선택적 dispatcher 설정을 함께 다룹니다. 전체 operator-host command guide는 [PREQ CLI](/guide/ko/getting-started/preq-cli/)를 참고하세요. 웹 앱을 self-hosting하거나 migration을 검증한다면 [웹 앱 설정](/guide/ko/web-app/setup/)으로 이어가면 됩니다.
+첫 실행 뒤에는 어떤 worker runtime이 감지됐는지, 원격 `/mcp` 연결이 등록됐는지, 이 host의 project mapping이 준비됐는지 확인할 수 있어야 합니다. 전체 operator-host command guide는 [PREQ CLI](/guide/ko/getting-started/preq-cli/)를 참고하세요. 웹 앱을 self-hosting하거나 migration을 검증한다면 [웹 앱 설정](/guide/ko/web-app/setup/)으로 이어가면 됩니다.
 
 ## 설정 경로 선택
 
@@ -34,7 +35,7 @@ Installer는 기본 CLI 경로, worker runtime support, 원격 MCP 등록, 선�
 
 - [빠른 시작](/guide/ko/getting-started/quick-start/) — `npx -y @sonim1/preqstation@latest install`, `status`, MCP 등록, project mapping까지 가장 빠르게 진행
 - [PREQ CLI](/guide/ko/getting-started/preq-cli/) — operator-host install, lifecycle check, integration install, project mapping
-- [환경 변수](/guide/ko/reference/environment-variables/) — dispatcher home, worker home, project mapping, token 호환성 변수 확인
+- [환경 변수](/guide/ko/reference/environment-variables/) — 최소 웹 앱 변수, dispatcher home, worker home, project mapping 변수 확인
 
 ### 2. Worker-only 설정
 
@@ -49,7 +50,7 @@ Installer는 기본 CLI 경로, worker runtime support, 원격 MCP 등록, 선�
 ### 4. 웹 앱과 레거시 호환성
 
 - [웹 앱 설정](/guide/ko/web-app/setup/) — 환경 변수, migration, 첫 로그인까지 전체 웹 앱 설정 확인
-- [API Keys](/guide/ko/web-app/api-keys/) — shell-helper mode와 legacy local bridge용 token 설정
+- [레거시 API Keys](/guide/ko/web-app/api-keys/) — shell-helper mode와 legacy local bridge용 token 설정
 
 ## PreqStation 구성 이해하기
 
@@ -60,7 +61,14 @@ Installer는 기본 CLI 경로, worker runtime support, 원격 MCP 등록, 선�
 
 task의 **engine**이 실제로 `claude-code`, `codex`, `gemini-cli` 중 어떤 CLI를 띄울지 결정하고, queued dispatcher 경로는 그와 별도로 동작합니다.
 
-처음 설치라면 PREQ CLI installer부터 실행하세요. worker를 이미 직접 쓰고 있다면 worker-only 설정을 보고, 큐 기반 전달이 필요할 때만 Hermes를 추가하면 됩니다. 예전 token setup은 API key 호환성 문서를 참고하세요.
+처음 설치라면 PREQ CLI installer부터 실행하세요. worker를 이미 직접 쓰고 있다면 worker-only 설정을 보고, 큐 기반 전달이 필요할 때만 Hermes를 추가하면 됩니다. 예전 token setup은 레거시 API key 호환성 문서를 참고하세요.
+
+첫 설정이 끝났다면 다음이 준비되어 있어야 합니다.
+
+- 로컬 `preqstation` command 또는 반복 가능한 `npx` command
+- 사용하는 runtime의 원격 `/mcp` 연결
+- queued work를 받을 host라면 하나 이상의 project mapping
+- 다음으로 읽을 문서: [PREQ CLI](/guide/ko/getting-started/preq-cli/), [워커 설치](/guide/ko/skill/installation/), 또는 [Telegram 연동](/guide/ko/web-app/telegram/)
 
 이 시스템은 “이슈를 모아두는 백로그”보다, 이미 범위가 정해진 작업을 실제로 실행시키는 데 맞습니다.
 

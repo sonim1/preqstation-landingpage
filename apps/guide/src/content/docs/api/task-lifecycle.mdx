@@ -13,6 +13,18 @@ Tasks in PreqStation have two dimensions:
 
 That split is the main difference from the older `in_progress` / `review` model.
 
+## UI, API, and Agent Actions
+
+| User sees | API value | Common action |
+|---|---|---|
+| Inbox column | `inbox` | create a task, then let an agent plan it |
+| Todo column | `todo` | dispatch or start implementation |
+| Hold column | `hold` | fix the blocker or add missing context |
+| Ready column | `ready` | review result, run QA, then decide whether it is done |
+| Done column | `done` | archive or reopen only if follow-up work appears |
+| Queued badge | `run_state=queued` | wait for the dispatcher or inspect Hermes/Telegram |
+| Working badge | payload `run_state=working` | wait for the worker or inspect operator-host logs |
+
 ## Workflow Model
 
 <Mermaid
@@ -116,6 +128,19 @@ stop
 | `ready` | `hold` | Verification fails | `preq_block_task()` |
 
 `preq_update_task_status()` is the manual escape hatch for direct status changes such as reopening or archiving a card.
+
+## Example Timeline
+
+```text
+09:00 user creates PROJ-284 in Inbox
+09:02 agent runs preq_plan_task -> Todo
+09:05 user dispatches with H Telegram -> run_state=queued
+09:06 worker runs preq_start_task -> run_state=working
+09:20 worker runs preq_complete_task -> Ready
+09:25 owner verifies and runs preq_review_task -> Done
+```
+
+The workflow column tells you the review state. The run-state overlay tells you whether an execution process is currently waiting or active.
 
 ## Result Payload
 

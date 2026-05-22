@@ -42,3 +42,5 @@ Hermes는 별도의 dispatch 하네스입니다. 태스크를 받아 프로젝�
 - `done`: 검증까지 끝난 작업
 
 `queued`, `working`, `done`은 run-state overlay입니다. 이 값들은 태스크가 지금 dispatch 대기 중인지, worker가 실행 중인지, 실행이 종료되었는지를 보여주지만 workflow status를 대체하지 않습니다. 예를 들어 `todo` 태스크가 `queued`일 수 있고, 같은 `todo` 태스크가 worker에게 claim되면 `working`으로 보일 수 있습니다. 구현이 끝나면 workflow status는 `ready`로 이동해 리뷰를 기다리고, 검증이 끝났을 때 `done`이 됩니다.
+
+흐름을 직접 확인할 준비가 됐다면 [빠른 시작](/guide/ko/getting-started/quick-start/)으로 이어가세요.

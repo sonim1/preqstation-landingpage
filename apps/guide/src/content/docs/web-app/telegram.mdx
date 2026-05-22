@@ -13,9 +13,13 @@ The web app uses one shared Telegram sender bot token, then routes messages to t
 
 | Need | Configure |
 |---|---|
-| Send tasks, QA, or insights to Hermes | Sender bot token + Hermes Chat ID + Hermes receiver bot |
+| Minimum Hermes test | PreqStation sender bot token + Hermes Chat ID |
+| Production Hermes dispatch | Sender bot token + Hermes Chat ID + Hermes receiver bot + Hermes profile |
+| Ready-lane QA queueing | Production Hermes dispatch plus a mapped project checkout |
 
 The sender bot belongs to PreqStation. A Hermes receiver bot belongs to the Hermes host.
+
+Use the minimum path to prove PreqStation can send to the right chat. Use the production path before relying on queued task execution, because Hermes must be able to parse `/preqstation dispatch`, create a worktree, and launch the selected engine.
 
 ## What Telegram Is Used For
 
@@ -44,6 +48,12 @@ Recommended validation from the settings screen:
 - **Send Hermes Test** when the Hermes channel is enabled
 
 ## Telegram Bots and Chats
+
+The production path has two bots:
+
+```text
+PreqStation sender bot -> Telegram chat -> Hermes receiver bot -> Hermes profile -> preqstation run
+```
 
 ### 1. Create the PreqStation sender bot
 
@@ -279,6 +289,8 @@ insight_prompt_b64=BASE64URL_PROMPT
 4. Confirm Hermes accepts bot-to-bot messages from the PreqStation sender bot
 5. Dispatch a real task with **H Telegram**
 6. Queue a QA run or project insight with **H Telegram** if you use those flows
+
+Successful task dispatch means the Telegram message appears in the Hermes chat, Hermes routes it to the PREQ profile, `preqstation run` starts on the operator host, and the task card shows execution progress without changing the workflow column prematurely.
 
 If the Hermes bot responds to you but ignores PreqStation bot messages, the most common causes are:
 

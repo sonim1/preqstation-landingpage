@@ -13,9 +13,13 @@ Telegram은 일반적인 태스크 작업에는 필수가 아니지만, 웹 앱�
 
 | 필요 | 설정 |
 |---|---|
-| task, QA, insight를 Hermes로 보내기 | sender bot token + Hermes Chat ID + Hermes receiver bot |
+| 최소 Hermes test | PreqStation sender bot token + Hermes Chat ID |
+| production Hermes dispatch | sender bot token + Hermes Chat ID + Hermes receiver bot + Hermes profile |
+| Ready-lane QA 큐잉 | production Hermes dispatch + mapped project checkout |
 
 Sender bot은 PreqStation 쪽 bot입니다. Hermes receiver bot은 Hermes host 쪽 bot입니다.
+
+최소 경로는 PreqStation이 올바른 chat으로 메시지를 보낼 수 있는지 확인할 때 사용합니다. queued task execution에 의존하기 전에는 production 경로까지 설정해서 Hermes가 `/preqstation dispatch`를 parse하고 worktree를 만들고 선택된 engine을 실행할 수 있어야 합니다.
 
 ## Telegram을 어디에 쓰는가
 
@@ -44,6 +48,12 @@ Settings 화면에서 권장하는 검증:
 - Hermes 채널을 켰다면 **Send Hermes Test**
 
 ## Telegram 봇과 채팅방 준비
+
+Production 경로에는 bot이 두 개 있습니다.
+
+```text
+PreqStation sender bot -> Telegram chat -> Hermes receiver bot -> Hermes profile -> preqstation run
+```
 
 ### 1. PreqStation sender bot 만들기
 
@@ -279,6 +289,8 @@ insight_prompt_b64=BASE64URL_PROMPT
 4. PreqStation sender bot이 보낸 메시지에도 Hermes가 반응하는지 확인합니다
 5. 실제 task를 **H Telegram**으로 dispatch해 봅니다
 6. QA run 또는 project insight도 Hermes로 보낼 계획이라면 **H Telegram** target으로 큐잉을 확인합니다
+
+성공한 task dispatch는 Telegram 메시지가 Hermes chat에 나타나고, Hermes가 PREQ profile로 라우팅하고, operator host에서 `preqstation run`이 시작되며, task card가 workflow column을 성급하게 바꾸지 않고 execution progress를 보여주는 상태입니다.
 
 Hermes bot이 내 메시지에는 응답하는데 PreqStation bot 메시지는 무시한다면, 가장 흔한 원인은 아래 둘입니다.
 

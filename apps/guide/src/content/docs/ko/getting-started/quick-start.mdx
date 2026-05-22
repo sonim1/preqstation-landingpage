@@ -3,6 +3,8 @@ title: 빠른 시작
 description: PreqStation을 몇 분 안에 시작합니다.
 ---
 
+빠른 시작은 첫 실행 경로입니다. 목표는 하나입니다. 이 머신이 선택한 agent runtime을 통해 PREQ 작업을 실행할 준비가 됐는지 확인하는 것입니다.
+
 ## 권장 설정 경로
 
 먼저 PREQ CLI installer를 실행하세요. 이 흐름은 로컬 operator host, worker runtime support, 가능한 경우 원격 `/mcp` 등록, project mapping을 준비합니다.
@@ -10,6 +12,23 @@ description: PreqStation을 몇 분 안에 시작합니다.
 ```bash
 npx -y @sonim1/preqstation@latest install
 npx -y @sonim1/preqstation@latest status
+```
+
+installer는 다시 실행해도 괜찮습니다. 이미 설치된 항목을 확인하고, 부족한 설정만 제안합니다.
+
+## 성공 기준
+
+첫 실행 뒤 `status`에서 아래를 확인할 수 있어야 합니다.
+
+- `preqstation` command 또는 반복 가능한 `npx` command를 사용할 수 있음
+- Claude Code, Codex, Gemini CLI 같은 worker runtime 중 하나 이상이 감지됨
+- runtime이 지원하면 `preqstation` 원격 `/mcp` 연결이 등록됨
+- 이 host가 queued dispatch를 받을 예정이라면 project mapping이 준비됨
+
+어떤 항목이 불명확하면 더 자세한 read-only 진단을 실행하세요.
+
+```bash
+npx -y @sonim1/preqstation@latest doctor
 ```
 
 Global install, `update`, `doctor`, JSON output, project mapping, Hermes targeted install, Hermes sync, uninstall까지 전체 명령 reference는 [PREQ CLI](/guide/ko/getting-started/preq-cli/)를 참고하세요.
@@ -22,7 +41,7 @@ Global install, `update`, `doctor`, JSON output, project mapping, Hermes targete
 | Claude Code, Codex, Gemini를 이미 직접 쓰는 경우 | [워커 설치](/guide/ko/skill/installation/) | hosted dispatch support가 필요하면 PREQ CLI |
 | 웹 앱을 self-hosting하거나 migration을 검증하는 경우 | [웹 앱 설정](/guide/ko/web-app/setup/) | 로그인 확인 후 PREQ CLI |
 | Telegram 또는 Hermes dispatch를 운영하는 경우 | [PREQ CLI](/guide/ko/getting-started/preq-cli/) 후 [Telegram](/guide/ko/web-app/telegram/) | 수동 profile fallback |
-| 예전 token 기반 설정을 유지 중인 경우 | [API Keys](/guide/ko/web-app/api-keys/) | runtime이 지원하면 원격 `/mcp` OAuth |
+| 예전 token 기반 설정을 유지 중인 경우 | [레거시 API Keys](/guide/ko/web-app/api-keys/) | runtime이 지원하면 원격 `/mcp` OAuth |
 
 ## 수동 Worker-only MCP 설정
 
@@ -44,88 +63,11 @@ gemini mcp add --scope user --transport http preqstation https://<your-domain>/m
 ## 같은 설정 경로로 이어가기
 
 - **Worker-only 수동 설정** — 전체 CLI installer 경로를 쓰지 않을 때 [워커 설치](/guide/ko/skill/installation/)를 참고하세요
-- **웹 앱 설정** — hosted 설정, self-hosting, migration, 첫 로그인 세부 정보는 [웹 앱 설정](/guide/ko/web-app/setup/)을 참고하세요
 - **Hermes Telegram dispatcher** — Hermes가 Telegram dispatch를 받아야 한다면 [Telegram 연동](/guide/ko/web-app/telegram/)을 참고하세요
+- **Self-hosted 웹 앱** — 환경 변수, migration, 첫 로그인 세부 정보는 [웹 앱 설정](/guide/ko/web-app/setup/)을 참고하세요
+- **레거시 token 호환성** — shell-helper 모드나 예전 local bridge가 아직 bearer token을 요구할 때만 [레거시 API Keys](/guide/ko/web-app/api-keys/)를 참고하세요
 
 터미널에서 직접 worker access만 필요하다면 CLI 설치와 MCP 상태 확인까지만 하고 멈추면 됩니다.
-
-## 호환성: 로컬 웹 앱 개발
-
-이 경로는 웹 앱을 self-hosting해야 하거나, migration-era 설정을 검증해야 하거나, 로컬 개발 환경이 필요한 경우에만 사용하세요.
-
-### 로컬 개발 사전 준비
-
-- **Node.js 22** — [다운로드](https://nodejs.org)
-- **PostgreSQL** — Supabase, Neon, Railway 같은 관리형 서비스나 직접 운영하는 PostgreSQL 모두 사용할 수 있습니다
-- **GitHub 접근 권한** — 웹 앱 소스는 `sonim1/preqstation`에 있습니다
-
-### 1. 저장소 클론
-
-```bash
-git clone git@github.com:sonim1/preqstation.git
-cd preqstation
-```
-
-### 2. 환경 변수 설정
-
-`.env.example`을 `.env.local`로 복사한 뒤 필요한 값을 채우세요.
-
-```bash
-cp .env.example .env.local
-```
-
-그다음 `.env.local`을 수정합니다.
-
-```bash
-# Required
-AUTH_SECRET=<openssl rand -base64 48 로 생성>
-DATABASE_URL=postgresql://...  # PostgreSQL 연결 문자열
-
-# Optional
-ALLOWED_ORIGINS=https://your-app.vercel.app,https://your-app-git-main-user.vercel.app
-CRON_SECRET=<cleanup route용 선택 비밀값>
-```
-
-표준 PostgreSQL 연결 문자열을 제공하는 관리형 서비스나 직접 운영하는 PostgreSQL이면 PreqStation과 함께 사용할 수 있습니다.
-
-### 3. 의존성 설치
-
-```bash
-npm install
-```
-
-### 4. 데이터베이스 마이그레이션
-
-```bash
-npm run db:migrate
-```
-
-### 5. 개발 서버 시작
-
-```bash
-npm run dev
-```
-
-앱은 기본적으로 `http://localhost:3000`에서 실행됩니다. 다른 로컬 포트를 쓰려면 시작 전에 `.env.local`에 `PORT=`를 추가하세요. 로그인하지 않은 상태에서 `/`를 열면 `/login`으로 리다이렉트됩니다. 새 데이터베이스라면 브라우저에서 첫 owner 계정을 만드는 설정 폼이 표시됩니다. 기존 인스턴스라면 `users` 테이블에 저장된 owner 이메일과 비밀번호로 로그인하세요.
-
-## 호환성: API 토큰과 레거시 로컬 브리지
-
-`/api-keys`와 `PREQSTATION_TOKEN`은 shell-helper 모드 또는 레거시 로컬 MCP 브리지를 사용할 때만 필요합니다. 권장 원격 `/mcp` + OAuth 경로에서는 먼저 토큰을 발급할 필요가 없습니다.
-
-1. 로그인한 뒤 `http://localhost:3000/api-keys`를 엽니다. 같은 화면은 워크스페이스 사이드바의 **API Keys**에서도 열 수 있습니다.
-2. **Create API Key** 폼에서 만료 기간을 그대로 두거나 **Expires In**에서 원하는 값을 고릅니다.
-3. 키 이름에 `local-dev` 또는 `codex-laptop`처럼 알아보기 쉬운 이름을 입력하고 **Create Key**를 클릭합니다.
-4. 초록색 **New API key (shown once)** 패널에 표시된 토큰을 바로 복사합니다.
-5. 이 페이지를 닫기 전에 토큰을 로컬 에이전트 환경 변수에 저장하세요. 전체 토큰은 한 번만 표시됩니다.
-
-이 토큰은 해당 호환성 경로에서만 앱 URL과 함께 에이전트 런타임에 설정합니다.
-
-```bash
-export PREQSTATION_API_URL=http://localhost:3000
-export PREQSTATION_TOKEN=preq_your_new_token
-```
-
-토큰 기반 호환성 설정 전체는 [API Keys](/guide/ko/web-app/api-keys/)와 [Environment Variables](/guide/ko/reference/environment-variables/)에서 확인하세요.
 
 ## 다음 단계
 
@@ -134,4 +76,4 @@ export PREQSTATION_TOKEN=preq_your_new_token
 - [웹 앱 설정](/guide/ko/web-app/setup/) — hosted 설정과 self-hosted 로컬 개발 세부 정보
 - [철학](/guide/ko/getting-started/philosophy/) — PreqStation이 왜 존재하는지와 언제 쓰면 좋은지
 - [칸반 보드 가이드](/guide/ko/web-app/kanban/) — 태스크 보드 사용법
-- [API Keys](/guide/ko/web-app/api-keys/) — shell-helper 및 레거시 브리지 토큰 관리
+- [레거시 API Keys](/guide/ko/web-app/api-keys/) — shell-helper 및 레거시 브리지 토큰 관리

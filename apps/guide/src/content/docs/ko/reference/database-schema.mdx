@@ -1,0 +1,40 @@
+---
+title: 데이터베이스 스키마
+description: PreqStation의 핵심 table 관계와 역할을 요약합니다.
+---
+
+PreqStation database는 task, project metadata, work log, audit history를 저장합니다.
+
+## 관계 요약
+
+```text
+users
+  -> projects
+      -> project_settings
+      -> tasks
+          -> task_label_assignments -> task_labels
+          -> work_logs
+      -> qa_runs
+  -> oauth_clients / oauth_codes / mcp_connections
+  -> api_tokens / audit_logs / security_events / user_settings
+  -> events_outbox
+```
+
+실행 이력을 디버깅할 때는 `tasks`, `work_logs`, `events_outbox`를 함께 보세요. `tasks`는 현재 상태, `work_logs`는 사람이 읽을 수 있는 결과 기록, `events_outbox`는 append-only activity stream을 담당합니다.
+
+## 핵심 table
+
+| Table | 역할 |
+|---|---|
+| `users` | single-owner account |
+| `projects` | repository와 deployment target |
+| `project_settings` | deploy strategy, default branch, agent instruction 등 project별 key/value 설정 |
+| `tasks` | Kanban card, workflow status, execution overlay |
+| `task_labels` / `task_label_assignments` | owner-scoped label taxonomy |
+| `work_logs` | agent result, manual work log, verification note |
+| `events_outbox` | downstream polling용 event stream |
+| `mcp_connections` | active OAuth-backed MCP connection |
+| `api_tokens` | legacy bearer token metadata |
+| `audit_logs` / `security_events` | mutation과 auth/security event 기록 |
+
+전체 column 목록은 [영어 Database Schema reference](/guide/reference/database-schema/)를 기준으로 확인하세요.

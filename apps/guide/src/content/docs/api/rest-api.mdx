@@ -10,6 +10,16 @@ The PreqStation API is split into two surfaces:
 - **Bearer-token endpoints** for agents
 - **Session-cookie endpoints** for the web UI
 
+## Endpoint Matrix
+
+| Surface | Auth | Primary reader | Use for |
+|---|---|---|---|
+| `/api/tasks` | Bearer token | agents and direct REST automation | task listing, creation, lifecycle updates |
+| `/api/projects` | Bearer token | agents resolving project settings | project and deployment metadata |
+| `/api/qa-runs/:id` | Bearer token | QA agents | reporting branch-level QA results |
+| web app session endpoints | Session cookie | browser UI | settings, labels, todos, dispatch actions |
+| `/api/events` | Session cookie | internal integrations | polling owner-scoped activity events |
+
 ## Base URL
 
 ```text
@@ -309,7 +319,7 @@ These endpoints are used by the PreqStation web app.
 | `POST` | `/projects` | Create project |
 | `PATCH` | `/projects/:id` | Update project and project settings |
 
-### API Keys
+### Legacy API Keys
 
 | Method | Endpoint | Purpose |
 |---|---|---|

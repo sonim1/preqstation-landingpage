@@ -29,7 +29,8 @@ Plan for a maintenance window. This guide uses standard PostgreSQL dump-and-rest
 3. Restore the backup with `pg_restore` or `psql`
 4. Update `DATABASE_URL` in your PreqStation environment
 5. Run `npm run db:migrate`
-6. Log in to PreqStation and verify task access and API-key flows
+6. Compare row counts for core tables before switching traffic
+7. Log in to PreqStation and verify task access and legacy API-key flows if you use them
 
 ## Example commands
 
@@ -63,8 +64,18 @@ pg_dump \
 psql "$TARGET_DATABASE_URL" < preqstation.sql
 ```
 
+Check representative row counts before and after restore:
+
+```bash
+psql "$SOURCE_DATABASE_URL" -c "select count(*) as tasks from tasks;"
+psql "$TARGET_DATABASE_URL" -c "select count(*) as tasks from tasks;"
+psql "$SOURCE_DATABASE_URL" -c "select count(*) as work_logs from work_logs;"
+psql "$TARGET_DATABASE_URL" -c "select count(*) as work_logs from work_logs;"
+```
+
 ## After the move
 
 - Update `DATABASE_URL` anywhere PreqStation runs
 - Restart the app or redeploy so it picks up the new environment
 - Sign in and verify existing tasks, API keys, and owner-only flows behave as expected
+- Keep the old database read-only until the new app has accepted login, task reads, and at least one non-destructive API read

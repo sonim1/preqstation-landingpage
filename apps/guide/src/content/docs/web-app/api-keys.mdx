@@ -1,9 +1,16 @@
 ---
-title: API Keys
-description: Legacy Bearer tokens for shell-helper compatibility.
+title: Legacy API Keys
+description: Legacy Bearer tokens for shell-helper compatibility and direct REST automation.
 ---
 
-Remote `/mcp` plus browser OAuth is the default install path for Claude Code and Codex. This page is the legacy compatibility path for shell-helper mode and direct REST automation. Visiting `/api-keys` redirects to `/connections?legacy=1`.
+Remote `/mcp` plus browser OAuth is the default install path for Claude Code, Codex, and Gemini CLI. This page is the legacy compatibility path for shell-helper mode and direct REST automation. Visiting `/api-keys` redirects to `/connections?legacy=1`.
+
+Do not create a token for a new install unless a specific client cannot use remote MCP OAuth.
+
+| Path | Use it when | Secret you manage |
+|---|---|---|
+| Remote `/mcp` + OAuth | Claude Code, Codex, or Gemini CLI can connect to the hosted MCP endpoint | Browser OAuth session |
+| Legacy API key | Shell helpers, direct REST scripts, or an older local bridge still need bearer auth | `PREQSTATION_TOKEN` |
 
 API tokens allow coding agents to authenticate to the PreqStation REST API and perform task operations without OAuth.
 

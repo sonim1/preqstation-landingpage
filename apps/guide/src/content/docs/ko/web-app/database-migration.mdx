@@ -29,7 +29,8 @@ import { Aside } from '@astrojs/starlight/components';
 3. `pg_restore` 또는 `psql`로 백업을 복원합니다.
 4. PreqStation 환경의 `DATABASE_URL`을 새 데이터베이스로 바꿉니다.
 5. `npm run db:migrate`를 실행합니다.
-6. PreqStation에 로그인해서 태스크 접근과 API 키 흐름을 확인합니다.
+6. traffic을 바꾸기 전에 핵심 table row count를 비교합니다.
+7. PreqStation에 로그인해서 태스크 접근과 레거시 API 키 흐름을 확인합니다.
 
 ## 예시 명령
 
@@ -63,8 +64,18 @@ pg_dump \
 psql "$TARGET_DATABASE_URL" < preqstation.sql
 ```
 
+대표 row count도 source와 target에서 비교하세요.
+
+```bash
+psql "$SOURCE_DATABASE_URL" -c "select count(*) as tasks from tasks;"
+psql "$TARGET_DATABASE_URL" -c "select count(*) as tasks from tasks;"
+psql "$SOURCE_DATABASE_URL" -c "select count(*) as work_logs from work_logs;"
+psql "$TARGET_DATABASE_URL" -c "select count(*) as work_logs from work_logs;"
+```
+
 ## 이전 후 확인할 일
 
 - PreqStation이 실행되는 모든 곳의 `DATABASE_URL`을 새 값으로 업데이트합니다.
 - 앱을 재시작하거나 다시 배포해 새 환경 변수를 반영합니다.
-- 로그인해서 기존 태스크, API 키, owner 전용 흐름이 예상대로 동작하는지 확인합니다.
+- 로그인해서 기존 태스크, 레거시 API 키, owner 전용 흐름이 예상대로 동작하는지 확인합니다.
+- 새 앱에서 로그인, task read, 비파괴 API read가 확인될 때까지 이전 데이터베이스를 read-only 상태로 보관하세요.

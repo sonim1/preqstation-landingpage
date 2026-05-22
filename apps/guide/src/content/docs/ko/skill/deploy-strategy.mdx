@@ -1,0 +1,32 @@
+---
+title: 배포 전략
+description: PreqStation task execution의 git push/PR 전략을 요약합니다.
+---
+
+Task에서 git 작업을 하기 전에 agent는 project deployment strategy를 확인해야 합니다. 이 설정은 code가 어디에 commit/push되고 PR이 만들어지는지 결정합니다.
+
+## Strategy 선택
+
+| 원하는 흐름 | 값 | 결과 |
+|---|---|---|
+| 가장 빠른 single-owner 흐름 | `direct_commit` | 검증된 worktree 변경이 default branch에 반영됨 |
+| merge 전 review | `feature_branch` + `auto_pr=true` | task branch push 후 PR 생성 |
+| PR은 수동으로 관리 | `feature_branch` + `auto_pr=false` | branch push 후 review할 결과만 보고 |
+
+Strategy는 code push 위치를 바꾸는 설정이며, task lifecycle status 자체를 바꾸지는 않습니다.
+
+## 기본값
+
+strategy가 없거나 invalid이면 아래처럼 해석됩니다.
+
+```json
+{
+  "strategy": "direct_commit",
+  "default_branch": "main",
+  "auto_pr": false,
+  "commit_on_review": true,
+  "squash_merge": true
+}
+```
+
+전체 execution step과 cleanup 규칙은 [영어 Deploy Strategy reference](/guide/skill/deploy-strategy/)를 참고하세요.

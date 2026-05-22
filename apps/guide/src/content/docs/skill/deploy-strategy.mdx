@@ -7,6 +7,16 @@ import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
 Before executing any git operations on a task, agents must resolve and follow the project's deployment strategy. This contract defines how code changes should be committed, pushed, and deployed.
 
+## Choose a Strategy
+
+| You want | Use | Result |
+|---|---|---|
+| fastest single-owner flow | `direct_commit` | verified work lands on the default branch |
+| review before merge | `feature_branch` with `auto_pr=true` | task branch is pushed and a PR is opened |
+| manual PR creation | `feature_branch` with `auto_pr=false` | branch is pushed and the result reports what to review |
+
+Changing strategy affects where code is pushed, not how task lifecycle status works.
+
 ## Strategy Types
 
 Each project configures one of two active strategies:

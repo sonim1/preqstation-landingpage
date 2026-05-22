@@ -1,0 +1,42 @@
+---
+title: 인증
+description: Web UI, remote MCP, legacy bearer token 인증 방식을 요약합니다.
+---
+
+PreqStation은 세 가지 인증 경로를 사용합니다.
+
+| 인증 방식 | 사용처 | 새 설치 기본값 | 관리 위치 |
+|---|---|---|---|
+| OAuth-backed remote MCP | Claude Code, Codex, Gemini CLI | 예 | `/connections` |
+| Session cookie | browser web UI | 예 | login/logout flow |
+| Bearer token | shell helper, direct REST script, 예전 local bridge | 아니오 | `/connections?legacy=1` 또는 legacy token flow |
+
+확신이 없다면 remote MCP OAuth부터 시작하세요. `PREQSTATION_TOKEN`은 특정 compatibility client가 요구할 때만 발급합니다.
+
+## Remote MCP 등록
+
+```bash
+# Claude Code
+claude mcp add -s user --transport http preqstation https://your-domain.com/mcp
+
+# Codex
+codex mcp add preqstation --url https://your-domain.com/mcp
+
+# Gemini CLI
+gemini mcp add --scope user --transport http preqstation https://your-domain.com/mcp
+```
+
+브라우저 OAuth flow가 뜨면 완료하고, 연결은 `/connections`에서 확인하거나 revoke합니다.
+
+## Bearer token
+
+Bearer token은 legacy compatibility와 direct REST automation용입니다.
+
+```bash
+curl -H "Authorization: Bearer preq_xxxxx" \
+  https://your-domain.com/api/tasks
+```
+
+`401 Unauthorized`는 보통 인증이 없거나 만료된 상태입니다. `403 Forbidden`은 인증은 됐지만 owner-scoped resource 권한이 맞지 않는 상태입니다.
+
+자세한 cookie flags, token expiration, best practices는 [영어 Authentication reference](/guide/api/authentication/)를 참고하세요.

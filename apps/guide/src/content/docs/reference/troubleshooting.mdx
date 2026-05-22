@@ -7,6 +7,18 @@ import { Tabs, TabItem } from '@astrojs/starlight/components';
 
 The standard PreqStation setup path starts with the PREQ CLI and uses the hosted `/mcp` endpoint plus browser OAuth. Use the token-based steps below only if you are troubleshooting shell-helper mode or the legacy local stdio bridge.
 
+## Symptom Map
+
+| Symptom | Start here | First command |
+|---|---|---|
+| No PREQ tools appear in Claude, Codex, or Gemini | Remote MCP & OAuth Issues | `preqstation status` |
+| Browser auth never completes | Remote MCP & OAuth Issues | `claude mcp get preqstation` or runtime equivalent |
+| Dispatch cannot find the project checkout | Project Mapping Issues | `preqstation setup status` |
+| Hermes receives a message but does not run work | Dispatcher Execution Issues | `preqstation status hermes` |
+| Worker CLI works in your terminal but not in Hermes | Worktree & Git Issues | `preqstation doctor` |
+| `npm install` fails in a task worktree | Build & Compilation Errors | inspect the package manager log |
+| Shell helper returns `401 Unauthorized` | Legacy Compatibility Issues | confirm `PREQSTATION_TOKEN` |
+
 ## Start with Doctor and Status
 
 Run the read-only CLI checks before manual runtime debugging:
@@ -160,7 +172,7 @@ curl -H "Authorization: Bearer $PREQSTATION_TOKEN" \
 # ✅ Good: "https://preqstation-lp.vercel.app"
 ```
 
-5. If you still need the token-based setup reference, see [API Keys](/guide/web-app/api-keys/) and [Environment Variables](/guide/reference/environment-variables/).
+5. If you still need the token-based setup reference, see [Legacy API Keys](/guide/web-app/api-keys/) and [Environment Variables](/guide/reference/environment-variables/).
 
 ### "Invalid token" error on every MCP call in shell-helper mode or the legacy local bridge
 
