@@ -20,6 +20,13 @@ npx -y @sonim1/preqstation@latest status
 
 `install` is idempotent. Run it again when you want the guided installer to check what is already present and offer missing setup steps.
 
+## Choose `npx` or Global Install
+
+| Use | Best when | Command |
+|---|---|---|
+| `npx -y @sonim1/preqstation@latest ...` | You are trying PREQ once, debugging a host, or avoiding global packages | `npx -y @sonim1/preqstation@latest status` |
+| `npm install -g @sonim1/preqstation` | This machine will regularly execute queued work or host Hermes dispatch | `preqstation status` |
+
 ## Global Install
 
 If this host will operate PREQ regularly, install the command globally:
@@ -47,6 +54,25 @@ preqstation uninstall hermes
 `update` refreshes installed CLI surfaces and reruns MCP-backed setup automation where supported. `status` and `doctor` are read-only checks; use the JSON variants when another script or monitoring process needs structured output.
 
 `uninstall` removes selected installed surfaces. Project mappings and OAuth cache are intentionally separate from those installed surfaces, so do not rely on uninstall as a credential or mapping reset.
+
+## Reading Status Output
+
+Start with these three read-only checks before editing runtime files by hand:
+
+```bash
+preqstation status
+preqstation doctor
+preqstation setup status
+```
+
+Use the output like this:
+
+| Check | Healthy signal | If it is missing |
+|---|---|---|
+| CLI availability | `preqstation` resolves or the `npx` command runs | Re-run `install`, then confirm Node.js 22+ is active |
+| Worker runtime | Claude Code, Codex, or Gemini CLI is detected | Install the worker CLI or fix the host `PATH` |
+| Remote MCP | the `preqstation` server points at `https://<your-domain>/mcp` | Register MCP again or complete browser OAuth |
+| Project mapping | each project key resolves to an absolute local path | Run `preqstation setup auto` or `preqstation setup set` |
 
 ## Project Mapping
 

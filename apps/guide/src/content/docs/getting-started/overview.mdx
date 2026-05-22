@@ -10,6 +10,8 @@ PreqStation is an execution platform for AI-agent-driven development workflows. 
 
 If you want the product story before the system diagram, read [Product Philosophy](/guide/getting-started/philosophy/) first.
 
+Read this page when you want to understand how the pieces fit together. If you are trying to get your first runtime connected, use [Quick Start](/guide/getting-started/quick-start/) first and come back here after `status` is readable.
+
 ## Recommended First Step
 
 If you're starting PreqStation from scratch, begin with [Quick Start](/guide/getting-started/quick-start/). It starts with `npx -y @sonim1/preqstation@latest install`, then checks local runtime, MCP, and project setup. If you are self-hosting the web app or validating migrations, use [Web App Setup](/guide/web-app/setup/).
@@ -43,7 +45,7 @@ PreqStation separates the trigger path from the task engine:
 	</Card>
 </CardGrid>
 
-Some legacy identifiers still mention `preqstation-dispatcher` for compatibility.
+Some legacy identifiers still mention `preqstation-dispatcher` for compatibility. Treat those as internal compatibility names, not a separate user-facing setup path.
 
 <Aside>
 The public canonical repository is `sonim1/preqstation`. The web app source used for local development is still being migrated there, so setup instructions may reference the current development repository until that move is complete.
@@ -76,6 +78,12 @@ flowchart LR
 />
 
 ## Data Flow
+
+The shortest lifecycle is:
+
+```text
+create task -> plan task -> implement in worker -> complete to Ready -> verify -> mark Done
+```
 
 ### Task Creation and Notification
 

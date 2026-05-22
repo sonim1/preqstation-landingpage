@@ -5,6 +5,16 @@ description: PreqStation MCP tool reference for the current lifecycle model.
 
 The PreqStation MCP server exposes read-only tools for discovery and mutation tools for lifecycle work. All mutation tools carry an engine identity.
 
+## Side-Effect Summary
+
+| Category | Tools | Side effect |
+|---|---|---|
+| Read-only | `preq_list_projects`, `preq_list_tasks`, `preq_get_task`, `preq_get_project_settings` | no workflow mutation |
+| Planning | `preq_plan_task` | moves `inbox` to `todo` |
+| Execution | `preq_start_task`, `preq_complete_task`, `preq_block_task` | changes run state or workflow state |
+| Review | `preq_review_task`, `preq_update_qa_run` | records verification and may move `ready` to `done` |
+| Manual override | `preq_update_task_status`, `preq_update_task_note`, `preq_delete_task` | direct user/operator mutation |
+
 ## Tool Categories
 
 ### Read-only tools

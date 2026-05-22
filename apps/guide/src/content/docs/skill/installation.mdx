@@ -15,6 +15,14 @@ npx -y @sonim1/preqstation@latest install
 
 That installer can set up worker runtime support and remote MCP registration together. Use this page when you intentionally need a manual worker-only install or when the CLI installer cannot complete the MCP registration for your local runtime.
 
+## Worker or Dispatcher?
+
+| Setup | Means | Go here |
+|---|---|---|
+| Worker setup | the agent can call PREQ tools directly through remote MCP | this page |
+| Dispatcher setup | the web app can queue work to an operator host through Hermes/Telegram | [Telegram Integration](/guide/web-app/telegram/) |
+| Shell helper setup | a compatibility client uses bearer tokens without MCP | [Legacy API Keys](/guide/web-app/api-keys/) |
+
 ## Prerequisites
 
 - Node.js 22+ installed
@@ -150,6 +158,18 @@ Codex does not use a Claude-style local plugin or channel runtime. Keep it on th
 - **Engine** still remains separate and can be `claude-code`, `codex`, or `gemini-cli`.
 
 If you only want direct worker usage, this page is enough. If you want queued dispatch from the web app, continue with [Telegram Integration](/guide/web-app/telegram/).
+
+## Verify the Worker Connection
+
+After registration, confirm the runtime can see the server and make a first request:
+
+| Runtime | Check |
+|---|---|
+| Claude Code | `claude mcp get preqstation` |
+| Codex CLI | `codex mcp get preqstation` |
+| Gemini CLI | `gemini mcp list` |
+
+If the runtime reports authentication is needed, complete the browser OAuth flow and retry the same check.
 
 ## Gemini CLI
 

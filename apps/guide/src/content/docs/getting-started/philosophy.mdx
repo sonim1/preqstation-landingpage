@@ -42,3 +42,5 @@ The real workflow remains more precise:
 - `done` for verified completion
 
 `queued`, `working`, and `done` are run-state overlays. They show whether a task is waiting for dispatch, currently claimed by a worker, or finished at the execution layer, but they do not replace workflow status. For example, a `todo` task can be `queued`, then become `working` once a worker claims it. After implementation, the workflow status moves to `ready` for review, and only verified work becomes `done`.
+
+If you are ready to try the workflow, continue with [Quick Start](/guide/getting-started/quick-start/).

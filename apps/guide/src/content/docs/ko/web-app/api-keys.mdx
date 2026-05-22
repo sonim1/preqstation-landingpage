@@ -1,11 +1,16 @@
 ---
-title: API Keys
-description: Shell-helper compatibility를 위한 legacy Bearer token입니다.
+title: 레거시 API Keys
+description: Shell-helper compatibility와 direct REST automation을 위한 legacy Bearer token입니다.
 ---
 
-한국어 상세 번역은 아직 준비 중입니다. 최신 전체 reference는 [영어 API Keys](/guide/web-app/api-keys/)를 기준으로 유지됩니다.
-
 Remote `/mcp`와 browser OAuth가 Claude Code, Codex CLI, Gemini CLI의 기본 설치 경로입니다. `/api-keys`와 `PREQSTATION_TOKEN`은 shell-helper mode, direct REST automation, 예전 local bridge flow가 아직 필요할 때만 사용하는 compatibility path입니다.
+
+새 설치라면 특정 client가 remote MCP OAuth를 사용할 수 없을 때만 token을 만드세요.
+
+| 경로 | 언제 쓰나 | 관리하는 secret |
+|---|---|---|
+| Remote `/mcp` + OAuth | Claude Code, Codex, Gemini CLI가 hosted MCP endpoint에 연결 가능할 때 | browser OAuth session |
+| Legacy API key | Shell helper, direct REST script, 예전 local bridge가 bearer auth를 요구할 때 | `PREQSTATION_TOKEN` |
 
 ## 언제 token을 쓰나
 
@@ -23,4 +28,3 @@ export PREQSTATION_TOKEN=preq_xxxxxxxxxxxxx
 ```
 
 Token은 한 번만 표시되므로 공유하거나 version control에 저장하지 마세요. 노출되면 legacy token management flow에서 revoke한 뒤 새 token을 발급하세요.
-

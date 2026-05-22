@@ -1,0 +1,26 @@
+---
+title: MCP 도구
+description: PreqStation MCP tool category와 side effect를 요약합니다.
+---
+
+PreqStation MCP server는 read-only discovery tool과 lifecycle mutation tool을 제공합니다. Mutation tool은 engine identity를 함께 다룹니다.
+
+## Side effect 요약
+
+| Category | Tools | Side effect |
+|---|---|---|
+| Read-only | `preq_list_projects`, `preq_list_tasks`, `preq_get_task`, `preq_get_project_settings` | workflow 변경 없음 |
+| Planning | `preq_plan_task` | `inbox` -> `todo` |
+| Execution | `preq_start_task`, `preq_complete_task`, `preq_block_task` | run state 또는 workflow state 변경 |
+| Review | `preq_review_task`, `preq_update_qa_run` | verification 기록, `ready` -> `done` 가능 |
+| Manual override | `preq_update_task_status`, `preq_update_task_note`, `preq_delete_task` | 직접 mutation |
+
+## Engine 값
+
+- `claude-code`
+- `codex`
+- `gemini-cli`
+
+Mutation tool은 explicit `engine`, 기존 task engine, MCP client auto-detection, `PREQSTATION_ENGINE`, `codex` fallback 순서로 engine을 결정합니다.
+
+전체 parameter와 request/response 예시는 [영어 MCP Tools reference](/guide/skill/mcp-tools/)를 참고하세요.

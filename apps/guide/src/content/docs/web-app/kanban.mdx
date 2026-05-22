@@ -31,6 +31,18 @@ flowchart LR
 
 Archived tasks are hidden from the active board and handled through manual archive actions.
 
+## First Task Walkthrough
+
+Use this quick demo flow after setup:
+
+1. Click **+ New Task** and create a small task with a clear title, description, engine, and acceptance criteria.
+2. Leave the task in **Inbox** until an agent or operator has planned it.
+3. Move it to **Todo** only after the implementation path is clear.
+4. Dispatch or start the task. The card may show a `Queued` or `Working` badge without changing columns.
+5. Review the submitted result in **Ready**, run QA if needed, then move it to **Done** only after verification.
+
+Success looks like a card whose workflow column tells you the review state, while its overlay tells you whether execution is queued or running.
+
 ## Ready Lane QA
 
 The Ready lane includes QA runs for each project branch. Use the QA action on a Ready task to:
@@ -95,6 +107,15 @@ Each card shows:
 - **Labels** — Custom tags
 
 Click a card to view full details, edit, or add comments.
+
+## What to Check Before Done
+
+Before moving a Ready card to Done, confirm:
+
+- the branch or PR link points to the submitted change
+- the task result includes implementation notes and verification evidence
+- any QA run you queued has passed or its failure is understood
+- the acceptance criteria in the card are satisfied
 
 ## Bulk Actions
 

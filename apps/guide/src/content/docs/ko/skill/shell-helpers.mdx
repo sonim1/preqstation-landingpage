@@ -1,0 +1,36 @@
+---
+title: 셸 헬퍼
+description: MCP를 사용할 수 없을 때 쓰는 shell wrapper compatibility path입니다.
+---
+
+대부분의 새 설치는 이 페이지가 필요 없습니다. 가능한 경우 remote PREQ `/mcp` endpoint와 OAuth를 사용하세요.
+
+## 언제 쓰나
+
+- 사용 중인 runtime이 remote HTTP MCP를 아직 지원하지 않을 때
+- direct REST automation을 임시로 유지해야 할 때
+- 예전 local bridge flow를 migration 중일 때
+
+## 기본 설정
+
+```bash
+export PREQSTATION_API_URL="https://preqstation.example.com"
+export PREQSTATION_TOKEN="preq_xxxxx"
+source /path/to/preqstation-skill/scripts/preqstation-api.sh
+```
+
+이 helper script는 JSON 처리를 위해 `jq`가 필요합니다.
+
+## 가능한 한 remote MCP로 돌아가기
+
+runtime이 remote HTTP MCP를 지원하게 되면 아래 경로로 되돌리세요.
+
+```bash
+claude mcp add -s user --transport http preqstation https://<your-domain>/mcp
+codex mcp add preqstation --url https://<your-domain>/mcp
+gemini mcp add --scope user --transport http preqstation https://<your-domain>/mcp
+```
+
+그 뒤 다른 script가 필요로 하지 않는다면 shell startup file에서 `PREQSTATION_TOKEN`을 제거하세요.
+
+전체 helper list는 [영어 Shell Helpers reference](/guide/skill/shell-helpers/)를 참고하세요.

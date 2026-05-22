@@ -13,6 +13,18 @@ PreqStation의 태스크는 두 축으로 관리됩니다.
 
 이 분리가 이전의 `in_progress` / `review` 모델과 가장 큰 차이입니다.
 
+## UI, API, Agent 액션
+
+| 사용자가 보는 것 | API 값 | 일반적인 액션 |
+|---|---|---|
+| Inbox 컬럼 | `inbox` | 태스크 생성 후 agent가 계획 |
+| Todo 컬럼 | `todo` | 구현 dispatch 또는 start |
+| Hold 컬럼 | `hold` | blocker 해결 또는 context 추가 |
+| Ready 컬럼 | `ready` | 결과 검토, QA 실행, Done 여부 결정 |
+| Done 컬럼 | `done` | 필요할 때만 archive 또는 reopen |
+| Queued badge | `run_state=queued` | dispatcher 또는 Hermes/Telegram 상태 확인 |
+| Working badge | payload `run_state=working` | worker 진행 또는 operator-host log 확인 |
+
 ## 워크플로우 모델
 
 <Mermaid
@@ -101,3 +113,30 @@ stop
 <Aside>
 `preq_start_task()`는 실행 claim 액션입니다. 더 이상 `in_progress` 같은 별도 워크플로우 컬럼을 만들지 않습니다.
 </Aside>
+
+## 워크플로우 전환
+
+| From | To | Trigger | Command |
+|---|---|---|---|
+| `inbox` | `todo` | 계획 업로드 | `preq_plan_task()` |
+| `todo` | `ready` | 구현 완료 | `preq_complete_task()` |
+| `hold` | `ready` | blocker 해결 및 작업 완료 | `preq_complete_task()` |
+| `ready` | `done` | 검증 성공 | `preq_review_task()` |
+| `inbox` | `hold` | 계획 단계에서 막힘 | `preq_block_task()` |
+| `todo` | `hold` | 구현 단계에서 막힘 | `preq_block_task()` |
+| `ready` | `hold` | 검증 실패 | `preq_block_task()` |
+
+`preq_update_task_status()`는 reopen이나 archive 같은 수동 status 변경을 위한 escape hatch입니다.
+
+## 예시 타임라인
+
+```text
+09:00 user가 PROJ-284를 Inbox에 생성
+09:02 agent가 preq_plan_task 실행 -> Todo
+09:05 user가 H Telegram dispatch -> run_state=queued
+09:06 worker가 preq_start_task 실행 -> run_state=working
+09:20 worker가 preq_complete_task 실행 -> Ready
+09:25 owner가 검증 후 preq_review_task 실행 -> Done
+```
+
+워크플로우 컬럼은 review state를, run-state overlay는 현재 실행 프로세스가 대기/실행 중인지 보여줍니다.

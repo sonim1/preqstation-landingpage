@@ -1,0 +1,42 @@
+---
+title: 이벤트
+description: events_outbox와 /api/events polling 흐름을 요약합니다.
+---
+
+PreqStation은 mutation event를 `events_outbox`에 기록합니다. web app과 내부 integration은 `/api/events`를 통해 이 event를 읽어 audit, notification, activity timeline에 사용할 수 있습니다.
+
+이 페이지는 첫 설치 경로가 아닙니다. 내부 activity view, notification process, audit integration을 만들 때 참고하세요.
+
+## 주요 event type
+
+| Event | 의미 |
+|---|---|
+| `TASK_CREATED` | task 생성 |
+| `TASK_STATUS_CHANGED` | workflow status 변경 |
+| `TASK_UPDATED` | task field 변경 |
+| `TASK_DELETED` | task 삭제 |
+| `WORKLOG_CREATED` | work log 생성 |
+| `PROJECT_CREATED` | project 생성 |
+
+## Polling pattern
+
+1. `/api/events`를 호출합니다.
+2. 반환된 event를 `id` 오름차순으로 처리합니다.
+3. `nextCursor`를 저장합니다.
+4. 다음 polling에서 `?after=<nextCursor>`를 사용합니다.
+
+```json
+{
+  "events": [
+    {
+      "id": "42",
+      "eventType": "TASK_STATUS_CHANGED",
+      "entityType": "task",
+      "entityId": "PROJ-123"
+    }
+  ],
+  "nextCursor": "42"
+}
+```
+
+처리 실패 시 같은 cursor로 재시도하고, catch-up job에서는 `limit=100`을 사용하세요. 자세한 schema는 [영어 Events reference](/guide/api/events/)를 참고하세요.

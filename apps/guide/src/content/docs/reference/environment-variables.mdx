@@ -7,6 +7,17 @@ import { Tabs, TabItem } from '@astrojs/starlight/components';
 
 This reference documents all environment variables used by the PreqStation web app, worker compatibility paths, and the PREQ CLI dispatcher.
 
+## Minimal First Setup
+
+For a normal hosted or self-hosted web app, start with only the web service variables:
+
+```bash
+AUTH_SECRET="<generate with: openssl rand -base64 48>"
+DATABASE_URL="postgresql://user:pass@host/dbname"
+```
+
+Add `ALLOWED_ORIGINS` only when the app must trust additional first-party origins. Add `PREQSTATION_TOKEN` only for shell-helper mode, direct REST automation, or an older local bridge.
+
 ## PreqStation web app
 
 Server-side variables for the main PreqStation web service. Owner credentials are no longer read from environment variables. Fresh instances create the first owner account at `/login`, and existing deployments store owner credentials in the `users` table.
@@ -200,6 +211,8 @@ RUN npx -y @sonim1/preqstation@latest install
 | **Local Development** | `PORT` | Read by `npm run dev` to override the local web-app port |
 | **Shell Helper / Legacy Bridge** | `PREQSTATION_API_URL`, `PREQSTATION_TOKEN`, `PREQSTATION_ENGINE` | Available to the token-based shell helper flow and legacy local MCP bridge |
 | **CLI Dispatcher** | `PREQSTATION_DISPATCH_HOME`, `PREQSTATION_PROJECTS_FILE`, `PREQSTATION_WORKTREE_ROOT`, `PREQSTATION_WORKER_HOME`, `PREQSTATION_CLAUDE_HOME`, `PREQSTATION_CODEX_HOME`, `PREQSTATION_GEMINI_HOME`, `PREQSTATION_MEMORY_PATH`, `PREQSTATION_REPO_ROOTS`, `PREQSTATION_SERVER_URL` | Controls CLI installer state, project mapping, worker homes, repo scans, and detached worktree execution |
+
+After changing web service variables, restart or redeploy the web app. After changing dispatcher variables, restart Hermes or the long-running host process so it inherits the new environment.
 
 ## Secrets Best Practices
 

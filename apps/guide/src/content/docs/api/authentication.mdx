@@ -5,6 +5,16 @@ description: Bearer tokens and session authentication.
 
 PreqStation uses session cookies for the web UI, OAuth-backed MCP connections for Claude Code, Codex, and Gemini CLI, and bearer tokens only for shell-helper compatibility or direct REST automation.
 
+## Which Auth Path Applies?
+
+| Auth path | Used by | Default for new installs | Manage it from |
+|---|---|---|---|
+| OAuth-backed remote MCP | Claude Code, Codex, Gemini CLI | Yes | `/connections` |
+| Session cookie | browser web UI | Yes | login/logout flow |
+| Bearer token | shell helpers, direct REST scripts, older local bridge flows | No | `/connections?legacy=1` or the legacy token flow |
+
+If you are unsure, start with OAuth-backed remote MCP. Create a bearer token only when a specific compatibility client still requires `PREQSTATION_TOKEN`.
+
 ## OAuth-Backed MCP
 
 **For Claude Code, Codex, and Gemini CLI.**
@@ -105,6 +115,8 @@ Token is missing, invalid, or expired:
 }
 ```
 
+For remote MCP, `401` usually means the browser OAuth flow was not completed or the connection expired. Re-run the runtime MCP command, then retry the first real tool request.
+
 ### 403 Forbidden
 
 Token is valid but scoped to different owner (single-owner system):
@@ -117,6 +129,8 @@ Token is valid but scoped to different owner (single-owner system):
   }
 }
 ```
+
+For bearer tokens, `403` means the token authenticated but cannot access the requested owner-scoped resource.
 
 ## Best Practices
 

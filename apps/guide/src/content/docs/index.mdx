@@ -20,13 +20,14 @@ PreqStation is an execution system for developers using Claude, Codex, and Gemin
 
 ## Recommended First Step
 
-If you're setting up PreqStation for the first time, start with [Quick Start](/guide/getting-started/quick-start/). The shortest path now starts with the PREQ CLI installer:
+If you're setting up PreqStation for the first time, start with [Quick Start](/guide/getting-started/quick-start/). The shortest path is one installer command plus one status check:
 
 ```bash
 npx -y @sonim1/preqstation@latest install
+npx -y @sonim1/preqstation@latest status
 ```
 
-The installer covers the default CLI path, worker runtime support, remote MCP registration, and optional dispatcher setup. Use [PREQ CLI](/guide/getting-started/preq-cli/) for the full operator-host command guide. If you are self-hosting the web app or validating migrations, continue with [Web App Setup](/guide/web-app/setup/).
+After that first run, you should know which worker runtimes are available, whether the remote `/mcp` connection is registered, and whether your local project mapping is ready. Use [PREQ CLI](/guide/getting-started/preq-cli/) for the full operator-host command guide. If you are self-hosting the web app or validating migrations, continue with [Web App Setup](/guide/web-app/setup/).
 
 ## Choose Your Setup Path
 
@@ -34,7 +35,7 @@ The installer covers the default CLI path, worker runtime support, remote MCP re
 
 - [Quick Start](/guide/getting-started/quick-start/) — fastest path through `npx -y @sonim1/preqstation@latest install`, `status`, MCP registration, and project mapping
 - [PREQ CLI](/guide/getting-started/preq-cli/) — operator-host install, lifecycle checks, integration installs, and project mapping
-- [Environment Variables](/guide/reference/environment-variables/) — dispatcher home, worker homes, project mapping, and token compatibility variables
+- [Environment Variables](/guide/reference/environment-variables/) — minimal web app variables, dispatcher home, worker homes, and project mapping variables
 
 ### 2. Worker-Only Setup
 
@@ -49,7 +50,7 @@ Choose a dispatcher only if you want queued delivery from the web app.
 ### 4. Web App and Legacy Compatibility
 
 - [Web App Setup](/guide/web-app/setup/) — full web app setup details, environment variables, migrations, and first-login flow
-- [API Keys](/guide/web-app/api-keys/) — token setup for shell-helper mode and legacy local bridge paths
+- [Legacy API Keys](/guide/web-app/api-keys/) — token setup only for shell-helper mode and older local bridge paths
 
 ## How PreqStation Fits Together
 
@@ -60,7 +61,14 @@ Choose a dispatcher only if you want queued delivery from the web app.
 
 The task **engine** decides whether the run launches `claude-code`, `codex`, or `gemini-cli`. Any queued dispatcher path is separate from that engine choice.
 
-Fresh install: run the PREQ CLI installer. Already using a worker directly: use worker-only setup. Need queued delivery: add Hermes. Maintaining an old token setup: use the API key compatibility docs.
+Fresh install: run the PREQ CLI installer. Already using a worker directly: use worker-only setup. Need queued delivery: add Hermes. Maintaining an old token setup: use the legacy API key compatibility docs.
+
+After the first successful setup you should have:
+
+- a local `preqstation` command or a repeatable `npx` command
+- a registered remote `/mcp` connection for the runtime you use
+- at least one project mapping if this host will execute queued work
+- a clear next page: [PREQ CLI](/guide/getting-started/preq-cli/), [Worker Installation](/guide/skill/installation/), or [Telegram Integration](/guide/web-app/telegram/)
 
 Use it when a task is already scoped and you want reliable execution, not when you need a generic issue backlog.
 

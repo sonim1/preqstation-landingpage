@@ -216,9 +216,9 @@ export default defineConfig({
               slug: 'web-app/kanban',
             },
             {
-              label: 'API Keys',
+              label: 'Legacy API Keys',
               translations: {
-                ko: 'API 키',
+                ko: '레거시 API 키',
               },
               slug: 'web-app/api-keys',
             },

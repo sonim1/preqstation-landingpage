@@ -3,7 +3,19 @@ title: 문제 해결
 description: PreqStation task 실행 문제를 진단하는 시작점입니다.
 ---
 
-한국어 상세 번역은 아직 준비 중입니다. 현재 구현 상태와 맞는 최신 문제 해결 절차는 영어 문서를 기준으로 유지됩니다.
+현재 구현 상태와 맞는 전체 예시는 [영어 Troubleshooting](/guide/reference/troubleshooting/)을 기준으로 유지됩니다. 아래는 가장 자주 막히는 지점을 빠르게 찾기 위한 한국어 요약입니다.
+
+## 증상별 시작점
+
+| 증상 | 먼저 볼 곳 | 첫 명령 |
+|---|---|---|
+| Claude, Codex, Gemini에 PREQ tools가 보이지 않음 | Remote MCP & OAuth | `preqstation status` |
+| browser auth가 끝나지 않음 | Remote MCP & OAuth | `claude mcp get preqstation` 또는 runtime별 equivalent |
+| dispatch가 project checkout을 못 찾음 | Project Mapping | `preqstation setup status` |
+| Hermes는 메시지를 받지만 작업을 실행하지 않음 | Dispatcher Execution | `preqstation status hermes` |
+| 내 terminal에서는 worker CLI가 되지만 Hermes에서는 실패함 | Host PATH / environment | `preqstation doctor` |
+| task worktree에서 `npm install`이 실패함 | Build & Compilation | package manager log 확인 |
+| shell helper가 `401 Unauthorized`를 반환함 | Legacy Compatibility | `PREQSTATION_TOKEN` 확인 |
 
 ## 먼저 doctor/status 실행
 

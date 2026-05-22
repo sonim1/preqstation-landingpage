@@ -20,6 +20,13 @@ npx -y @sonim1/preqstation@latest status
 
 `install`은 반복 실행해도 됩니다. 이미 설치된 항목을 확인하고 빠진 설정을 안내받고 싶을 때 다시 실행하세요.
 
+## `npx`와 전역 설치 선택
+
+| 방식 | 언제 쓰나 | 명령 |
+|---|---|---|
+| `npx -y @sonim1/preqstation@latest ...` | PREQ를 처음 시험하거나 global package를 피하고 싶을 때 | `npx -y @sonim1/preqstation@latest status` |
+| `npm install -g @sonim1/preqstation` | 이 머신이 계속 queued work나 Hermes dispatch를 실행할 때 | `preqstation status` |
+
 ## 전역 설치
 
 이 host에서 PREQ를 계속 운영한다면 command를 전역으로 설치합니다.
@@ -47,6 +54,23 @@ preqstation uninstall hermes
 `update`는 설치된 CLI surface를 갱신하고, 지원되는 경우 MCP 기반 setup automation을 다시 실행합니다. `status`와 `doctor`는 read-only 점검 명령입니다. 다른 script나 monitoring process가 구조화된 출력이 필요할 때 JSON variant를 사용하세요.
 
 `uninstall`은 선택한 installed surface를 제거합니다. Project mapping과 OAuth cache는 installed surface와 분리되어 있으므로, uninstall을 credential 또는 mapping reset으로 기대하지 마세요.
+
+## Status 출력 읽기
+
+수동으로 runtime 파일을 고치기 전에 아래 read-only 점검부터 실행하세요.
+
+```bash
+preqstation status
+preqstation doctor
+preqstation setup status
+```
+
+| 확인 항목 | 정상 신호 | 빠졌을 때 |
+|---|---|---|
+| CLI availability | `preqstation`이 resolve되거나 `npx` command가 실행됨 | `install`을 다시 실행하고 Node.js 22+를 확인 |
+| Worker runtime | Claude Code, Codex, Gemini CLI 중 하나가 감지됨 | worker CLI 설치 또는 host `PATH` 수정 |
+| Remote MCP | `preqstation` server가 `https://<your-domain>/mcp`를 가리킴 | MCP를 다시 등록하거나 browser OAuth 완료 |
+| Project mapping | project key가 absolute local path로 resolve됨 | `preqstation setup auto` 또는 `preqstation setup set` 실행 |
 
 ## Project Mapping
 

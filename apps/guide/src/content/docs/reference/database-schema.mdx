@@ -7,6 +7,23 @@ import { Aside } from '@astrojs/starlight/components';
 
 The PreqStation database stores tasks, project metadata, work logs, and audit history. The current development schema lives in `projects-manager/lib/db/schema.ts` until the web app source is moved into the canonical `preqstation` repository.
 
+## Relationship Summary
+
+```text
+users
+  -> projects
+      -> project_settings
+      -> tasks
+          -> task_label_assignments -> task_labels
+          -> work_logs
+      -> qa_runs
+  -> oauth_clients / oauth_codes / mcp_connections
+  -> api_tokens / audit_logs / security_events / user_settings
+  -> events_outbox
+```
+
+Read `tasks`, `work_logs`, and `events_outbox` together when debugging execution history. The task row stores current state, work logs store durable human-readable results, and events provide the append-only activity stream.
+
 ## Core Tables
 
 ### users

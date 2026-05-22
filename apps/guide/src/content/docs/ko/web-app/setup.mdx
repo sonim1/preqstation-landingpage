@@ -27,7 +27,16 @@ gemini mcp add --scope user --transport http preqstation https://<your-domain>/m
 4. 브라우저 OAuth 흐름이 뜨면 완료합니다.
 5. 필요한 런타임에 맞춰 [워커 설치](/guide/ko/skill/installation/) 또는 [Telegram 연동](/guide/ko/web-app/telegram/)으로 이어서 진행합니다.
 
-API 토큰은 shell-helper 모드 또는 레거시 로컬 MCP 브리지를 써야 할 때만 나중에 필요합니다. 그 호환성 경로는 [API Keys](/guide/ko/web-app/api-keys/)와 [Environment Variables](/guide/ko/reference/environment-variables/)에서 확인하세요.
+API 토큰은 shell-helper 모드 또는 레거시 로컬 MCP 브리지를 써야 할 때만 나중에 필요합니다. 그 호환성 경로는 [레거시 API Keys](/guide/ko/web-app/api-keys/)와 [Environment Variables](/guide/ko/reference/environment-variables/)에서 확인하세요.
+
+## 설정 경로 선택
+
+| 상황 | 볼 섹션 | 완료 기준 |
+|---|---|---|
+| 이미 hosted 배포에 접근할 수 있음 | 대부분의 사용자에게 권장되는 경로 | `/connections`가 연결되고 runtime이 `/mcp`에 접근함 |
+| 웹 앱을 직접 운영함 | Self-hosted 로컬 개발 단계 | `/login`이 열리고 첫 owner 계정이 존재함 |
+| 데이터베이스 이전을 검증함 | 데이터베이스 마이그레이션 | migration 후 row count와 로그인 흐름이 맞음 |
+| 예전 bearer-token 자동화가 필요함 | 레거시 API Keys | `preq_` token이 compatibility client에만 저장됨 |
 
 ## Self-hosted 로컬 개발 사전 준비
 
@@ -99,6 +108,8 @@ npm run dev
 
 앱은 기본적으로 `http://localhost:3000`에서 열립니다. 다른 로컬 포트를 쓰려면 `.env.local`에 `PORT=`를 추가하세요. 로그인하지 않은 상태에서 `/`를 방문하면 `/login`으로 이동합니다.
 
+로컬 설정이 성공했다면 로그인 페이지가 열리고, 새 데이터베이스에서는 첫 owner 계정 생성 폼이 표시되며, 기존 데이터베이스에서는 저장된 owner 계정으로 로그인할 수 있어야 합니다.
+
 ## 첫 로그인
 
 1. `http://localhost:3000/login`으로 이동합니다.
@@ -123,7 +134,7 @@ Hermes 전체 흐름은 [Telegram 연동](/guide/ko/web-app/telegram/) 문서를
 
 토큰은 AES-GCM으로 암호화되어 저장됩니다.
 
-## Shell Helper 모드 또는 레거시 로컬 브리지용 API 키
+## Shell Helper 모드 또는 로컬 브리지용 레거시 API 키
 
 에이전트가 권장 원격 `/mcp` + OAuth 경로를 사용할 수 없고, shell-helper 모드 또는 레거시 로컬 브리지로 인증해야 할 때만 토큰을 발급하세요.
 
@@ -138,4 +149,4 @@ export PREQSTATION_API_URL=http://localhost:3000
 export PREQSTATION_TOKEN=preq_your_new_token
 ```
 
-전체 호환성 설정은 [API Keys](/guide/ko/web-app/api-keys/)와 [Environment Variables](/guide/ko/reference/environment-variables/)에서 확인하세요.
+전체 호환성 설정은 [레거시 API Keys](/guide/ko/web-app/api-keys/)와 [Environment Variables](/guide/ko/reference/environment-variables/)에서 확인하세요.

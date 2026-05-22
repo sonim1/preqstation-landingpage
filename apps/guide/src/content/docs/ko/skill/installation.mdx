@@ -15,6 +15,14 @@ npx -y @sonim1/preqstation@latest install
 
 이 installer는 worker runtime support와 원격 MCP 등록을 함께 처리할 수 있습니다. 이 페이지는 의도적으로 수동 worker-only 설치가 필요하거나, CLI installer가 현재 로컬 runtime의 MCP 등록을 완료하지 못했을 때 사용하세요.
 
+## Worker인지 Dispatcher인지 먼저 구분
+
+| 설정 | 의미 | 볼 문서 |
+|---|---|---|
+| Worker setup | agent가 remote MCP로 PREQ tools를 직접 호출 | 이 페이지 |
+| Dispatcher setup | 웹 앱이 Hermes/Telegram을 통해 operator host에 work를 queue | [Telegram 연동](/guide/ko/web-app/telegram/) |
+| Shell helper setup | MCP 없이 bearer token으로 호환성 client를 실행 | [레거시 API Keys](/guide/ko/web-app/api-keys/) |
+
 ## 사전 준비
 
 - Node.js 22+ 설치
@@ -150,6 +158,18 @@ Codex는 Claude 스타일의 로컬 plugin이나 channel runtime이 필요하지
 - **engine**은 별도이며 `claude-code`, `codex`, `gemini-cli` 중 실제 실행 CLI를 결정합니다.
 
 직접 worker만 쓸 거라면 이 페이지로 충분합니다. 웹 앱 queued dispatch가 필요하면 [Telegram 연동](/guide/ko/web-app/telegram/)으로 넘어가세요.
+
+## Worker 연결 확인
+
+등록 후 runtime이 server를 볼 수 있고 첫 요청을 보낼 수 있는지 확인합니다.
+
+| Runtime | 확인 |
+|---|---|
+| Claude Code | `claude mcp get preqstation` |
+| Codex CLI | `codex mcp get preqstation` |
+| Gemini CLI | `gemini mcp list` |
+
+runtime이 인증이 필요하다고 표시하면 browser OAuth flow를 완료한 뒤 같은 확인 명령을 다시 실행하세요.
 
 ## Gemini CLI
 
