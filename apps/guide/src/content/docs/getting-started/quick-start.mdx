@@ -7,7 +7,7 @@ Quick Start is the first-run path. Keep it focused on one outcome: this machine 
 
 ## Recommended Setup Path
 
-Run the PREQ CLI installer first. It prepares the local operator host, worker runtime support, remote `/mcp` registration where possible, and project mapping.
+Run the PREQ CLI installer first. It prepares the local operator host, detects worker runtimes, installs selected dispatch entrypoints, and creates project mappings.
 
 ```bash
 npx -y @sonim1/preqstation@latest install
@@ -22,8 +22,8 @@ After the first run, `status` should tell you:
 
 - the `preqstation` command is available or the `npx` command is usable
 - at least one worker runtime is detected, such as Claude Code, Codex, or Gemini CLI
-- the `preqstation` remote `/mcp` connection is registered when your runtime supports it
 - project mappings are present if this host will receive queued dispatches
+- optional direct-client `/mcp` compatibility is registered only if you chose that setup
 
 If any line is unclear, run the deeper read-only check:
 
@@ -43,9 +43,9 @@ For the full command reference, including global install, `update`, `doctor`, JS
 | Operating Telegram or Hermes dispatch | [PREQ CLI](/guide/getting-started/preq-cli/), then [Telegram](/guide/web-app/telegram/) | Manual profile fallback |
 | Maintaining an old token-based setup | [Legacy API Keys](/guide/web-app/api-keys/) | Remote `/mcp` OAuth when the runtime supports it |
 
-## Manual Worker-Only MCP Setup
+## Manual Direct-Client MCP Setup
 
-Use this only when the CLI installer cannot register MCP for your runtime or when you intentionally want a worker-only setup.
+Use this only when you intentionally want an agent client to call PREQ MCP tools directly. Detached dispatch workers use the PREQ CLI instruction file and task commands instead.
 
 ```bash
 # Claude Code
@@ -62,12 +62,12 @@ Complete the browser OAuth flow when prompted. Codex often starts this during `a
 
 ## Continue with the Setup Paths
 
-- **Worker-only manual setup** — use [Worker Installation](/guide/skill/installation/) when you do not want the full CLI installer path
+- **Worker-only manual setup** — use [Worker Installation](/guide/skill/installation/) only for direct-client MCP compatibility
 - **Hermes Telegram dispatcher** — use [Telegram Integration](/guide/web-app/telegram/) when Hermes should receive Telegram dispatches
 - **Self-hosted web app** — use [Web App Setup](/guide/web-app/setup/) for environment variables, migrations, and first-login details
 - **Legacy token compatibility** — use [Legacy API Keys](/guide/web-app/api-keys/) only when shell-helper mode or an older local bridge still needs bearer tokens
 
-If you only need direct worker access from your terminal, stop after the CLI install and MCP status checks.
+If you only need direct worker access from your terminal, stop after the CLI install and status checks.
 
 ## Next Steps
 

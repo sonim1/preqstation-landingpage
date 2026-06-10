@@ -12,7 +12,7 @@ PreqStation is designed as a single-owner system with comprehensive security con
 | Surface | Primary control | Operator responsibility |
 |---|---|---|
 | Web UI | signed `httpOnly` session cookies | keep `AUTH_SECRET` secret and use HTTPS |
-| Remote MCP | OAuth authorization code flow with PKCE | review and revoke connections in `/connections` |
+| Remote MCP compatibility | OAuth authorization code flow with PKCE | review and revoke direct-client connections in `/connections` |
 | Legacy REST tokens | SHA-256 hashed bearer tokens | issue only for compatibility clients and rotate when exposed |
 | Telegram dispatch | encrypted sender bot token plus Hermes allowlist | protect both bot tokens and keep bot-to-bot delivery narrow |
 | Database | owner-scoped PostgreSQL RLS | avoid sharing the owner account or database credentials |
@@ -37,7 +37,7 @@ Cookies are signed to prevent tampering and cannot be accessed by JavaScript.
 
 ### MCP OAuth and Connections
 
-- **Remote MCP** uses OAuth authorization code flow with PKCE and bearer access tokens.
+- **Remote MCP compatibility** uses OAuth authorization code flow with PKCE and bearer access tokens.
 - **OAuth clients** are stored in `oauth_clients`, and short-lived auth codes are stored in `oauth_codes`.
 - **Active installs** are stored in `mcp_connections` with display name, engine, status, last-used timestamp, and expiry.
 - **Owner review and revocation** happen in `/connections`, which is the page to use for OAuth-backed installs.
@@ -183,7 +183,7 @@ Before running a production deployment, confirm:
 - `AUTH_SECRET` is generated from strong randomness and is not reused across unrelated environments
 - the app is served over HTTPS
 - `ALLOWED_ORIGINS` contains only first-party origins you actually use
-- remote MCP connections in `/connections` are recognizable and current
+- optional remote MCP connections in `/connections` are recognizable and current if you use direct-client access
 - legacy API keys exist only for clients that cannot use OAuth
 - Telegram bot tokens are saved through **Settings > Telegram**, not committed into `.env`
 - audit logs and security events are reviewed after setup or credential rotation

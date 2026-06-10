@@ -30,3 +30,5 @@ strategy가 없거나 invalid이면 아래처럼 해석됩니다.
 ```
 
 전체 execution step과 cleanup 규칙은 [영어 Deploy Strategy reference](/guide/skill/deploy-strategy/)를 참고하세요.
+
+Detached dispatch worker는 이 전략을 `.preqstation-instructions.txt`의 PREQ CLI command로 수행합니다. 기본 lifecycle command는 `preqstation task get`, `preqstation project settings --project`, `preqstation task complete --json-file`, `preqstation task block --reason-file`입니다.

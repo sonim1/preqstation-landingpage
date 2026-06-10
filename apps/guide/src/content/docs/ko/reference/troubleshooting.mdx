@@ -34,11 +34,12 @@ preqstation status --json
 
 1. Server URL과 remote `/mcp` endpoint가 올바른지 확인합니다.
 2. OAuth login flow가 끝났는지 확인합니다.
-3. Claude Code, Codex CLI, Gemini CLI의 MCP registration을 확인합니다.
+3. Direct-client MCP compatibility를 쓰는 경우에만 Claude Code, Codex CLI, Gemini CLI의 MCP registration을 확인합니다.
 4. `preqstation setup status`, `preqstation setup auto`, `preqstation setup set`으로 local project mapping을 확인합니다.
 5. `claude`, `codex`, `gemini` 실행 파일이 host process `PATH`에서 보이는지 확인합니다.
 6. `fnm` 같은 session-scoped Node 설정에만 의존했다면 host process 환경을 고치고 Hermes를 재시작합니다.
 7. Hermes profile에 terminal/tool execution이 켜져 있는지 확인합니다.
 8. `PREQSTATION_TOKEN`과 `/api-keys`는 shell-helper mode 또는 legacy local bridge compatibility path에서만 확인합니다.
+9. Global CLI failure는 `~/.preqstation/logs/error.log`를 확인하고, stack trace가 필요하면 `--debug` 또는 `PREQSTATION_DEBUG=1`을 사용합니다.
 
 전체 단계와 예시는 [영어 Troubleshooting](/guide/reference/troubleshooting/)을 참고하세요.

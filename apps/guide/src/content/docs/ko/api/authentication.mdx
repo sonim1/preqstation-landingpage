@@ -3,17 +3,18 @@ title: 인증
 description: Web UI, remote MCP, legacy bearer token 인증 방식을 요약합니다.
 ---
 
-PreqStation은 세 가지 인증 경로를 사용합니다.
+PreqStation은 web UI session, 일반 dispatch host를 위한 PREQ CLI local state, optional direct-client MCP OAuth, legacy bearer token 경로를 사용합니다.
 
 | 인증 방식 | 사용처 | 새 설치 기본값 | 관리 위치 |
 |---|---|---|---|
-| OAuth-backed remote MCP | Claude Code, Codex, Gemini CLI | 예 | `/connections` |
+| PREQ CLI auth/state | local operator host, Hermes dispatch, direct `preqstation run` | 예 | `preqstation auth`, `preqstation status`, `~/.preqstation` |
+| OAuth-backed remote MCP | direct-client Claude Code, Codex, Gemini CLI compatibility | 아니오 | `/connections` |
 | Session cookie | browser web UI | 예 | login/logout flow |
 | Bearer token | shell helper, direct REST script, 예전 local bridge | 아니오 | `/connections?legacy=1` 또는 legacy token flow |
 
-확신이 없다면 remote MCP OAuth부터 시작하세요. `PREQSTATION_TOKEN`은 특정 compatibility client가 요구할 때만 발급합니다.
+확신이 없다면 [빠른 시작](/guide/ko/getting-started/quick-start/)의 PREQ CLI 경로부터 시작하세요. Remote MCP OAuth는 agent client가 PREQ MCP tool을 직접 호출해야 할 때만 추가합니다. `PREQSTATION_TOKEN`은 특정 compatibility client가 요구할 때만 발급합니다.
 
-## Remote MCP 등록
+## Remote MCP compatibility 등록
 
 ```bash
 # Claude Code

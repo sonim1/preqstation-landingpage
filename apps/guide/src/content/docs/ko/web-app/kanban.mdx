@@ -25,10 +25,10 @@ flowchart LR
 
 | 상태 | 의미 | 액션 |
 |---|---|---|
-| **Inbox** | 새 태스크, 아직 계획 전 | 에이전트가 `preq_plan_task` 실행 후 Todo로 이동 |
-| **Todo** | 계획 완료, 에이전트 작업 가능 | `preq_start_task`로 작업 시작 |
+| **Inbox** | 새 태스크, 아직 계획 전 | 에이전트가 보통 `preqstation task plan`으로 계획을 업로드 |
+| **Todo** | 계획 완료, 에이전트 작업 가능 | `preqstation task start`로 작업 claim |
 | **Hold** | 막혔거나 일시정지 | blocker 해결 후 재개 |
-| **Ready** | 구현 완료, 검증 대기 | 검증 후 `preq_review_task`로 Done 이동 |
+| **Ready** | 구현 완료, 검증 대기 | 검증 후 `preqstation task review` 또는 UI로 Done 이동 |
 | **Done** | 검증 완료 | 필요 시 재오픈 또는 archive |
 
 Archived는 활성 보드에 보이지 않으며 수동 archive 흐름으로 다뤄집니다.

@@ -27,19 +27,19 @@ npx -y @sonim1/preqstation@latest install
 npx -y @sonim1/preqstation@latest status
 ```
 
-After that first run, you should know which worker runtimes are available, whether the remote `/mcp` connection is registered, and whether your local project mapping is ready. Use [PREQ CLI](/guide/getting-started/preq-cli/) for the full operator-host command guide. If you are self-hosting the web app or validating migrations, continue with [Web App Setup](/guide/web-app/setup/).
+After that first run, you should know which worker runtimes are available, whether your local project mapping is ready, and whether any optional direct-client MCP compatibility was installed. Use [PREQ CLI](/guide/getting-started/preq-cli/) for the full operator-host command guide. If you are self-hosting the web app or validating migrations, continue with [Web App Setup](/guide/web-app/setup/).
 
 ## Choose Your Setup Path
 
 ### 1. CLI Default Setup
 
-- [Quick Start](/guide/getting-started/quick-start/) — fastest path through `npx -y @sonim1/preqstation@latest install`, `status`, MCP registration, and project mapping
+- [Quick Start](/guide/getting-started/quick-start/) — fastest path through `npx -y @sonim1/preqstation@latest install`, `status`, runtime detection, and project mapping
 - [PREQ CLI](/guide/getting-started/preq-cli/) — operator-host install, lifecycle checks, integration installs, and project mapping
-- [Environment Variables](/guide/reference/environment-variables/) — minimal web app variables, dispatcher home, worker homes, and project mapping variables
+- [Environment Variables](/guide/reference/environment-variables/) — minimal web app variables, CLI home, worker homes, and project mapping variables
 
 ### 2. Worker-Only Setup
 
-- [Worker Installation](/guide/skill/installation/) — manual Claude, Codex, or Gemini worker setup when you do not want the full CLI installer path
+- [Worker Installation](/guide/skill/installation/) — manual direct-client MCP compatibility for Claude, Codex, or Gemini
 
 ### 3. Dispatcher Setup
 
@@ -55,7 +55,7 @@ Choose a dispatcher only if you want queued delivery from the web app.
 ## How PreqStation Fits Together
 
 - **PreqStation web app** — Central web app with the Kanban board, REST API, dispatch action UI, Telegram delivery, and execution overlays
-- **preqstation-skill** — Agent-side package for worker MCP access across Claude Code, Codex, and Gemini CLI
+- **preqstation-skill** — Legacy/manual package for direct-client MCP access across Claude Code, Codex, and Gemini CLI
 - **PREQ CLI** — User-facing npm package and command: `@sonim1/preqstation` and `preqstation`
 - **preqstation-dispatcher** — Historical/internal dispatcher surface behind Hermes execution. Some plugin/config identifiers still mention `preqstation-dispatcher` for compatibility.
 
@@ -66,7 +66,7 @@ Fresh install: run the PREQ CLI installer. Already using a worker directly: use 
 After the first successful setup you should have:
 
 - a local `preqstation` command or a repeatable `npx` command
-- a registered remote `/mcp` connection for the runtime you use
+- an optional direct-client `/mcp` connection only if you chose that compatibility setup
 - at least one project mapping if this host will execute queued work
 - a clear next page: [PREQ CLI](/guide/getting-started/preq-cli/), [Worker Installation](/guide/skill/installation/), or [Telegram Integration](/guide/web-app/telegram/)
 

@@ -5,7 +5,7 @@ description: Install and operate the @sonim1/preqstation CLI for local operator-
 
 The PREQ CLI is the public npm package `@sonim1/preqstation` and the user-facing command `preqstation`.
 
-Use it on the local machine or host that will execute or dispatch PREQ tasks. It prepares operator-host setup for the pieces you choose: Hermes entrypoints, Claude Code/Codex/Gemini worker runtime support, PREQSTATION MCP registration, and project mappings.
+Use it on the local machine or host that will execute or dispatch PREQ tasks. It prepares operator-host setup for the pieces you choose: Hermes entrypoints, worker runtime detection, detached worktree state, logs, and project mappings.
 
 The CLI does not replace the web app. The web app remains the task and control plane for creating tasks, dispatching work, and reviewing results.
 
@@ -51,7 +51,7 @@ preqstation uninstall
 preqstation uninstall hermes
 ```
 
-`update` refreshes installed CLI surfaces and reruns MCP-backed setup automation where supported. `status` and `doctor` are read-only checks; use the JSON variants when another script or monitoring process needs structured output.
+`update` refreshes installed CLI surfaces and host support. `status` and `doctor` are read-only checks; use the JSON variants when another script or monitoring process needs structured output.
 
 `uninstall` removes selected installed surfaces. Project mappings and OAuth cache are intentionally separate from those installed surfaces, so do not rely on uninstall as a credential or mapping reset.
 
@@ -71,7 +71,7 @@ Use the output like this:
 |---|---|---|
 | CLI availability | `preqstation` resolves or the `npx` command runs | Re-run `install`, then confirm Node.js 22+ is active |
 | Worker runtime | Claude Code, Codex, or Gemini CLI is detected | Install the worker CLI or fix the host `PATH` |
-| Remote MCP | the `preqstation` server points at `https://<your-domain>/mcp` | Register MCP again or complete browser OAuth |
+| Direct-client MCP compatibility | the `preqstation` server points at `https://<your-domain>/mcp` when you opted into that setup | Register MCP again or complete browser OAuth |
 | Project mapping | each project key resolves to an absolute local path | Run `preqstation setup auto` or `preqstation setup set` |
 
 ## Project Mapping
@@ -86,7 +86,7 @@ preqstation setup status
 preqstation setup unset PROJ
 ```
 
-`setup auto` scans `PREQSTATION_REPO_ROOTS` when set, otherwise `~/projects`. It matches local git origins against PREQ project repository URLs. Shared mappings are stored in `~/.preqstation-dispatch/projects.json`.
+`setup auto` scans `PREQSTATION_REPO_ROOTS` when set, otherwise `~/projects`. It matches local git origins against PREQ project repository URLs. Shared mappings are stored in `~/.preqstation/projects.json`.
 
 Use `setup set` when the checkout is outside the scanned roots or when you want to pin a project key to an exact path.
 
@@ -108,11 +108,17 @@ preqstation sync hermes
 preqstation sync hermes --force
 ```
 
+If `install`, `update`, or `sync hermes` reports that a gateway restart is required, restart Hermes before the next dispatch:
+
+```bash
+hermes gateway restart
+```
+
 Hermes must have terminal/tool execution enabled. A chat-only Hermes profile cannot create worktrees or launch local worker CLIs.
 
 ## Manual Worker Setup
 
-Use the CLI first for normal local setup. Manual MCP registration and worker-only setup remain available when the CLI cannot register a runtime or when you intentionally want direct worker access without dispatcher setup.
+Use the CLI first for normal local setup. Manual MCP registration and worker-only setup remain available when you intentionally want direct-client PREQ tool access without detached dispatch.
 
 Token and API key paths are compatibility paths for shell helpers and older local bridges. The recommended remote `/mcp` flow uses OAuth where the runtime supports it.
 

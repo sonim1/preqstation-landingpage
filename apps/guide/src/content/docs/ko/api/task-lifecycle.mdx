@@ -64,6 +64,8 @@ Run state는 워크플로우 상태와 별도로 추적됩니다.
 
 Telegram dispatch가 먼저 `queued`를 설정할 수 있고, 이후 `preq_start_task()`가 active working 상태로 올립니다.
 
+아래 예시는 API lifecycle reference라 MCP tool name을 사용합니다. Detached dispatch worker는 `.preqstation-instructions.txt` 안의 동등한 `preqstation task ...` command를 받습니다.
+
 ## 라이프사이클 브랜치
 
 에이전트는 태스크를 한 번 읽고, 현재 상태에 맞는 브랜치 하나만 수행합니다.

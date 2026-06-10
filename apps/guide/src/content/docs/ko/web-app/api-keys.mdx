@@ -3,13 +3,14 @@ title: 레거시 API Keys
 description: Shell-helper compatibility와 direct REST automation을 위한 legacy Bearer token입니다.
 ---
 
-Remote `/mcp`와 browser OAuth가 Claude Code, Codex CLI, Gemini CLI의 기본 설치 경로입니다. `/api-keys`와 `PREQSTATION_TOKEN`은 shell-helper mode, direct REST automation, 예전 local bridge flow가 아직 필요할 때만 사용하는 compatibility path입니다.
+PREQ CLI가 새 operator host의 기본 설치 경로입니다. Remote `/mcp`와 browser OAuth는 Claude Code, Codex CLI, Gemini CLI가 PREQ MCP tool을 직접 호출해야 할 때 쓰는 optional direct-client compatibility입니다. `/api-keys`와 `PREQSTATION_TOKEN`은 shell-helper mode, direct REST automation, 예전 local bridge flow가 아직 필요할 때만 사용하는 compatibility path입니다.
 
-새 설치라면 특정 client가 remote MCP OAuth를 사용할 수 없을 때만 token을 만드세요.
+새 설치라면 특정 client가 PREQ CLI 또는 optional remote MCP OAuth를 사용할 수 없을 때만 token을 만드세요.
 
 | 경로 | 언제 쓰나 | 관리하는 secret |
 |---|---|---|
-| Remote `/mcp` + OAuth | Claude Code, Codex, Gemini CLI가 hosted MCP endpoint에 연결 가능할 때 | browser OAuth session |
+| PREQ CLI | operator host가 인증, project mapping, dispatch/direct run을 실행할 때 | `~/.preqstation` 아래 CLI auth cache |
+| Remote `/mcp` + OAuth | direct-client Claude Code, Codex, Gemini CLI가 hosted MCP tool을 직접 호출해야 할 때 | browser OAuth session |
 | Legacy API key | Shell helper, direct REST script, 예전 local bridge가 bearer auth를 요구할 때 | `PREQSTATION_TOKEN` |
 
 ## 언제 token을 쓰나

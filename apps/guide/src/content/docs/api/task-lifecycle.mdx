@@ -64,6 +64,8 @@ Run state is tracked independently from workflow status:
 
 Telegram dispatch can mark a task as `queued` before an agent picks it up. `preq_start_task()` upgrades that to the active working state.
 
+The examples below use MCP tool names because this is an API lifecycle reference. Detached dispatch workers receive equivalent `preqstation task ...` commands in `.preqstation-instructions.txt`.
+
 ## Lifecycle Branches
 
 Agents fetch the task once, resolve the current workflow status once, then execute exactly one matching branch.

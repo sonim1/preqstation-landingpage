@@ -3,14 +3,15 @@ title: 보안
 description: PreqStation의 인증, 권한, token, audit model을 요약합니다.
 ---
 
-PreqStation은 single-owner system으로 설계되어 있습니다. 보안 모델은 web session, remote MCP OAuth, legacy bearer token, Telegram dispatch, PostgreSQL RLS로 나뉩니다.
+PreqStation은 single-owner system으로 설계되어 있습니다. 보안 모델은 web session, PREQ CLI local state, optional remote MCP OAuth, legacy bearer token, Telegram dispatch, PostgreSQL RLS로 나뉩니다.
 
 ## 보안 모델 요약
 
 | Surface | 주요 control | 운영자가 확인할 것 |
 |---|---|---|
 | Web UI | signed `httpOnly` session cookie | `AUTH_SECRET` 보호, HTTPS 사용 |
-| Remote MCP | OAuth authorization code flow + PKCE | `/connections`에서 connection review/revoke |
+| PREQ CLI | local auth cache와 project mapping | `preqstation status`와 `~/.preqstation` 권한 확인 |
+| Remote MCP compatibility | OAuth authorization code flow + PKCE | direct-client connection을 `/connections`에서 review/revoke |
 | Legacy REST token | SHA-256 hashed bearer token | compatibility client에만 발급하고 노출 시 rotate |
 | Telegram dispatch | encrypted sender bot token + Hermes allowlist | 두 bot token 보호, bot-to-bot delivery를 좁게 유지 |
 | Database | owner-scoped PostgreSQL RLS | owner account와 DB credential 공유 금지 |
@@ -20,7 +21,7 @@ PreqStation은 single-owner system으로 설계되어 있습니다. 보안 모�
 - `AUTH_SECRET`은 강한 random 값이고 다른 환경과 재사용하지 않음
 - 앱은 HTTPS로 제공됨
 - `ALLOWED_ORIGINS`에는 실제 first-party origin만 포함됨
-- `/connections`의 remote MCP connection이 현재 쓰는 runtime과 일치함
+- direct-client access를 쓴다면 `/connections`의 remote MCP connection이 현재 쓰는 runtime과 일치함
 - legacy API key는 OAuth를 쓸 수 없는 client에만 존재함
 - Telegram bot token은 **Settings > Telegram**으로 저장하고 `.env`에 commit하지 않음
 - setup 또는 credential rotation 후 audit log와 security event를 확인함

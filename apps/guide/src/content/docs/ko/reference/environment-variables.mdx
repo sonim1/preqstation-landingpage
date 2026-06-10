@@ -6,7 +6,7 @@ description: PreqStation web app, PREQ CLI dispatcher, compatibility path에서 
 ## 핵심 구분
 
 - **Web app**: `AUTH_SECRET`, `DATABASE_URL`, `ALLOWED_ORIGINS`, `UNSPLASH_ACCESS_KEY`, `CRON_SECRET`, `EVENT_OUTBOX_RETENTION_DAYS`
-- **PREQ CLI dispatcher**: `PREQSTATION_DISPATCH_HOME`, `PREQSTATION_PROJECTS_FILE`, `PREQSTATION_WORKTREE_ROOT`, `PREQSTATION_REPO_ROOTS`, `PREQSTATION_SERVER_URL`
+- **PREQ CLI runtime**: `PREQSTATION_DISPATCH_HOME`, `PREQSTATION_PROJECTS_FILE`, `PREQSTATION_WORKTREE_ROOT`, `PREQSTATION_REPO_ROOTS`, `PREQSTATION_SERVER_URL`
 - **Worker homes**: `PREQSTATION_WORKER_HOME`, `PREQSTATION_CLAUDE_HOME`, `PREQSTATION_CODEX_HOME`, `PREQSTATION_GEMINI_HOME`
 - **Compatibility only**: `PREQSTATION_API_URL`, `PREQSTATION_TOKEN`, `PREQSTATION_ENGINE`
 
@@ -36,6 +36,6 @@ export PREQSTATION_ENGINE="claude-code"  # optional
 ## 변경 후 재시작 기준
 
 - Web service 변수(`AUTH_SECRET`, `DATABASE_URL`, `ALLOWED_ORIGINS`)를 바꾸면 web app을 restart 또는 redeploy하세요.
-- Dispatcher 변수(`PREQSTATION_DISPATCH_HOME`, `PREQSTATION_REPO_ROOTS`, worker home 변수)를 바꾸면 Hermes 또는 장기 실행 host process를 재시작하세요.
+- CLI runtime 변수(`PREQSTATION_DISPATCH_HOME`, `PREQSTATION_REPO_ROOTS`, worker home 변수)를 바꾸면 Hermes 또는 장기 실행 host process를 재시작하세요.
 
 전체 변수 표와 Docker/CI 예시는 [영어 Environment Variables](/guide/reference/environment-variables/)를 기준으로 유지됩니다.
