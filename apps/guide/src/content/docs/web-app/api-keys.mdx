@@ -3,13 +3,14 @@ title: Legacy API Keys
 description: Legacy Bearer tokens for shell-helper compatibility and direct REST automation.
 ---
 
-Remote `/mcp` plus browser OAuth is the default install path for Claude Code, Codex, and Gemini CLI. This page is the legacy compatibility path for shell-helper mode and direct REST automation. Visiting `/api-keys` redirects to `/connections?legacy=1`.
+The PREQ CLI is the default install path for new operator hosts. Remote `/mcp` plus browser OAuth is optional direct-client compatibility for Claude Code, Codex, and Gemini CLI. This page is the legacy compatibility path for shell-helper mode and direct REST automation. Visiting `/api-keys` redirects to `/connections?legacy=1`.
 
-Do not create a token for a new install unless a specific client cannot use remote MCP OAuth.
+Do not create a token for a new install unless a specific client cannot use the PREQ CLI or optional remote MCP OAuth.
 
 | Path | Use it when | Secret you manage |
 |---|---|---|
-| Remote `/mcp` + OAuth | Claude Code, Codex, or Gemini CLI can connect to the hosted MCP endpoint | Browser OAuth session |
+| PREQ CLI | Operator host can authenticate, map projects, and launch dispatch/direct runs | CLI auth cache under `~/.preqstation` |
+| Remote `/mcp` + OAuth | Direct-client Claude Code, Codex, or Gemini CLI must call hosted MCP tools | Browser OAuth session |
 | Legacy API key | Shell helpers, direct REST scripts, or an older local bridge still need bearer auth | `PREQSTATION_TOKEN` |
 
 API tokens allow coding agents to authenticate to the PreqStation REST API and perform task operations without OAuth.
@@ -23,7 +24,7 @@ API tokens allow coding agents to authenticate to the PreqStation REST API and p
 
 ## Current Status
 
-Legacy API keys remain available only as a compatibility path. The current web app redirects `/api-keys` to `/connections?legacy=1` to point new installs back toward OAuth-backed MCP.
+Legacy API keys remain available only as a compatibility path. The current web app redirects `/api-keys` to `/connections?legacy=1` to point new installs back toward the CLI-first and OAuth-backed compatibility surfaces.
 
 Use a bearer token only when you already maintain a shell-helper or direct REST setup that still depends on it.
 
@@ -31,7 +32,7 @@ Use a bearer token only when you already maintain a shell-helper or direct REST 
 
 Use tokens when your client needs shell-helper compatibility or direct REST access.
 
-### Recommended Remote MCP Setup
+### Optional Remote MCP Compatibility
 
 ```bash
 # Claude Code

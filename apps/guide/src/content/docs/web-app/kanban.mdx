@@ -23,10 +23,10 @@ flowchart LR
 
 | Status | Meaning | Action |
 |---|---|---|
-| **Inbox** | New tasks waiting for planning | Agent should run `preq_plan_task` to move to Todo |
-| **Todo** | Planned and ready for agents | Agent can start work with `preq_start_task` |
+| **Inbox** | New tasks waiting for planning | Agent should upload a plan, usually through `preqstation task plan` |
+| **Todo** | Planned and ready for agents | Agent can claim work with `preqstation task start` |
 | **Hold** | Blocked or paused | Agent or user resolves the blocker, then retries |
-| **Ready** | Implementation submitted for verification | Choose a QA engine, queue a run, review history, then move to Done after verification |
+| **Ready** | Implementation submitted for verification | Choose a QA engine, queue a run, review history, then use `preqstation task review` or the UI after verification |
 | **Done** | Task verified and complete | Archive or reopen if needed |
 
 Archived tasks are hidden from the active board and handled through manual archive actions.

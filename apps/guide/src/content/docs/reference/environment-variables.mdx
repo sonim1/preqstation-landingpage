@@ -5,7 +5,7 @@ description: Complete reference of all environment variables for PreqStation sys
 
 import { Tabs, TabItem } from '@astrojs/starlight/components';
 
-This reference documents all environment variables used by the PreqStation web app, worker compatibility paths, and the PREQ CLI dispatcher.
+This reference documents all environment variables used by the PreqStation web app, worker compatibility paths, and the PREQ CLI runtime.
 
 ## Minimal First Setup
 
@@ -55,9 +55,9 @@ Get a PostgreSQL connection string from your provider:
 
 `npm run dev` defaults to `http://localhost:3000`. If you need a different local port, set `PORT=` in `.env.local` before starting the dev server. `PORT` is a local development override, not part of the runtime env schema or `.env.example`.
 
-## preqstation-skill
+## preqstation-skill (deprecated legacy compatibility)
 
-Agent-side variables for shell-helper mode and the legacy local stdio bridge. The recommended remote `/mcp` setup for Claude Code, Codex, and Gemini CLI uses OAuth and does not require exporting these variables just to register the server.
+Agent-side variables for shell-helper mode and the deprecated legacy local stdio bridge. The recommended remote `/mcp` setup for Claude Code, Codex, and Gemini CLI uses OAuth and does not require exporting these variables just to register the server.
 
 | Variable | Required | Default | Purpose |
 |----------|----------|---------|---------|
@@ -92,13 +92,13 @@ Use this only when shell-helper mode, direct REST automation, or an older local 
 | `codex` | Codex (OpenAI) |
 | `gemini-cli` | Gemini CLI |
 
-## PREQ CLI Dispatcher
+## PREQ CLI Runtime
 
 Execution layer variables for `preqstation install`, `preqstation setup`, Hermes, and detached worktree management.
 
 | Variable | Required | Default | Purpose |
 |----------|----------|---------|---------|
-| `PREQSTATION_DISPATCH_HOME` | No | `~/.preqstation-dispatch` | Base directory for dispatcher state, logs, project mappings, and worktrees |
+| `PREQSTATION_DISPATCH_HOME` | No | `~/.preqstation` | Base directory for CLI state, logs, project mappings, OAuth cache, and worktrees |
 | `PREQSTATION_PROJECTS_FILE` | No | `<dispatch-home>/projects.json` | Project key to local checkout mapping file |
 | `PREQSTATION_WORKTREE_ROOT` | No | `<dispatch-home>/worktrees` | Root directory for isolated task worktrees |
 | `PREQSTATION_WORKER_HOME` | No | `<dispatch-home>/workers` | Base directory for worker support files |
@@ -115,16 +115,16 @@ Execution layer variables for `preqstation install`, `preqstation setup`, Hermes
 
 ```bash
 # ~/.zshrc or ~/.bashrc
-export PREQSTATION_DISPATCH_HOME="$HOME/.preqstation-dispatch"
-export PREQSTATION_WORKTREE_ROOT="$HOME/.preqstation-dispatch/worktrees"
+export PREQSTATION_DISPATCH_HOME="$HOME/.preqstation"
+export PREQSTATION_WORKTREE_ROOT="$HOME/.preqstation/worktrees"
 export PREQSTATION_REPO_ROOTS="$HOME/projects:$HOME/work"
 ```
 
 ### Worktree Root Considerations
 
-**Default:** `~/.preqstation-dispatch/worktrees`
-- Persistent under the dispatcher home
-- Keeps detached task worktrees together with dispatcher state
+**Default:** `~/.preqstation/worktrees`
+- Persistent under the CLI home
+- Keeps detached task worktrees together with runtime state
 - Works for Hermes hosts using the PREQ CLI
 
 **Custom:** `/home/user/preq-worktrees`
@@ -157,9 +157,9 @@ export PREQSTATION_API_URL="https://preqstation.example.com"
 export PREQSTATION_TOKEN="preq_xxxxx"  # from /api-keys page
 export PREQSTATION_ENGINE="claude-code"
 
-# 5. Override dispatcher locations only when needed
-export PREQSTATION_DISPATCH_HOME="$HOME/.preqstation-dispatch"
-export PREQSTATION_WORKTREE_ROOT="$HOME/.preqstation-dispatch/worktrees"
+# 5. Override CLI runtime locations only when needed
+export PREQSTATION_DISPATCH_HOME="$HOME/.preqstation"
+export PREQSTATION_WORKTREE_ROOT="$HOME/.preqstation/worktrees"
 ```
 </TabItem>
 <TabItem label="CI/CD Pipeline">
@@ -192,8 +192,8 @@ ENV PREQSTATION_API_URL=https://preqstation.example.com
 ENV PREQSTATION_TOKEN=preq_xxxxx
 ENV PREQSTATION_ENGINE=claude-code
 
-# PREQ CLI dispatcher
-ENV PREQSTATION_DISPATCH_HOME=/app/.preqstation-dispatch
+# PREQ CLI runtime
+ENV PREQSTATION_DISPATCH_HOME=/app/.preqstation
 ENV PREQSTATION_WORKTREE_ROOT=/app/worktrees
 ENV PREQSTATION_REPO_ROOTS=/workspace
 
@@ -210,7 +210,7 @@ RUN npx -y @sonim1/preqstation@latest install
 | **Web Service** | `AUTH_SECRET`, `DATABASE_URL`, `ALLOWED_ORIGINS`, `UNSPLASH_ACCESS_KEY`, `CRON_SECRET`, `EVENT_OUTBOX_RETENTION_DAYS` | Server-side only, set during deployment |
 | **Local Development** | `PORT` | Read by `npm run dev` to override the local web-app port |
 | **Shell Helper / Legacy Bridge** | `PREQSTATION_API_URL`, `PREQSTATION_TOKEN`, `PREQSTATION_ENGINE` | Available to the token-based shell helper flow and legacy local MCP bridge |
-| **CLI Dispatcher** | `PREQSTATION_DISPATCH_HOME`, `PREQSTATION_PROJECTS_FILE`, `PREQSTATION_WORKTREE_ROOT`, `PREQSTATION_WORKER_HOME`, `PREQSTATION_CLAUDE_HOME`, `PREQSTATION_CODEX_HOME`, `PREQSTATION_GEMINI_HOME`, `PREQSTATION_MEMORY_PATH`, `PREQSTATION_REPO_ROOTS`, `PREQSTATION_SERVER_URL` | Controls CLI installer state, project mapping, worker homes, repo scans, and detached worktree execution |
+| **CLI Runtime** | `PREQSTATION_DISPATCH_HOME`, `PREQSTATION_PROJECTS_FILE`, `PREQSTATION_WORKTREE_ROOT`, `PREQSTATION_WORKER_HOME`, `PREQSTATION_CLAUDE_HOME`, `PREQSTATION_CODEX_HOME`, `PREQSTATION_GEMINI_HOME`, `PREQSTATION_MEMORY_PATH`, `PREQSTATION_REPO_ROOTS`, `PREQSTATION_SERVER_URL` | Controls CLI installer state, project mapping, OAuth cache, logs, worker homes, repo scans, and detached worktree execution |
 
 After changing web service variables, restart or redeploy the web app. After changing dispatcher variables, restart Hermes or the long-running host process so it inherits the new environment.
 

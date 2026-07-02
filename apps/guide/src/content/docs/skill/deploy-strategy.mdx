@@ -34,9 +34,9 @@ Missing, invalid, and legacy `none` values are normalized to `direct_commit`.
 
 Before any git action, resolve the deployment strategy:
 
-1. Call `preq_get_task <task_id>`
+1. Run `preqstation task get <task_id>`
 2. Check `task.deploy_strategy` in the response
-3. If missing, call `preq_get_project_settings <project_key>`
+3. If missing, run `preqstation project settings --project <project_key>`
 4. Use settings: `deploy_strategy`, `deploy_default_branch`, `deploy_auto_pr`, `deploy_commit_on_review`, `deploy_squash_merge`
 
 ### Default Values
@@ -76,7 +76,18 @@ Use this for:
 
 1. Work in isolated worktree
 2. Make commits and run tests
-3. **Before `preq_complete_task`:**
+3. **Before `preqstation task complete`:**
+
+Create a `result.json` payload before completion. Include at least `summary`, and include `tests`, `branchName`, and `prUrl` when they apply:
+
+```json
+{
+  "summary": "Implemented rate limiting",
+  "tests": "npm run test",
+  "branchName": "preqstation/PROJ/rate-limit",
+  "prUrl": "https://github.com/org/repo/pull/123"
+}
+```
 
 <Tabs>
 <TabItem label="Squash Merge (default)">
@@ -88,9 +99,9 @@ git -C <project_cwd> merge --squash <worktree_branch>
 git -C <project_cwd> commit -m "PROJ-284: Implement rate limiting"
 git -C <project_cwd> push origin <default_branch>
 
-# Verify push succeeded before completing
-git ls-remote --heads origin <default_branch> | grep -q . && \
-  preq_complete_task PROJ-284 "Implemented rate limiting" claude-code
+# Verify push succeeded before completing, then write result.json and complete.
+git ls-remote --heads origin <default_branch> | grep -q .
+preqstation task complete PROJ-284 --json-file result.json
 ```
 </TabItem>
 <TabItem label="Regular Merge">
@@ -118,7 +129,7 @@ Use this for:
 
 1. Work in isolated worktree (branch: `preqstation/<project_key>/<feature>`)
 2. Make commits and run tests
-3. **Before `preq_complete_task`:**
+3. **Before `preqstation task complete`:**
 
 ```bash
 # Push feature branch
@@ -126,23 +137,17 @@ git -C <project_cwd> push origin <worktree_branch>
 
 # Verify push succeeded
 git ls-remote --heads origin <worktree_branch> | grep -q . || \
-  { preq_block_task PROJ-284 "Failed to push feature branch" claude-code; exit 1; }
+  { printf '%s\n' "Failed to push feature branch" > blocker.md; preqstation task block PROJ-284 --reason-file blocker.md; exit 1; }
 
-# If auto_pr=true, create PR (requires GitHub MCP or gh CLI)
+# If auto_pr=true, create PR (requires gh CLI or an authenticated GitHub integration)
 if [ "$deploy_auto_pr" = "true" ]; then
   gh pr create --head <worktree_branch> --base <default_branch> \
     --title "PROJ-284: Implement rate limiting" \
     --body "Task: PROJ-284"
 fi
 
-# Complete task with branch and PR URL
-preq_complete_task PROJ-284 \
-  "Implemented rate limiting" \
-  claude-code \
-  "https://github.com/org/repo/pull/123" \
-  "npm run test" \
-  "" \
-  "preqstation/PROJ/rate-limit"
+# Complete task with summary, branch, tests, and PR URL in result.json
+preqstation task complete PROJ-284 --json-file result.json
 ```
 
 ## commit_on_review Rule
@@ -150,17 +155,18 @@ preq_complete_task PROJ-284 \
 When `deploy_commit_on_review=true` (default):
 
 - Agents must verify the remote push before moving the task to `ready`
-- Check branch exists on origin before calling `preq_complete_task`
-- Do not call `preq_complete_task` without a successful push
+- Check branch exists on origin before calling `preqstation task complete`
+- Do not call `preqstation task complete` without a successful push
 
 **Example verification:**
 ```bash
 if ! git ls-remote --heads origin "$branch_name" | grep -q .; then
-  preq_block_task PROJ-284 "Remote push verification failed" claude-code
+  printf '%s\n' "Remote push verification failed" > blocker.md
+  preqstation task block PROJ-284 --reason-file blocker.md
   exit 1
 fi
 
-preq_complete_task PROJ-284 "..." claude-code
+preqstation task complete PROJ-284 --json-file result.json
 ```
 
 When `deploy_commit_on_review=false`:
@@ -171,15 +177,15 @@ When `deploy_commit_on_review=false`:
 ## Complete Execution Flow
 
 ```
-1. Fetch task: preq_get_task PROJ-284
-2. Fetch strategy: preq_get_project_settings PROJ
+1. Fetch task: `preqstation task get PROJ-284`
+2. Fetch strategy: `preqstation project settings --project PROJ`
 3. Resolve strategy from response
 4. Execute code changes in worktree
 5. Deploy per strategy:
    - direct_commit: merge + push default_branch
    - feature_branch: push <worktree_branch>, create PR if auto_pr=true
 6. Verify remote push (if commit_on_review=true)
-7. Call preq_complete_task with summary, branch, pr_url
+7. Call `preqstation task complete PROJ-284 --json-file result.json` with summary, branch, and PR URL
 8. Clean up worktree: git worktree remove <cwd> --force
 ```
 

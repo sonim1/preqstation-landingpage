@@ -153,7 +153,7 @@ Use `setup set` when you want to provide an explicit local checkout path:
 preqstation setup set PROJ /absolute/path/to/project
 ```
 
-The dispatcher stores project mappings in `~/.preqstation-dispatch/projects.json`.
+The PREQ CLI stores project mappings in `~/.preqstation/projects.json`.
 
 ### 2. Create a dedicated Hermes profile
 
@@ -185,6 +185,12 @@ When a newer package version is installed later, resync the profile copy:
 
 ```bash
 HERMES_HOME="$HOME/.hermes/profiles/preq-coder" preqstation sync hermes
+```
+
+If the CLI reports that a gateway restart is required after install, update, or sync, restart Hermes before dispatching again:
+
+```bash
+hermes gateway restart
 ```
 
 ### 4. Configure Telegram access inside the Hermes profile
@@ -249,10 +255,10 @@ preq-coder gateway setup
 preq-coder gateway start
 ```
 
-After env or profile changes:
+After env or profile changes, or after the CLI asks for a restart:
 
 ```bash
-preq-coder gateway restart
+hermes gateway restart
 ```
 
 ## PreqStation to Hermes Message Shape

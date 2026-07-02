@@ -1,11 +1,11 @@
 ---
-title: Installation
-description: Install preqstation-skill and connect Claude, Codex, or Gemini as PreqStation workers.
+title: Deprecated Manual Worker Compatibility
+description: Deprecated direct-client MCP and legacy worker setup for Claude, Codex, or Gemini.
 ---
 
 import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
-`preqstation-skill` is the core agent-side package for PreqStation. It owns the `preqstation` worker skill, documents the lifecycle rules, and provides the Claude Code helper plugin plus Codex/Gemini worker install paths.
+`preqstation-skill` is the deprecated legacy/manual agent-side package for direct-client MCP access. Detached dispatch workers should use the PREQ CLI instruction file and `preqstation task ...` commands instead.
 
 Most users should start with the CLI path in [Quick Start](/guide/getting-started/quick-start/):
 
@@ -13,21 +13,21 @@ Most users should start with the CLI path in [Quick Start](/guide/getting-starte
 npx -y @sonim1/preqstation@latest install
 ```
 
-That installer can set up worker runtime support and remote MCP registration together. Use this page when you intentionally need a manual worker-only install or when the CLI installer cannot complete the MCP registration for your local runtime.
+Use this page when you intentionally need manual direct-client MCP access, the Claude helper plugin, shell-helper mode, or the legacy local stdio bridge.
 
 ## Worker or Dispatcher?
 
 | Setup | Means | Go here |
 |---|---|---|
-| Worker setup | the agent can call PREQ tools directly through remote MCP | this page |
-| Dispatcher setup | the web app can queue work to an operator host through Hermes/Telegram | [Telegram Integration](/guide/web-app/telegram/) |
+| Direct-client worker setup | the agent can call PREQ tools directly through remote MCP | this page |
+| Dispatcher setup | the web app can queue work to an operator host through PREQ CLI + Hermes/Telegram | [Telegram Integration](/guide/web-app/telegram/) |
 | Shell helper setup | a compatibility client uses bearer tokens without MCP | [Legacy API Keys](/guide/web-app/api-keys/) |
 
 ## Prerequisites
 
 - Node.js 22+ installed
 - A running PreqStation deployment at `https://<your-domain>`
-- Access to the PreqStation web app if you want to use the recommended remote MCP login flow
+- Access to the PreqStation web app if you want to use optional direct-client remote MCP login
 - A PreqStation API token only if you plan to use shell-helper mode or the legacy local stdio bridge
 
 ## Choose a Worker-Only Install
@@ -43,9 +43,9 @@ preqstation doctor
 
 Continue below only for worker-only setups.
 
-### Claude Code Plugin
+### Deprecated Claude Code Plugin
 
-For Claude Code, the plugin is a Claude-specific helper path. It includes the packaged `preqstation` worker skill and helper commands.
+For Claude Code, the plugin is a Claude-specific legacy helper path. It includes the packaged `preqstation` worker skill and helper commands.
 
 ```bash
 claude plugin marketplace add https://github.com/sonim1/preqstation-skill
@@ -58,11 +58,11 @@ Then open Claude Code and run:
 /preqstation setup
 ```
 
-`/preqstation setup` can add or verify the user-scoped `preqstation` MCP connection, fetch projects when `preq_list_projects` is available, and save repo mappings in `~/.preqstation-dispatch/projects.json`.
+`/preqstation setup` can add or verify the user-scoped `preqstation` MCP connection, fetch projects when `preq_list_projects` is available, and save repo mappings in `~/.preqstation/projects.json`.
 
-### Worker-Only Skill Installs
+### Deprecated Worker-Only Skill Installs
 
-Use worker-only install when you do not want the Claude plugin helpers, or when installing for Codex or Gemini CLI:
+Use worker-only install only when maintaining a legacy local bridge and you do not want the Claude plugin helpers, or when installing that bridge for Codex or Gemini CLI:
 
 ```bash
 npx skills add sonim1/preqstation-skill -g -a claude-code
@@ -80,13 +80,13 @@ gemini-cli
 
 ## Dispatcher Paths Live Elsewhere
 
-This page is only for **worker setup**.
+This page is only for **manual direct-client worker setup**.
 
 If you also want queued dispatch from the web app, use the PREQ CLI installer first, then [Telegram Integration](/guide/web-app/telegram/) for Hermes-specific setup.
 
-## Recommended MCP Setup (HTTP + OAuth)
+## Optional MCP Setup (HTTP + OAuth)
 
-The recommended MCP runtime now lives in the PreqStation service itself at `/mcp`. Claude Code, Codex, and Gemini CLI should connect to that remote endpoint and complete the browser OAuth flow when prompted.
+The direct-client MCP runtime lives in the PreqStation service itself at `/mcp`. Claude Code, Codex, and Gemini CLI can connect to that remote endpoint and complete the browser OAuth flow when prompted.
 
 ## Claude Code
 
@@ -142,7 +142,7 @@ codex mcp get preqstation
 </TabItem>
 </Tabs>
 
-Codex does not use a Claude-style local plugin or channel runtime. Keep it on the worker + remote MCP path.
+Codex does not use a Claude-style local plugin or channel runtime. Use remote MCP only when you intentionally want direct-client PREQ tool access.
 
 ## When Authentication Starts
 
@@ -153,8 +153,8 @@ Codex does not use a Claude-style local plugin or channel runtime. Keep it on th
 
 ## Worker vs Dispatcher
 
-- **Worker setup** means the agent can call PREQ tools directly through MCP.
-- **Dispatcher setup** means the web app can queue a task to another runtime.
+- **Worker setup** here means the agent can call PREQ tools directly through MCP.
+- **Dispatcher setup** means the web app can queue a task to an operator host that launches PREQ CLI.
 - **Engine** still remains separate and can be `claude-code`, `codex`, or `gemini-cli`.
 
 If you only want direct worker usage, this page is enough. If you want queued dispatch from the web app, continue with [Telegram Integration](/guide/web-app/telegram/).
@@ -173,7 +173,7 @@ If the runtime reports authentication is needed, complete the browser OAuth flow
 
 ## Gemini CLI
 
-Gemini CLI uses the same worker + remote MCP path when the local Gemini CLI supports remote HTTP MCP.
+Gemini CLI can use the same direct-client remote MCP path when the local Gemini CLI supports remote HTTP MCP.
 
 Register the remote PreqStation MCP endpoint manually only when the CLI installer did not do it for you:
 
@@ -237,7 +237,7 @@ If you must manually configure the legacy local stdio bridge in settings:
 ```
 
 <Aside>
-Replace `/ABSOLUTE/PATH/TO/preqstation-skill` with the actual installation path. Relative paths will not work. The recommended remote `/mcp` setup above does not need a local script path.
+Replace `/ABSOLUTE/PATH/TO/preqstation-skill` with the actual installation path. Relative paths will not work. The remote `/mcp` compatibility setup above does not need a local script path.
 </Aside>
 
 ## Troubleshooting

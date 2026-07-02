@@ -32,7 +32,7 @@ PreqStation은 task를 시작하는 trigger 경로와 실제 작업을 수행하
     Task와 control plane입니다. 태스크 관리, 칸반 UI, workflow state, review evidence, REST/MCP 기반 API, 필요할 때 dispatch target 선택을 담당합니다.
   </Card>
   <Card title="PREQ CLI" icon="rocket">
-    사용자-facing package와 command는 `@sonim1/preqstation`, `preqstation`입니다. Operator host 지원을 설치/업데이트하고, `status`와 `doctor`를 확인하고, project mapping과 worker runtime support를 준비합니다.
+    사용자-facing package와 command는 `@sonim1/preqstation`, `preqstation`입니다. Operator host 지원을 설치/업데이트하고, `status`와 `doctor`를 확인하고, project mapping, worker runtime 감지, detached dispatch state를 관리합니다.
   </Card>
   <Card title="Worker runtimes" icon="approve">
     Claude Code, Codex CLI, Gemini CLI가 실제 task work를 수행합니다. Task의 `engine`이 어떤 worker runtime을 실행할지 결정하며, Hermes/Telegram dispatch 경로와는 별개입니다.
@@ -128,10 +128,10 @@ flowchart TD
 
 ```text
 에이전트 실행 흐름:
-  inbox -> preq_plan_task -> todo
-  todo 또는 hold -> 구현 -> preq_complete_task -> ready
-  ready -> 검증 -> preq_review_task -> done
-  막히면 언제든 preq_block_task -> hold
+  inbox -> preqstation task plan -> todo
+  todo 또는 hold -> preqstation task start/complete -> ready
+  ready -> preqstation task review -> done
+  막히면 언제든 preqstation task block -> hold
 ```
 
 ## 기술 스택

@@ -3,21 +3,22 @@ title: Authentication
 description: Bearer tokens and session authentication.
 ---
 
-PreqStation uses session cookies for the web UI, OAuth-backed MCP connections for Claude Code, Codex, and Gemini CLI, and bearer tokens only for shell-helper compatibility or direct REST automation.
+PreqStation uses session cookies for the web UI, CLI-managed local state for normal dispatch hosts, OAuth-backed MCP connections for optional direct-client compatibility, and bearer tokens only for shell-helper compatibility or direct REST automation.
 
 ## Which Auth Path Applies?
 
 | Auth path | Used by | Default for new installs | Manage it from |
 |---|---|---|---|
-| OAuth-backed remote MCP | Claude Code, Codex, Gemini CLI | Yes | `/connections` |
+| PREQ CLI auth/state | local operator hosts, Hermes dispatch, direct `preqstation run` | Yes | `preqstation auth`, `preqstation status`, `~/.preqstation` |
+| OAuth-backed remote MCP | direct-client Claude Code, Codex, Gemini CLI compatibility | No | `/connections` |
 | Session cookie | browser web UI | Yes | login/logout flow |
 | Bearer token | shell helpers, direct REST scripts, older local bridge flows | No | `/connections?legacy=1` or the legacy token flow |
 
-If you are unsure, start with OAuth-backed remote MCP. Create a bearer token only when a specific compatibility client still requires `PREQSTATION_TOKEN`.
+If you are unsure, start with the PREQ CLI in [Quick Start](/guide/getting-started/quick-start/). Add OAuth-backed remote MCP only when a direct agent client needs to call PREQ MCP tools itself. Create a bearer token only when a specific compatibility client still requires `PREQSTATION_TOKEN`.
 
-## OAuth-Backed MCP
+## OAuth-Backed MCP Compatibility
 
-**For Claude Code, Codex, and Gemini CLI.**
+**For direct-client Claude Code, Codex, and Gemini CLI access.**
 
 Register the remote `/mcp` endpoint and complete browser OAuth:
 

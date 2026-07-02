@@ -32,7 +32,7 @@ PreqStation separates the trigger path from the task engine:
 		Task and control plane. It manages tasks, renders the Kanban UI, tracks workflow state and review evidence, exposes REST/MCP-backed APIs, and lets users choose a dispatch target when they want one.
 	</Card>
 	<Card title="PREQ CLI" icon="rocket">
-		User-facing package and command: `@sonim1/preqstation` and `preqstation`. It installs and updates operator-host support, checks `status` and `doctor`, maps projects, and prepares worker runtime support.
+		User-facing package and command: `@sonim1/preqstation` and `preqstation`. It installs and updates operator-host support, checks `status` and `doctor`, maps projects, detects worker runtimes, and manages detached dispatch state.
 	</Card>
 	<Card title="Worker Runtimes" icon="approve">
 		Claude Code, Codex CLI, and Gemini CLI perform the task work. The task `engine` decides which worker runtime starts, independent of the Hermes/Telegram dispatch path.
@@ -128,10 +128,10 @@ flowchart TD
 
 ```text
 Agent lifecycle:
-  inbox -> preq_plan_task -> todo
-  todo or hold -> implement -> preq_complete_task -> ready
-  ready -> verify -> preq_review_task -> done
-  any blocked step -> preq_block_task -> hold
+  inbox -> preqstation task plan -> todo
+  todo or hold -> preqstation task start/complete -> ready
+  ready -> preqstation task review -> done
+  any blocked step -> preqstation task block -> hold
 ```
 
 ## Tech Stack

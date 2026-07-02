@@ -1,11 +1,11 @@
 ---
-title: 설치
-description: preqstation-skill을 설치하고 Claude, Codex, Gemini를 PreqStation worker로 연결합니다.
+title: Deprecated 수동 Worker 호환성
+description: Claude, Codex, Gemini용 deprecated direct-client MCP와 legacy worker 설정입니다.
 ---
 
 import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
-`preqstation-skill`은 PreqStation의 핵심 에이전트 측 패키지입니다. `preqstation` worker skill, 작업 수명 주기 규칙, Claude Code helper plugin, Codex/Gemini worker 설치 경로를 제공합니다.
+`preqstation-skill`은 direct-client MCP access를 위한 deprecated legacy/manual agent-side package입니다. Detached dispatch worker는 PREQ CLI instruction file과 `preqstation task ...` command를 사용해야 합니다.
 
 대부분의 사용자는 [빠른 시작](/guide/ko/getting-started/quick-start/)의 CLI 경로부터 시작하면 됩니다.
 
@@ -13,14 +13,14 @@ import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 npx -y @sonim1/preqstation@latest install
 ```
 
-이 installer는 worker runtime support와 원격 MCP 등록을 함께 처리할 수 있습니다. 이 페이지는 의도적으로 수동 worker-only 설치가 필요하거나, CLI installer가 현재 로컬 runtime의 MCP 등록을 완료하지 못했을 때 사용하세요.
+이 페이지는 수동 direct-client MCP access, Claude helper plugin, shell-helper mode, legacy local stdio bridge가 의도적으로 필요할 때만 사용하세요.
 
 ## Worker인지 Dispatcher인지 먼저 구분
 
 | 설정 | 의미 | 볼 문서 |
 |---|---|---|
-| Worker setup | agent가 remote MCP로 PREQ tools를 직접 호출 | 이 페이지 |
-| Dispatcher setup | 웹 앱이 Hermes/Telegram을 통해 operator host에 work를 queue | [Telegram 연동](/guide/ko/web-app/telegram/) |
+| Direct-client worker setup | agent가 remote MCP로 PREQ tools를 직접 호출 | 이 페이지 |
+| Dispatcher setup | 웹 앱이 PREQ CLI + Hermes/Telegram을 통해 operator host에 work를 queue | [Telegram 연동](/guide/ko/web-app/telegram/) |
 | Shell helper setup | MCP 없이 bearer token으로 호환성 client를 실행 | [레거시 API Keys](/guide/ko/web-app/api-keys/) |
 
 ## 사전 준비
@@ -43,9 +43,9 @@ preqstation doctor
 
 Worker-only 설정이 필요한 경우에만 아래로 이어가면 됩니다.
 
-### Claude Code Plugin
+### Deprecated Claude Code Plugin
 
-Claude Code plugin은 Claude-specific helper 경로입니다. Plugin 안에 packaged `preqstation` worker skill과 helper command가 포함되어 있습니다.
+Claude Code plugin은 Claude-specific legacy helper 경로입니다. Plugin 안에 packaged `preqstation` worker skill과 helper command가 포함되어 있습니다.
 
 ```bash
 claude plugin marketplace add https://github.com/sonim1/preqstation-skill
@@ -58,11 +58,11 @@ claude plugin install preqstation@preqstation
 /preqstation setup
 ```
 
-`/preqstation setup`은 user-scoped `preqstation` MCP 연결을 추가하거나 검증하고, `preq_list_projects`를 사용할 수 있으면 프로젝트를 가져오며, repo mapping을 `~/.preqstation-dispatch/projects.json`에 저장할 수 있습니다.
+`/preqstation setup`은 user-scoped `preqstation` MCP 연결을 추가하거나 검증하고, `preq_list_projects`를 사용할 수 있으면 프로젝트를 가져오며, repo mapping을 `~/.preqstation/projects.json`에 저장할 수 있습니다.
 
-### Worker-only skill 설치
+### Deprecated worker-only skill 설치
 
-Claude plugin helper가 필요 없거나 Codex/Gemini CLI에 설치할 때는 worker-only 경로를 사용합니다.
+Legacy local bridge를 유지해야 하고 Claude plugin helper가 필요 없거나 Codex/Gemini CLI에 설치할 때만 worker-only 경로를 사용합니다.
 
 ```bash
 npx skills add sonim1/preqstation-skill -g -a claude-code
@@ -80,13 +80,13 @@ gemini-cli
 
 ## Dispatcher 경로는 별도 문서로 분리
 
-이 페이지는 **worker 설정 전용**입니다.
+이 페이지는 **수동 direct-client worker 설정 전용**입니다.
 
 웹 앱에서 queued dispatch도 쓰고 싶다면 먼저 PREQ CLI installer를 사용한 뒤, [Telegram 연동](/guide/ko/web-app/telegram/)에서 Hermes-specific 설정을 확인하세요.
 
-## 권장 MCP 설정 (HTTP + OAuth)
+## Optional MCP 설정 (HTTP + OAuth)
 
-권장 MCP 런타임은 이제 PreqStation 서비스 내부의 `/mcp`에 있습니다. Claude Code, Codex, Gemini CLI는 이 원격 엔드포인트에 연결하고, 필요할 때 브라우저 OAuth 플로우를 완료하면 됩니다.
+Direct-client MCP runtime은 PreqStation 서비스 내부의 `/mcp`에 있습니다. Claude Code, Codex, Gemini CLI는 이 원격 엔드포인트에 연결하고, 필요할 때 브라우저 OAuth 플로우를 완료할 수 있습니다.
 
 ## Claude Code
 
@@ -142,7 +142,7 @@ codex mcp get preqstation
 </TabItem>
 </Tabs>
 
-Codex는 Claude 스타일의 로컬 plugin이나 channel runtime이 필요하지 않습니다. worker + remote MCP 경로만 유지하면 됩니다.
+Codex는 Claude 스타일의 로컬 plugin이나 channel runtime이 필요하지 않습니다. PREQ tool을 직접 호출해야 할 때만 remote MCP 경로를 사용하세요.
 
 ## 인증이 시작되는 시점
 
@@ -153,8 +153,8 @@ Codex는 Claude 스타일의 로컬 plugin이나 channel runtime이 필요하지
 
 ## Worker와 Dispatcher의 차이
 
-- **worker 설정**은 에이전트가 MCP를 통해 PREQ 툴을 직접 호출하는 경로입니다.
-- **dispatcher 설정**은 웹 앱이 다른 runtime에 작업을 큐잉하는 경로입니다.
+- 여기서 말하는 **worker 설정**은 에이전트가 MCP를 통해 PREQ tool을 직접 호출하는 경로입니다.
+- **dispatcher 설정**은 웹 앱이 PREQ CLI를 실행하는 operator host에 작업을 큐잉하는 경로입니다.
 - **engine**은 별도이며 `claude-code`, `codex`, `gemini-cli` 중 실제 실행 CLI를 결정합니다.
 
 직접 worker만 쓸 거라면 이 페이지로 충분합니다. 웹 앱 queued dispatch가 필요하면 [Telegram 연동](/guide/ko/web-app/telegram/)으로 넘어가세요.
@@ -173,7 +173,7 @@ runtime이 인증이 필요하다고 표시하면 browser OAuth flow를 완료�
 
 ## Gemini CLI
 
-Gemini CLI는 설치된 로컬 CLI가 remote HTTP MCP를 지원할 때 Claude/Codex와 같은 worker + remote MCP 경로를 사용합니다.
+Gemini CLI는 설치된 로컬 CLI가 remote HTTP MCP를 지원할 때 같은 direct-client MCP 경로를 사용할 수 있습니다.
 
 CLI installer가 대신 처리하지 못했을 때만 원격 PreqStation MCP 엔드포인트를 수동 등록합니다.
 
@@ -237,7 +237,7 @@ export PREQSTATION_ENGINE="claude-code"  # or codex, gemini-cli
 ```
 
 <Aside>
-`/ABSOLUTE/PATH/TO/preqstation-skill`은 실제 설치 경로로 바꾸세요. 상대 경로는 동작하지 않습니다. 위의 권장 원격 `/mcp` 설정은 로컬 스크립트 경로가 필요하지 않습니다.
+`/ABSOLUTE/PATH/TO/preqstation-skill`은 실제 설치 경로로 바꾸세요. 상대 경로는 동작하지 않습니다. 위의 remote `/mcp` compatibility 설정은 로컬 스크립트 경로가 필요하지 않습니다.
 </Aside>
 
 ## 문제 해결

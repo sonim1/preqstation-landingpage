@@ -10,30 +10,32 @@ import { Aside } from '@astrojs/starlight/components';
 Most users do not need to clone the web app repository. If you already have access to a PreqStation deployment, use the hosted setup path first:
 
 1. Sign in to the web app.
-2. Open `/connections` and complete the provider setup you need.
-3. Register the remote MCP endpoint:
+2. Install the PREQ CLI on the operator host that will execute or dispatch work.
+3. Authenticate the CLI against your deployment and verify status:
 
 ```bash
-# Claude Code
-claude mcp add -s user --transport http preqstation https://<your-domain>/mcp
-
-# Codex
-codex mcp add preqstation --url https://<your-domain>/mcp
-
-# Gemini CLI
-gemini mcp add --scope user --transport http preqstation https://<your-domain>/mcp
+npx -y @sonim1/preqstation@latest install
+preqstation auth login --server-url https://<your-domain>
+preqstation status
 ```
 
-4. Complete the browser OAuth flow when prompted.
-5. Continue with [Worker Installation](/guide/skill/installation/) or [Telegram Integration](/guide/web-app/telegram/), depending on the runtime you need.
+4. Map the local project checkout if this host will receive dispatches:
 
-API tokens are only needed later if you must use shell-helper mode or the legacy local MCP bridge. For that compatibility path, see [Legacy API Keys](/guide/web-app/api-keys/) and [Environment Variables](/guide/reference/environment-variables/).
+```bash
+preqstation setup auto
+# or:
+preqstation setup set PROJ /absolute/path/to/project
+```
+
+5. Continue with [Telegram Integration](/guide/web-app/telegram/) when Hermes should receive queued dispatches, or [Worker Installation](/guide/skill/installation/) only when you intentionally need direct-client MCP compatibility.
+
+Remote MCP connections in `/connections` and API tokens are optional compatibility paths. Use them only when an agent client must call PREQ MCP tools directly, shell-helper mode is required, or an older local bridge is still in use. For that compatibility path, see [Legacy API Keys](/guide/web-app/api-keys/) and [Environment Variables](/guide/reference/environment-variables/).
 
 ## Setup Path Decision
 
 | Situation | Use this section | Done when |
 |---|---|---|
-| You already have a hosted deployment | Recommended for Most Users | `/connections` is connected and your runtime can reach `/mcp` |
+| You already have a hosted deployment | Recommended for Most Users | `preqstation status` is healthy and project mappings are present when needed |
 | You are running the web app yourself | Self-Hosted Local Development Steps | `/login` opens and the first owner account exists |
 | You are validating a database move | Database Migration | migrations run and row counts match after restore |
 | You need old bearer-token automation | Legacy API Keys | a `preq_` token is stored only in the compatibility client |
@@ -136,7 +138,7 @@ The bot token is encrypted at rest with AES-GCM.
 
 ## Legacy API Keys for Shell Helper Mode or the Local Bridge
 
-Issue tokens only when an agent cannot use the recommended remote `/mcp` + OAuth flow and must authenticate through shell-helper mode or the legacy local bridge:
+Issue tokens only when an agent cannot use the PREQ CLI or optional remote `/mcp` OAuth flow and must authenticate through shell-helper mode or the legacy local bridge:
 
 1. Open `/api-keys` after signing in, or click **API Keys** in the workspace sidebar
 2. Use the **Create API Key** form to enter a name and optional expiration

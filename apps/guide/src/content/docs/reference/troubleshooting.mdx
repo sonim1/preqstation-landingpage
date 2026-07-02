@@ -5,7 +5,7 @@ description: Common issues and solutions for PreqStation task execution
 
 import { Tabs, TabItem } from '@astrojs/starlight/components';
 
-The standard PreqStation setup path starts with the PREQ CLI and uses the hosted `/mcp` endpoint plus browser OAuth. Use the token-based steps below only if you are troubleshooting shell-helper mode or the legacy local stdio bridge.
+The standard PreqStation setup path starts with the PREQ CLI. Use the remote `/mcp` sections only when troubleshooting optional direct-client MCP compatibility, and use the token-based steps only for shell-helper mode or the legacy local stdio bridge.
 
 ## Symptom Map
 
@@ -35,12 +35,13 @@ Use the normal output when you are debugging interactively. Use the JSON output 
 Common next steps from the checks:
 
 - Fix server URL or `/mcp` endpoint warnings before re-registering worker runtimes.
-- Finish OAuth if the runtime is registered but unauthenticated.
+- Finish OAuth if you intentionally registered direct-client MCP but the runtime is unauthenticated.
 - Refresh project mappings with `preqstation setup status`, `preqstation setup auto`, or `preqstation setup set`.
 - Fix missing worker executables such as `claude`, `codex`, or `gemini` on the host process `PATH`.
 - Restart Hermes after changing environment variables, because long-running host processes inherit their environment at launch.
+- Inspect global CLI failures in `~/.preqstation/logs/error.log`; pass `--debug` or set `PREQSTATION_DEBUG=1` when you need stack traces.
 
-## Remote MCP & OAuth Issues
+## Optional Remote MCP & OAuth Issues
 
 ### Server URL or remote `/mcp` endpoint looks wrong
 
@@ -230,7 +231,7 @@ preqstation setup auto PROJ=https://github.com/example/project
 preqstation setup set PROJ /absolute/path/to/project
 ```
 
-3. Check dispatcher state paths:
+3. Check CLI runtime state paths:
 ```bash
 echo $PREQSTATION_DISPATCH_HOME
 echo $PREQSTATION_PROJECTS_FILE
@@ -349,7 +350,7 @@ git ls-remote --heads origin <branch_name>
 git -C <project_cwd> push origin <branch_name>
 ```
 
-2. Then call `preq_complete_task` again
+2. Then run `preqstation task complete <task_id> --json-file result.json` again
 </TabItem>
 <TabItem label="Issue: Wrong branch name">
 **Cause:** Branch created locally but with different name.
@@ -360,7 +361,7 @@ git -C <project_cwd> branch
 # Expected: preqstation/PROJ/feature-name
 ```
 
-**Fix:** Push with correct name or use `preq_complete_task` with `branchName` parameter.
+**Fix:** Push with the correct name or include the final branch in the `preqstation task complete --json-file result.json` payload.
 </TabItem>
 </Tabs>
 
@@ -535,11 +536,11 @@ git -C <project_cwd> worktree remove <old_path> --force
 git -C <project_cwd> worktree prune
 ```
 
-### ❌ Expecting PREQ tools without MCP
+### ❌ Expecting direct-client PREQ tools without MCP
 
-**Issue:** `preq_*` tools are unavailable because the MCP server was never registered.
+**Issue:** `preq_*` tools are unavailable in a direct agent client because the optional MCP server was never registered.
 
-**Fix:** Ensure the PreqStation MCP server is registered:
+**Fix:** For normal detached dispatch, use the PREQ CLI and the generated `.preqstation-instructions.txt`. For direct-client MCP compatibility, register the PreqStation MCP server:
 ```bash
 claude mcp list | grep preqstation
 ```
@@ -574,7 +575,8 @@ If you've checked all above:
 
 3. **Check logs:**
    - Claude Code: Settings → Logs
-   - PREQ CLI dispatcher: `.preqstation-dispatch/<engine>.log` inside the task worktree
+   - PREQ CLI global errors: `~/.preqstation/logs/error.log`
+   - Detached worker process: `.preqstation-dispatch/<engine>.log` inside the task worktree
    - PreqStation web app: deployment or server logs
 
 4. **File an issue** with:
