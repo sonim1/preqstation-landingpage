@@ -1,11 +1,11 @@
 ---
-title: Manual Worker Compatibility
-description: Optional direct-client MCP and legacy worker setup for Claude, Codex, or Gemini.
+title: Deprecated Manual Worker Compatibility
+description: Deprecated direct-client MCP and legacy worker setup for Claude, Codex, or Gemini.
 ---
 
 import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
-`preqstation-skill` is the legacy/manual agent-side package for direct-client MCP access. Detached dispatch workers should use the PREQ CLI instruction file and `preqstation task ...` commands instead.
+`preqstation-skill` is the deprecated legacy/manual agent-side package for direct-client MCP access. Detached dispatch workers should use the PREQ CLI instruction file and `preqstation task ...` commands instead.
 
 Most users should start with the CLI path in [Quick Start](/guide/getting-started/quick-start/):
 
@@ -43,9 +43,9 @@ preqstation doctor
 
 Continue below only for worker-only setups.
 
-### Claude Code Plugin
+### Deprecated Claude Code Plugin
 
-For Claude Code, the plugin is a Claude-specific helper path. It includes the packaged `preqstation` worker skill and helper commands.
+For Claude Code, the plugin is a Claude-specific legacy helper path. It includes the packaged `preqstation` worker skill and helper commands.
 
 ```bash
 claude plugin marketplace add https://github.com/sonim1/preqstation-skill
@@ -60,9 +60,9 @@ Then open Claude Code and run:
 
 `/preqstation setup` can add or verify the user-scoped `preqstation` MCP connection, fetch projects when `preq_list_projects` is available, and save repo mappings in `~/.preqstation/projects.json`.
 
-### Worker-Only Skill Installs
+### Deprecated Worker-Only Skill Installs
 
-Use worker-only install when you do not want the Claude plugin helpers, or when installing for Codex or Gemini CLI:
+Use worker-only install only when maintaining a legacy local bridge and you do not want the Claude plugin helpers, or when installing that bridge for Codex or Gemini CLI:
 
 ```bash
 npx skills add sonim1/preqstation-skill -g -a claude-code

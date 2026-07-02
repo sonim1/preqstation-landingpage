@@ -1,11 +1,11 @@
 ---
-title: 수동 Worker 호환성
-description: Claude, Codex, Gemini용 optional direct-client MCP와 legacy worker 설정입니다.
+title: Deprecated 수동 Worker 호환성
+description: Claude, Codex, Gemini용 deprecated direct-client MCP와 legacy worker 설정입니다.
 ---
 
 import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
-`preqstation-skill`은 direct-client MCP access를 위한 legacy/manual agent-side package입니다. Detached dispatch worker는 PREQ CLI instruction file과 `preqstation task ...` command를 사용해야 합니다.
+`preqstation-skill`은 direct-client MCP access를 위한 deprecated legacy/manual agent-side package입니다. Detached dispatch worker는 PREQ CLI instruction file과 `preqstation task ...` command를 사용해야 합니다.
 
 대부분의 사용자는 [빠른 시작](/guide/ko/getting-started/quick-start/)의 CLI 경로부터 시작하면 됩니다.
 
@@ -43,9 +43,9 @@ preqstation doctor
 
 Worker-only 설정이 필요한 경우에만 아래로 이어가면 됩니다.
 
-### Claude Code Plugin
+### Deprecated Claude Code Plugin
 
-Claude Code plugin은 Claude-specific helper 경로입니다. Plugin 안에 packaged `preqstation` worker skill과 helper command가 포함되어 있습니다.
+Claude Code plugin은 Claude-specific legacy helper 경로입니다. Plugin 안에 packaged `preqstation` worker skill과 helper command가 포함되어 있습니다.
 
 ```bash
 claude plugin marketplace add https://github.com/sonim1/preqstation-skill
@@ -60,9 +60,9 @@ claude plugin install preqstation@preqstation
 
 `/preqstation setup`은 user-scoped `preqstation` MCP 연결을 추가하거나 검증하고, `preq_list_projects`를 사용할 수 있으면 프로젝트를 가져오며, repo mapping을 `~/.preqstation/projects.json`에 저장할 수 있습니다.
 
-### Worker-only skill 설치
+### Deprecated worker-only skill 설치
 
-Claude plugin helper가 필요 없거나 Codex/Gemini CLI에 설치할 때는 worker-only 경로를 사용합니다.
+Legacy local bridge를 유지해야 하고 Claude plugin helper가 필요 없거나 Codex/Gemini CLI에 설치할 때만 worker-only 경로를 사용합니다.
 
 ```bash
 npx skills add sonim1/preqstation-skill -g -a claude-code
