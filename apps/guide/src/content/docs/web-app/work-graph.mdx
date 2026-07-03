@@ -1,0 +1,99 @@
+---
+title: Work Graph
+description: Understand the v2 execution graph, workflow profile metadata, and agent runtime contract.
+---
+
+import Mermaid from '../../../components/Mermaid.astro';
+
+The Work Graph is the primary execution trace for a task. The Kanban board tells you where the task sits in the workflow. The Work Graph tells you how the work actually happened: planning, exploration, implementation, tests, review, decisions, blockers, and evidence.
+
+<Mermaid
+  chart={`
+flowchart LR
+  root[Root task node] --> plan[Plan]
+  plan --> explore[Explore]
+  explore --> implement[Implement]
+  implement --> test[Test]
+  test --> review[Review]
+  explore --> decision[Decision]
+  implement --> blocked[Blocked]
+`}
+  caption="A task keeps one graph of typed work nodes. Nodes can branch when work splits, waits for a decision, or records a blocker."
+/>
+
+## Kanban vs Work Graph
+
+| Surface | Answers | Best for |
+|---|---|---|
+| Kanban board | What workflow column is the task in? | Inbox, Todo, Hold, Ready, Done, QA queue state |
+| Work Graph | What did the agent actually do? | Execution history, decisions, evidence, workflow memory |
+| Task lifecycle API | What state transition should happen next? | Planning, claiming work, completion, review, blocking |
+
+Use the Kanban board to manage the task's review state. Use the Work Graph when you need to inspect the agent's execution path or understand why a workflow was chosen.
+
+## What Gets Recorded
+
+A graph contains typed work nodes. Common node types include `plan`, `explore`, `analyze`, `research`, `implement`, `test`, `qa`, `review`, `decision`, `approval`, `blocked`, and `result`.
+
+Each node can carry:
+
+- `status` such as `pending`, `running`, `waiting_for_user`, `blocked`, `completed`, `failed`, or `cancelled`
+- a body or result summary
+- evidence such as commands, tests, changed files, screenshots, pull requests, deployments, logs, or errors
+- actor, engine, and model attribution
+- metadata, including `metadata.workflow_profile`
+
+Task notes stay on the canonical root node. Detailed work belongs on child nodes so the graph stays readable.
+
+## Workflow Profile
+
+PreqStation Core does not choose whether a harness should use GStack, GSD, Superpowers, Speckit, OpenSpec, or any other local workflow. The default requested profile is `auto`, which means the harness chooses the concrete workflow from its own instructions and records what it chose.
+
+```json
+{
+  "workflow_profile": {
+    "requested": "auto",
+    "manual_command": null,
+    "resolved": "gstack-plan-eng-review",
+    "resolved_command": "/plan-eng-review",
+    "resolved_reason": "Architecture review needed before implementation"
+  }
+}
+```
+
+`requested` is required. `resolved`, `resolved_command`, and `resolved_reason` are written by the harness after it decides. Until a manual override UI ships, `manual_command` remains `null`.
+
+## Agent Runtime Contract
+
+There are two command surfaces:
+
+| Command | Owner | Purpose |
+|---|---|---|
+| `preqstation` | dispatcher package `@sonim1/preqstation` | operator-host setup, project mapping, worktree preparation, engine launch |
+| `preqstation-agent` | core app package | Work Graph lifecycle recording from inside the agent runtime |
+
+Graph-aware harnesses can use:
+
+```bash
+preqstation-agent agent guide --json
+preqstation-agent run prepare PREQ-123 --json
+preqstation-agent graph init PREQ-123 --json
+preqstation-agent graph node create PREQ-123 --type analyze --title "Inspect CLI" --metadata-file metadata.json --json
+preqstation-agent graph node complete NODE-ID --summary-file result.md --metadata-file metadata.json --json
+preqstation-agent graph evidence attach NODE-ID --kind test --title "Unit tests" --url https://example.com --json
+preqstation-agent graph memory append PREQ-123 --body-file notes.md --json
+```
+
+MCP clients can use the equivalent graph tools: `preq_agent_guide`, `preq_graph_state`, `preq_graph_node_create`, `preq_graph_node_update`, and `preq_graph_evidence_attach`.
+
+## Reading a Graph
+
+Start from the root node, then follow the branch that matches the latest active or completed work. Look for:
+
+- the node where the harness recorded `metadata.workflow_profile`
+- decision or approval nodes that explain a workflow change
+- blocked nodes with waiting reasons
+- evidence attached to implementation, test, QA, deploy, or review nodes
+- workflow memory that should carry forward into the next agent run
+
+If you only need to know whether the task is ready for review, use the Kanban board. If you need to understand what happened inside the run, use the Work Graph.

@@ -13,6 +13,8 @@ Tasks in PreqStation have two dimensions:
 
 That split is the main difference from the older `in_progress` / `review` model.
 
+The [Work Graph](/guide/web-app/work-graph/) is attached to the same task but records a different layer: the agent's execution path, evidence, decisions, and workflow memory. Lifecycle tools move the card through review states. Graph tools record how the work was performed.
+
 ## UI, API, and Agent Actions
 
 | User sees | API value | Common action |
@@ -65,6 +67,8 @@ Run state is tracked independently from workflow status:
 Telegram dispatch can mark a task as `queued` before an agent picks it up. `preq_start_task()` upgrades that to the active working state.
 
 The examples below use MCP tool names because this is an API lifecycle reference. Detached dispatch workers receive equivalent `preqstation task ...` commands in `.preqstation-instructions.txt`.
+
+Graph-aware workers should also record their execution with `preqstation-agent graph ...` or the MCP graph tools. `metadata.workflow_profile` belongs on graph node metadata, not on the task workflow status itself.
 
 ## Lifecycle Branches
 

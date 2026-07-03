@@ -1,0 +1,99 @@
+---
+title: 워크 그래프
+description: v2 실행 그래프, workflow profile metadata, agent runtime contract를 설명합니다.
+---
+
+import Mermaid from '../../../../components/Mermaid.astro';
+
+워크 그래프는 태스크 실행의 기본 기록입니다. 칸반 보드는 태스크가 어떤 워크플로우 컬럼에 있는지 보여줍니다. 워크 그래프는 실제로 작업이 어떻게 진행됐는지 보여줍니다: 계획, 탐색, 구현, 테스트, 리뷰, 결정, blocker, 근거 자료까지 기록합니다.
+
+<Mermaid
+  chart={`
+flowchart LR
+  root[Root task node] --> plan[Plan]
+  plan --> explore[Explore]
+  explore --> implement[Implement]
+  implement --> test[Test]
+  test --> review[Review]
+  explore --> decision[Decision]
+  implement --> blocked[Blocked]
+`}
+  caption="태스크 하나는 typed work node로 이루어진 그래프 하나를 가집니다. 작업이 갈라지거나, 결정이 필요하거나, blocker를 기록할 때 노드가 분기될 수 있습니다."
+/>
+
+## 칸반과 워크 그래프
+
+| 화면 | 답하는 질문 | 적합한 용도 |
+|---|---|---|
+| 칸반 보드 | 태스크가 어떤 workflow column에 있는가? | Inbox, Todo, Hold, Ready, Done, QA queue state |
+| 워크 그래프 | 에이전트가 실제로 무엇을 했는가? | 실행 기록, 결정, evidence, workflow memory |
+| Task lifecycle API | 다음 state transition은 무엇인가? | 계획, claim, complete, review, block |
+
+칸반 보드는 태스크의 review state를 관리할 때 사용합니다. 워크 그래프는 에이전트의 실행 경로나 특정 workflow가 선택된 이유를 확인할 때 사용합니다.
+
+## 기록되는 것
+
+그래프는 typed work node로 구성됩니다. 대표 node type은 `plan`, `explore`, `analyze`, `research`, `implement`, `test`, `qa`, `review`, `decision`, `approval`, `blocked`, `result`입니다.
+
+각 노드는 다음을 가질 수 있습니다.
+
+- `pending`, `running`, `waiting_for_user`, `blocked`, `completed`, `failed`, `cancelled` 같은 `status`
+- 본문 또는 result summary
+- command, test, changed file, screenshot, pull request, deployment, log, error 같은 evidence
+- actor, engine, model attribution
+- `metadata.workflow_profile`을 포함한 metadata
+
+태스크 note는 canonical root node에 남습니다. 세부 실행 기록은 child node에 남겨 그래프를 읽기 쉽게 유지합니다.
+
+## Workflow Profile
+
+PreqStation Core는 harness가 GStack, GSD, Superpowers, Speckit, OpenSpec 또는 다른 로컬 workflow 중 무엇을 써야 하는지 선택하지 않습니다. 기본 requested profile은 `auto`입니다. 즉 harness가 자기 instruction과 local context를 보고 실제 workflow를 고른 뒤, 무엇을 골랐는지 기록합니다.
+
+```json
+{
+  "workflow_profile": {
+    "requested": "auto",
+    "manual_command": null,
+    "resolved": "gstack-plan-eng-review",
+    "resolved_command": "/plan-eng-review",
+    "resolved_reason": "Architecture review needed before implementation"
+  }
+}
+```
+
+`requested`는 필수입니다. `resolved`, `resolved_command`, `resolved_reason`은 harness가 결정한 뒤 씁니다. 수동 override UI가 출시되기 전까지 `manual_command`는 `null`입니다.
+
+## Agent Runtime Contract
+
+명령어 surface는 두 개로 나뉩니다.
+
+| 명령어 | 소유 | 목적 |
+|---|---|---|
+| `preqstation` | dispatcher package `@sonim1/preqstation` | operator host setup, project mapping, worktree 준비, engine launch |
+| `preqstation-agent` | core app package | agent runtime 내부에서 Work Graph lifecycle 기록 |
+
+그래프를 기록하는 harness는 아래 명령을 사용할 수 있습니다.
+
+```bash
+preqstation-agent agent guide --json
+preqstation-agent run prepare PREQ-123 --json
+preqstation-agent graph init PREQ-123 --json
+preqstation-agent graph node create PREQ-123 --type analyze --title "Inspect CLI" --metadata-file metadata.json --json
+preqstation-agent graph node complete NODE-ID --summary-file result.md --metadata-file metadata.json --json
+preqstation-agent graph evidence attach NODE-ID --kind test --title "Unit tests" --url https://example.com --json
+preqstation-agent graph memory append PREQ-123 --body-file notes.md --json
+```
+
+MCP client는 동등한 graph tool인 `preq_agent_guide`, `preq_graph_state`, `preq_graph_node_create`, `preq_graph_node_update`, `preq_graph_evidence_attach`를 사용할 수 있습니다.
+
+## 그래프 읽는 법
+
+Root node에서 시작해서 최신 active 또는 completed 작업과 연결된 branch를 따라가세요. 특히 아래를 확인합니다.
+
+- harness가 `metadata.workflow_profile`을 기록한 노드
+- workflow 변경 이유를 설명하는 decision 또는 approval node
+- waiting reason이 있는 blocked node
+- implementation, test, QA, deploy, review node에 붙은 evidence
+- 다음 agent run으로 이어져야 하는 workflow memory
+
+태스크가 review 가능한 상태인지 알고 싶다면 칸반 보드를 보면 됩니다. 실행 내부에서 무슨 일이 있었는지 이해하려면 워크 그래프를 보면 됩니다.

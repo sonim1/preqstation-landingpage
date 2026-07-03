@@ -14,6 +14,7 @@ The PreqStation MCP server exposes read-only tools for discovery and mutation to
 | Execution | `preq_start_task`, `preq_complete_task`, `preq_block_task` | changes run state or workflow state |
 | Review | `preq_review_task`, `preq_update_qa_run` | records verification and may move `ready` to `done` |
 | Manual override | `preq_update_task_status`, `preq_update_task_note`, `preq_delete_task` | direct user/operator mutation |
+| Work Graph | `preq_agent_guide`, `preq_graph_state`, `preq_graph_node_create`, `preq_graph_node_update`, `preq_graph_evidence_attach` | v2 execution graph discovery and mutation |
 
 ## Tool Categories
 
@@ -25,6 +26,18 @@ The PreqStation MCP server exposes read-only tools for discovery and mutation to
 | `preq_list_tasks` | List tasks by status, label, engine, project key, run state, or dispatch target |
 | `preq_get_task` | Fetch one task by ticket or UUID |
 | `preq_get_project_settings` | Fetch resolved project settings by project key |
+
+### Work Graph tools
+
+| Tool | Purpose |
+|---|---|
+| `preq_agent_guide` | Discover runtime rules and the workflow profile contract |
+| `preq_graph_state` | Read or initialize a task work graph |
+| `preq_graph_node_create` | Create a typed work graph node with optional metadata |
+| `preq_graph_node_update` | Transition a node and attach result metadata |
+| `preq_graph_evidence_attach` | Attach evidence to a graph node |
+
+See [Work Graph](/guide/web-app/work-graph/) for how graph tools relate to Kanban and task lifecycle status.
 
 ### Mutation tools
 
