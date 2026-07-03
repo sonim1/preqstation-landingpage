@@ -216,6 +216,13 @@ export default defineConfig({
               slug: 'web-app/kanban',
             },
             {
+              label: 'Work Graph',
+              translations: {
+                ko: '워크 그래프',
+              },
+              slug: 'web-app/work-graph',
+            },
+            {
               label: 'Legacy API Keys',
               translations: {
                 ko: '레거시 API 키',

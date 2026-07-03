@@ -7,6 +7,8 @@ import Mermaid from '../../../components/Mermaid.astro';
 
 The Kanban board is your main interface for managing tasks. It displays the five active workflow columns: Inbox, Todo, Hold, Ready, and Done.
 
+Kanban remains the workflow-position view. For the execution trace behind a task, use the [Work Graph](/guide/web-app/work-graph/).
+
 <Mermaid
   chart={`
 flowchart LR
@@ -30,6 +32,12 @@ flowchart LR
 | **Done** | Task verified and complete | Archive or reopen if needed |
 
 Archived tasks are hidden from the active board and handled through manual archive actions.
+
+## Kanban vs Work Graph
+
+Use Kanban to answer "what state is this task in?" Use the Work Graph to answer "what did the agent do, what evidence did it attach, and why did it choose that workflow?"
+
+The board keeps task review state simple. The graph keeps execution history detailed without adding extra columns such as `in_progress`.
 
 ## First Task Walkthrough
 

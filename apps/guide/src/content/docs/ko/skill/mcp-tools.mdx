@@ -14,6 +14,7 @@ PreqStation MCP server는 read-only discovery tool과 direct-client compatibilit
 | Execution | `preq_start_task`, `preq_complete_task`, `preq_block_task` | run state 또는 workflow state 변경 |
 | Review | `preq_review_task`, `preq_update_qa_run` | verification 기록, `ready` -> `done` 가능 |
 | Manual override | `preq_update_task_status`, `preq_update_task_note`, `preq_delete_task` | 직접 mutation |
+| Work Graph | `preq_agent_guide`, `preq_graph_state`, `preq_graph_node_create`, `preq_graph_node_update`, `preq_graph_evidence_attach` | v2 execution graph 조회와 mutation |
 
 ## Engine 값
 
@@ -24,3 +25,5 @@ PreqStation MCP server는 read-only discovery tool과 direct-client compatibilit
 Mutation tool은 explicit `engine`, 기존 task engine, MCP client auto-detection, `PREQSTATION_ENGINE`, `codex` fallback 순서로 engine을 결정합니다.
 
 전체 parameter와 request/response 예시는 [영어 MCP Tools reference](/guide/skill/mcp-tools/)를 참고하세요.
+
+Work Graph tool이 칸반과 task lifecycle status에 어떻게 연결되는지는 [워크 그래프](/guide/ko/web-app/work-graph/)를 참고하세요.
